@@ -5,6 +5,7 @@ function Services() {
   return (
     <motion.section
       id="servicios"
+      className="services-section"
       style={styles.container}
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -12,23 +13,23 @@ function Services() {
     >
       <h2>Nuestros Servicios</h2>
 
-      <div style={styles.cards}>
+      <div className="services-cards" style={styles.cards}>
         <Card
           title="Diseño de sonrisa"
           text="Mejoramos tu sonrisa con tratamientos estéticos."
-          image="https://images.unsplash.com/photo-1606813907291-d86efa9b94db"
+          image="https://dentioral.com/wp-content/uploads/2016/01/diseno-de-sonrisa-dentioral.jpg"
         />
 
         <Card
           title="Ortodoncia"
           text="Alinea tus dientes con los mejores especialistas."
-          image="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5"
+          image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCY3QiRtYKamiQG5PpbeapoAMWuYwV9v54CQ&s"
         />
 
         <Card
           title="Implantes"
           text="Recupera tu sonrisa con implantes dentales."
-          image="https://images.unsplash.com/photo-1629909613654-28e377c37b09"
+          image="https://dentalarrasate.com/wp-content/uploads/implantes-dentales-duelen.jpg"
         />
       </div>
     </motion.section>

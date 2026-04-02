@@ -4,6 +4,7 @@ function Gallery() {
   return (
     <motion.section
       id="galeria"
+      className="gallery-section"
       style={styles.container}
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -11,10 +12,10 @@ function Gallery() {
     >
       <h2 style={styles.title}>Galería</h2>
 
-      <div style={styles.grid}>
-        <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5" style={styles.img} />
-        <img src="https://images.unsplash.com/photo-1606813907291-d86efa9b94db" style={styles.img} />
-        <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09" style={styles.img} />
+      <div className="gallery-grid" style={styles.grid}>
+        <img src="https://cuidateplus.marca.com/sites/default/files/styles/natural/public/cms/2023-06/limpieza-dental.jpg.webp?itok=R5G-Yt_8" style={styles.img} />
+        <img src="https://www.shutterstock.com/image-photo/dentists-work-dental-office-showing-260nw-2626103783.jpg" style={styles.img} />
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXWagW52WPsKBQYFsOtWj5THrzUeonBJSk9Q&s" style={styles.img} />
       </div>
     </motion.section>
   );

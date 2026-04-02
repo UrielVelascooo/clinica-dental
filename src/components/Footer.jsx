@@ -1,6 +1,6 @@
 function Footer() {
   return (
-    <footer style={styles.footer}>
+    <footer className="footer" style={styles.footer}>
       <h3>DentalVelasco</h3>
       <p>© 2026 Clínica Dental - Todos los derechos reservados</p>
 

@@ -1,6 +1,6 @@
 function Card({ title, text, image }) {
   return (
-    <div style={styles.card}>
+    <div className="service-card" style={styles.card}>
       <img src={image} alt={title} style={styles.image} />
       <h3>{title}</h3>
       <p>{text}</p>

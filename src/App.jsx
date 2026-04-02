@@ -8,7 +8,7 @@ import Footer from "./components/Footer";
 import Dentists from "./components/Dentists";
 function App() {
   return (
-    <div style={{ fontFamily: "Arial, sans-serif" }}>
+    <div className="app-root">
       <Navbar />
       <Hero />
       <Services />

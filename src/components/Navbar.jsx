@@ -1,7 +1,7 @@
 function Navbar() {
   return (
-    <nav style={styles.nav}>
-      <h2 style={styles.logo}>DentalCare</h2>
+    <nav className="navbar" style={styles.nav}>
+      <h2 style={styles.logo}>Dental Velasco</h2>
 
       <ul style={styles.menu}>
   <li><a href="#inicio" style={styles.link}>Inicio</a></li>
@@ -19,7 +19,7 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "15px 60px",
+    padding: "15px 20px",
     backgroundColor: "#0a2540",
     color: "white",
     position: "sticky",
@@ -31,12 +31,12 @@ const styles = {
     fontSize: "1.5rem",
     fontWeight: "bold"
   },
-  menu: {
-    display: "flex",
-    gap: "30px",
-    listStyle: "none",
-    flexWrap: "wrap",
-    justifyContent: "center"
+menu: {
+  display: "flex",
+  gap: "30px",
+  listStyle: "none",
+  flexWrap: "wrap",
+  justifyContent: "center"
   },
   link: {
     color: "white",

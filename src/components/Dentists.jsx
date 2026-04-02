@@ -4,6 +4,7 @@ function Dentists() {
   return (
     <motion.section
       id="dentistas"
+      className="dentists-section"
       style={styles.container}
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -17,7 +18,7 @@ function Dentists() {
         Contamos con especialistas altamente capacitados, comprometidos con brindarte una atención de calidad, confianza y los mejores resultados para tu salud y estética dental.
       </p>
 
-      <div style={styles.cards}>
+      <div className="dentists-cards" style={styles.cards}>
         <motion.div
           style={styles.card}
           whileHover={{
@@ -29,7 +30,7 @@ function Dentists() {
             src="https://images.unsplash.com/photo-1607746882042-944635dfe10e"
             style={styles.image}
           />
-          <h3>Dr. Juan Pérez</h3>
+          <h3>Dra. Daniela Pérez</h3>
           <p>Especialista en Ortodoncia</p>
         </motion.div>
 

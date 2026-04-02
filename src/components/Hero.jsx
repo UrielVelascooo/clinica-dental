@@ -4,14 +4,15 @@ function Hero() {
   return (
     <motion.section
       id="inicio"
+      className="hero-section"
       style={styles.hero}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
-      <div style={styles.overlay}>
-        <h1 style={styles.title}>Boca sana</h1>
-        <p style={styles.text}>
+      <div className="hero-overlay" style={styles.overlay}>
+        <h1 className="hero-title" style={styles.title}>Boca sana</h1>
+        <p className="hero-text" style={styles.text}>
           Nos preocupamos por tu salud dental con los mejores tratamientos
         </p>
       </div>
@@ -37,15 +38,15 @@ const styles = {
     textAlign: "center",
     color: "white"
   },
-  title: {
-    fontSize: "3.5rem",
-    fontWeight: "bold",
-    marginBottom: "15px"
-  },
-  text: {
-    fontSize: "1.3rem",
-    maxWidth: "500px"
-  }
+ title: {
+  fontSize: "2.5rem",
+  fontWeight: "bold",
+  marginBottom: "15px"
+},
+text: {
+  fontSize: "1.1rem",
+  maxWidth: "90%"
+}
 };
 
 export default Hero;
