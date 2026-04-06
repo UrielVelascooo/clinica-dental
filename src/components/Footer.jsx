@@ -1,13 +1,33 @@
+import React from "react";
+
 function Footer() {
   return (
-    <footer className="footer" style={styles.footer}>
-      <h3>DentalVelasco</h3>
-      <p>© 2026 Clínica Dental - Todos los derechos reservados</p>
+    <footer style={styles.footer}>
+      {/* DECORACIÓN GEOMÉTRICA DE FONDO (Innovación Visual) */}
+      <div style={styles.decorShape}></div>
+      <div style={styles.decorCircle}></div>
+      
+      <div style={styles.container}>
+        <div style={styles.contentRow}>
+          
+          {/* BLOQUE IZQUIERDO: LOGO MINIMALISTA */}
+          <div style={styles.brandBlock}>
+            <h3 style={styles.logo}>
+              Dental<span style={styles.highlight}>Velasco</span>
+            </h3>
+            <div style={styles.verticalDivider}></div>
+            <span style={styles.tagline}>Estética & Salud Dental</span>
+          </div>
 
-      <div style={styles.links}>
-        <span>Inicio</span>
-        <span>Servicios</span>
-        <span>Contacto</span>
+          {/* BLOQUE DERECHO: COPYRIGHT REFINADO */}
+          <div style={styles.copyBlock}>
+            <p style={styles.copyText}>
+              © 2026 Clínica Dental. Todos los derechos reservados.
+              <span style={styles.location}> | Ixtapaluca, Edo. Méx.</span>
+            </p>
+          </div>
+          
+        </div>
       </div>
     </footer>
   );
@@ -15,18 +35,101 @@ function Footer() {
 
 const styles = {
   footer: {
-    backgroundColor: "#0a2540",
-    color: "white",
-    textAlign: "center",
-    padding: "30px 20px",
-    marginTop: "40px"
+    backgroundColor: "#fdfeff", // Fondo blanco limpio para un look premium
+    color: "#1f2937",
+    padding: "60px 5%",
+    marginTop: "0",
+    fontFamily: "'Inter', sans-serif",
+    position: "relative", // Necesario para los elementos decorativos
+    overflow: "hidden", // Para recortar las formas decorativas
+    borderTop: "1px solid #f1f5f9" // Línea sutil de separación
   },
-  links: {
-    marginTop: "10px",
+
+  // ELEMENTOS DECORATIVOS VISUALES (Innovación)
+  decorShape: {
+    position: "absolute",
+    width: "400px",
+    height: "400px",
+    background: "rgba(144, 224, 239, 0.1)", // Azul cian muy suave
+    borderRadius: "100px",
+    transform: "rotate(45deg)",
+    bottom: "-150px",
+    left: "-100px",
+    zIndex: 0
+  },
+
+  decorCircle: {
+    position: "absolute",
+    width: "150px",
+    height: "150px",
+    background: "rgba(0, 180, 216, 0.05)", // Azul clínico sutil
+    borderRadius: "50%",
+    top: "-50px",
+    right: "10%",
+    zIndex: 0
+  },
+
+  container: {
+    maxWidth: "1200px",
+    margin: "0 auto",
+    zIndex: 1, // Por encima de la decoración
+    position: "relative"
+  },
+
+  contentRow: {
     display: "flex",
-    justifyContent: "center",
-    gap: "20px",
-    fontSize: "0.9rem"
+    justifyContent: "space-between", // Separa logo de copyright
+    alignItems: "center", // Alineación vertical perfecta
+    flexWrap: "wrap", // Adaptable a móviles
+    gap: "20px"
+  },
+
+  brandBlock: {
+    display: "flex",
+    alignItems: "center",
+    gap: "20px"
+  },
+
+  logo: {
+    fontSize: "1.4rem",
+    fontWeight: "800",
+    margin: 0,
+    color: "#023e8a", // Azul marino profesional
+    letterSpacing: "-0.5px"
+  },
+
+  highlight: {
+    color: "#00b4d8", // Azul cian para énfasis
+    fontWeight: "300" // Contraste de grosor
+  },
+
+  verticalDivider: {
+    width: "1px",
+    height: "24px",
+    background: "#e5e7eb"
+  },
+
+  tagline: {
+    fontSize: "13px",
+    color: "#9ca3af",
+    fontWeight: "500",
+    textTransform: "uppercase",
+    letterSpacing: "1px"
+  },
+
+  copyBlock: {
+    textAlign: "right"
+  },
+
+  copyText: {
+    fontSize: "13px",
+    color: "#6b7280",
+    margin: 0,
+    lineHeight: "1.5"
+  },
+
+  location: {
+    color: "#9ca3af"
   }
 };
 
