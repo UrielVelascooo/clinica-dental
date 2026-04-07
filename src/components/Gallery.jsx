@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 
 function Gallery() {
   const images = [
-    "https://images.unsplash.com/photo-1606813907291-d86efa9b94db",
-    "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5",
-    "https://images.unsplash.com/photo-1629909613654-28e377c37b09",
-    "https://images.unsplash.com/photo-1609840112855-9f2b5c2b9f6f",
-    "https://images.unsplash.com/photo-1598256989800-fe5f95da9787",
-    "https://images.unsplash.com/photo-1579684385127-1ef15d508118",
-    "https://images.unsplash.com/photo-1588776814769-1f1f0c7d6d5d"
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJU0hm-HUMias7Zo77YnsGSoSNTyFtO2zQpg&s",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSsU3lGKov2TAv8ZIYbBlRy7I76d4h7GTTMA&s",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvPi4NdICjLoGJ6M9KI0MwV3IfYSuwjVq5w&s",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSK7F0pPx0yhC04XgrS6dKsgrfs4r2ahm6YKA&s",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJA3SYpLs8V60WGY_5JZOIRorUPsLoCazbVQ&s",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBg3EjJFyXy3PAGVfcHKEXu0Jd1uqavXnWRw&s"
+    
   ];
 
   const [index, setIndex] = useState(0);

@@ -14,10 +14,10 @@ function Home() {
   return (
     <>
       <section id="inicio"><Hero /></section>
-      <section id="servicios"><Services /></section>
-      
-      {/* SECCIÓN DENTISTAS: Asegúrate de que el id sea "dentistas" */}
       <section id="dentistas"><Dentists /></section> 
+      
+     
+      <section id="servicios"><Services /></section>
       
       <section id="galeria"><Gallery /></section>
       <section id="contacto"><Contact /></section>

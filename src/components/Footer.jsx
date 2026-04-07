@@ -23,7 +23,7 @@ function Footer() {
           <div style={styles.copyBlock}>
             <p style={styles.copyText}>
               © 2026 Clínica Dental. Todos los derechos reservados.
-              <span style={styles.location}> | Ixtapaluca, Edo. Méx.</span>
+              <span style={styles.location}> | Instituto Tegnologico de Iztapalapa, CDMX</span>
             </p>
           </div>
           

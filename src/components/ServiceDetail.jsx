@@ -12,7 +12,7 @@ const infoServicios = {
       "Detección temprana de caries y enfermedades periodontales",
       "Revisiones periódicas preventivas"
     ],
-    image: "https://images.unsplash.com/photo-1629909604934-2cca5b2f64ee?q=80&w=1200"
+    image: "https://www.clinicadentalventas.com/theme/unify2/assets/img/blog/la-importancia-diagnostico-dental-correcto-top.jpg"
   },
   limpieza: {
     title: "Limpieza y Profilaxis Dental",
@@ -24,7 +24,7 @@ const infoServicios = {
       "Aplicación de flúor protector",
       "Educación personalizada en higiene oral"
     ],
-    image: "https://images.unsplash.com/photo-1606811971618-478622128c19?q=80&w=1200"
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR27_qdOHnjOS0s6fFSnIpp_zzFjpFfzgLTCA&s"
   },
   restauracion: {
     title: "Tratamientos de Restauración",
@@ -36,7 +36,7 @@ const infoServicios = {
       "Reparación de dientes fracturados",
       "Carillas para mejorar la forma dental"
     ],
-    image: "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?q=80&w=1200"
+    image: "https://dentaldaia.com/wp-content/uploads/2021/07/PULPOTOMIA-H2.jpg"
   },
   ortodoncia: {
     title: "Ortodoncia Avanzada",
@@ -48,7 +48,7 @@ const infoServicios = {
       "Corrección de maloclusiones complejas",
       "Seguimiento personalizado mes a mes"
     ],
-    image: "https://images.unsplash.com/photo-1588776814222-19f875050ef1?q=80&w=1200"
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLu1vt7nSZx7y3H2lpjuq-sBllflhVJTv3Ww&s"
   },
   endodoncia: {
     title: "Endodoncia",
@@ -60,7 +60,7 @@ const infoServicios = {
       "Conservación de la pieza natural",
       "Tecnología rotatoria para mayor rapidez"
     ],
-    image: "https://images.unsplash.com/photo-1612117180496-e179e83ae410?q=80&w=1200"
+    image: "https://www.cirbdental.com.mx/wp-content/uploads/2019/05/Endodoncia-tratamiento-1024x576.jpg"
   },
   periodoncia: {
     title: "Periodoncia",
@@ -72,7 +72,7 @@ const infoServicios = {
       "Limpiezas profundas (raspado y alisado)",
       "Prevención de la pérdida dental"
     ],
-    image: "https://images.unsplash.com/photo-1600170311833-c2cf5280ce49?q=80&w=1200"
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGraC-MRdItQf6J2WTW5T4A5VQO2_k9oU57Q&s"
   },
   odontopediatria: {
     title: "Odontopediatría",
@@ -84,7 +84,7 @@ const infoServicios = {
       "Selladores de fosetas y fisuras",
       "Ambiente lúdico y de confianza"
     ],
-    image: "https://images.unsplash.com/photo-1593012920516-e575d1d6cc4e?q=80&w=1200"
+    image: "https://simonblas.com/wp-content/uploads/2021/06/Portada-Prevencio%CC%81n-en-Odontopediatria.png"
   },
   estetica: {
     title: "Estética Dental",
@@ -96,7 +96,7 @@ const infoServicios = {
       "Carillas de alta estética",
       "Rehabilitación estética integral"
     ],
-    image: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?q=80&w=1200"
+    image: "https://estudidentalbarcelona.com/wp-content/uploads/2020/01/shutterstock_539034556.jpg"
   },
   cirugia: {
     title: "Cirugía Oral e Implantes",
@@ -108,7 +108,7 @@ const infoServicios = {
       "Cirugía de encías y mandíbula",
       "Sedación consciente disponible"
     ],
-    image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200"
+    image: "https://www.westcoastdental.com/wp-content/uploads/2021/03/What-Is-Oral-Surgery_-portrait.jpg"
   }
 };
 
