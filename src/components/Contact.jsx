@@ -104,7 +104,7 @@ function Contact() {
         <div style={styles.mapOverlay}>Ubicación de nuestra clínica</div>
         <iframe
           title="mapa"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3764.123!2d-99.055!3d19.375!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTnCsDIyJzMwLjAiTiA5OcKwMDMnMTguMCJX!5e0!3m2!1ses!2smx!4v1650000000000!5m2!1ses!2smx" 
+         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3763.7421416600864!2d-99.05548712406544!3d19.38031478188792!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1fd0614558e4b%3A0x3760847a107a0b9f!2sTecNM%20%7C%20Tecnol%C3%B3gico%20Nacional%20de%20M%C3%A9xico%20Campus%20Iztapalapa!5e0!3m2!1ses-419!2smx!4v1775537153095!5m2!1ses-419!2smx" 
           style={styles.map}
           loading="lazy"
         ></iframe>
