@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 
 function Whatsapp() {
-  const phone = "521234567890"; // ← Asegúrate de incluir el código de país
+  const phone = "521234567890"; 
   const [showTooltip, setShowTooltip] = useState(false);
 
-  // Aparece el mensaje de "Hola" después de 3 segundos para llamar la atención
+  
   useEffect(() => {
     const timer = setTimeout(() => setShowTooltip(true), 3000);
     return () => clearTimeout(timer);
@@ -12,7 +12,7 @@ function Whatsapp() {
 
   return (
     <div style={styles.wrapper}>
-      {/* Globo de texto flotante (Tooltip) */}
+      
       <div style={{
         ...styles.tooltip,
         opacity: showTooltip ? 1 : 0,
@@ -26,7 +26,7 @@ function Whatsapp() {
         >✕</button>
       </div>
 
-      {/* Botón Principal */}
+      
       <a
         href={`https://wa.me/${phone}`}
         target="_blank"
@@ -114,7 +114,6 @@ const styles = {
   }
 };
 
-// Necesitas agregar esto a tu archivo de CSS global o un bloque de style tag
 const cssAnimations = `
   @keyframes pulse {
     0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }

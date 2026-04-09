@@ -3,14 +3,14 @@ import React from "react";
 function Footer() {
   return (
     <footer style={styles.footer}>
-      {/* DECORACIÓN GEOMÉTRICA DE FONDO (Innovación Visual) */}
+      
       <div style={styles.decorShape}></div>
       <div style={styles.decorCircle}></div>
       
       <div style={styles.container}>
         <div style={styles.contentRow}>
           
-          {/* BLOQUE IZQUIERDO: LOGO MINIMALISTA */}
+          
           <div style={styles.brandBlock}>
             <h3 style={styles.logo}>
               Dental<span style={styles.highlight}>Velasco</span>
@@ -19,7 +19,7 @@ function Footer() {
             <span style={styles.tagline}>Estética & Salud Dental</span>
           </div>
 
-          {/* BLOQUE DERECHO: COPYRIGHT REFINADO */}
+          
           <div style={styles.copyBlock}>
             <p style={styles.copyText}>
               © 2026 Clínica Dental. Todos los derechos reservados.
@@ -35,22 +35,22 @@ function Footer() {
 
 const styles = {
   footer: {
-    backgroundColor: "#fdfeff", // Fondo blanco limpio para un look premium
+    backgroundColor: "#fdfeff", 
     color: "#1f2937",
     padding: "60px 5%",
     marginTop: "0",
     fontFamily: "'Inter', sans-serif",
-    position: "relative", // Necesario para los elementos decorativos
-    overflow: "hidden", // Para recortar las formas decorativas
-    borderTop: "1px solid #f1f5f9" // Línea sutil de separación
+    position: "relative", 
+    overflow: "hidden", 
+    borderTop: "1px solid #f1f5f9" 
   },
 
-  // ELEMENTOS DECORATIVOS VISUALES (Innovación)
+  
   decorShape: {
     position: "absolute",
     width: "400px",
     height: "400px",
-    background: "rgba(144, 224, 239, 0.1)", // Azul cian muy suave
+    background: "rgba(144, 224, 239, 0.1)", 
     borderRadius: "100px",
     transform: "rotate(45deg)",
     bottom: "-150px",
@@ -62,7 +62,7 @@ const styles = {
     position: "absolute",
     width: "150px",
     height: "150px",
-    background: "rgba(0, 180, 216, 0.05)", // Azul clínico sutil
+    background: "rgba(0, 180, 216, 0.05)", 
     borderRadius: "50%",
     top: "-50px",
     right: "10%",
@@ -72,15 +72,15 @@ const styles = {
   container: {
     maxWidth: "1200px",
     margin: "0 auto",
-    zIndex: 1, // Por encima de la decoración
+    zIndex: 1, 
     position: "relative"
   },
 
   contentRow: {
     display: "flex",
-    justifyContent: "space-between", // Separa logo de copyright
-    alignItems: "center", // Alineación vertical perfecta
-    flexWrap: "wrap", // Adaptable a móviles
+    justifyContent: "space-between", 
+    alignItems: "center", 
+    flexWrap: "wrap", 
     gap: "20px"
   },
 
@@ -94,13 +94,13 @@ const styles = {
     fontSize: "1.4rem",
     fontWeight: "800",
     margin: 0,
-    color: "#023e8a", // Azul marino profesional
+    color: "#023e8a", 
     letterSpacing: "-0.5px"
   },
 
   highlight: {
-    color: "#00b4d8", // Azul cian para énfasis
-    fontWeight: "300" // Contraste de grosor
+    color: "#00b4d8", 
+    fontWeight: "300" 
   },
 
   verticalDivider: {

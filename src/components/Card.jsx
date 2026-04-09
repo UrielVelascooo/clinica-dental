@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 function Card({ title, text, image }) {
   return (
     <div style={styles.card}>
-      {/* Contenedor de imagen con máscara de degradado */}
+      
       <div style={styles.imageBox}>
         <img src={image} alt={title} style={styles.image} />
         <div style={styles.imageOverlay}></div>
       </div>
 
-      {/* Contenido que "flota" sobre la imagen */}
+      
       <div style={styles.cardContent}>
         <h3 style={styles.cardTitle}>{title}</h3>
         <p style={styles.cardText}>{text}</p>
@@ -27,7 +27,7 @@ const styles = {
   card: {
     width: "340px",
     backgroundColor: "#ffffff",
-    borderRadius: "32px", // Bordes ultra-redondeados coherentes
+    borderRadius: "32px", 
     overflow: "hidden",
     boxShadow: "0 25px 50px rgba(10, 37, 64, 0.1)",
     border: "1px solid #f0f0f0",
@@ -54,7 +54,7 @@ const styles = {
   },
   cardContent: {
     padding: "0 30px 35px 30px",
-    marginTop: "-40px", // Efecto innovador de solapado
+    marginTop: "-40px", 
     position: "relative",
     zIndex: 2,
     flexGrow: 1,
@@ -65,7 +65,7 @@ const styles = {
   cardTitle: {
     fontSize: "1.5rem",
     color: "#0a2540",
-    fontWeight: "900", // Máximo peso para impacto visual
+    fontWeight: "900", 
     marginBottom: "12px",
     letterSpacing: "-1px",
     lineHeight: "1.2"

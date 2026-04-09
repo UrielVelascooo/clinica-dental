@@ -16,11 +16,11 @@ function Gallery() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setFade(false); // Inicia desvanecimiento
+      setFade(false); 
       setTimeout(() => {
         setIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-        setFade(true); // Aparece la nueva imagen
-      }, 500); // Tiempo del efecto fade
+        setFade(true); 
+      }, 500); 
     }, 3000); 
 
     return () => clearInterval(interval);
@@ -48,7 +48,7 @@ function Gallery() {
             alt="Instalaciones de la clínica"
           />
           
-          {/* Indicadores de progreso (bolitas) */}
+          
           <div style={styles.pagination}>
             {images.map((_, i) => (
               <div 

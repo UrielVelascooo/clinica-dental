@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 
-// DICCIONARIO MAESTRO CON LOS 9 SERVICIOS DETALLADOS
+
 const infoServicios = {
   diagnostico: {
     title: "Consulta y Diagnóstico General",
@@ -127,7 +127,7 @@ function ServiceDetail() {
 
   return (
     <div style={styles.pageContainer}>
-      {/* Fondo decorativo sutil */}
+      
       <div style={styles.glow} />
 
       <div style={styles.contentWrapper}>
@@ -136,7 +136,7 @@ function ServiceDetail() {
         </Link>
 
         <div style={styles.mainGrid}>
-          {/* LADO VISUAL */}
+          
           <div style={styles.visualSide}>
             <div style={styles.imageContainer}>
               <img src={service.image} alt={service.title} style={styles.image} />
@@ -144,7 +144,7 @@ function ServiceDetail() {
             </div>
           </div>
 
-          {/* LADO DE TEXTO (Glassmorphism) */}
+          
           <div style={styles.infoSide}>
             <div style={styles.card}>
               <h1 style={styles.title}>{service.title}</h1>

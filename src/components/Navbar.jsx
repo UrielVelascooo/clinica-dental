@@ -42,7 +42,7 @@ function Navbar() {
           ...(scrolled ? styles.navScrolled : styles.navDefault),
         }}
       >
-        {/* Logo Section */}
+        
         <NavHashLink smooth to="/#inicio" style={styles.logoContainer} className="logo-hover">
           <DentalLogoIcon />
           <div style={styles.textStack}>
@@ -51,7 +51,7 @@ function Navbar() {
           </div>
         </NavHashLink>
 
-        {/* Navigation Links */}
+        
         <ul style={styles.menuList}>
           {["Inicio", "Dentistas", "Servicios", "Galería"].map((item) => (
             <li key={item} style={styles.navItem}>
@@ -66,7 +66,7 @@ function Navbar() {
               </NavHashLink>
             </li>
           ))}
-          {/* Botón de Contacto Destacado */}
+          
           <li>
             <NavHashLink
               smooth
@@ -79,7 +79,7 @@ function Navbar() {
         </ul>
       </div>
 
-      {/* Estilos CSS Inline para animaciones de Hover */}
+      
       <style>{`
         .nav-link-hover { position: relative; }
         .nav-link-hover::after {

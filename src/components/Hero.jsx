@@ -70,13 +70,13 @@ const styles = {
     alignItems: "center",
     position: "relative",
     overflow: "hidden",
-    padding: "120px 0 60px 0" // Espacio para el Navbar flotante
+    padding: "120px 0 60px 0" 
   },
   wrapper: {
     width: "100%",
     maxWidth: "1200px",
     margin: "0 auto",
-    padding: "0 25px", // Colchón para celulares
+    padding: "0 25px", 
     zIndex: 1,
     boxSizing: "border-box"
   },
@@ -97,7 +97,7 @@ const styles = {
   },
   statusDot: { width: "8px", height: "8px", background: "#00b4d8", borderRadius: "50%", boxShadow: "0 0 10px #00b4d8" },
   title: {
-    fontSize: "clamp(3.5rem, 12vw, 7rem)", // SE ENCOGE AUTOMÁTICAMENTE EN EL CELULAR
+    fontSize: "clamp(3.5rem, 12vw, 7rem)", 
     fontWeight: "900",
     lineHeight: "0.95",
     color: "#023e8a",

@@ -170,19 +170,19 @@ const styles = {
     alignItems: "center"
   },
   badgeContainer: {
-    background: "#023e8a", // Color más sólido y oscuro para que resalte
-    padding: "12px 32px",  // Más relleno para que se vea imponente
+    background: "#023e8a", 
+    padding: "12px 32px",  
     borderRadius: "60px",
     marginBottom: "30px",
-    boxShadow: "0 10px 20px rgba(2, 62, 138, 0.2)", // Sombra para profundidad
+    boxShadow: "0 10px 20px rgba(2, 62, 138, 0.2)", 
     border: "2px solid #00b4d8",
   },
   newTag: {
-    fontSize: "1rem",      // Tamaño de letra aumentado
-    fontWeight: "900",     // Más grosor (Extra Bold)
-    color: "#ffffff",      // Blanco para máximo contraste sobre el azul
+    fontSize: "1rem",      
+    fontWeight: "900",     
+    color: "#ffffff",      
     textTransform: "uppercase",
-    letterSpacing: "3px",  // Espaciado elegante
+    letterSpacing: "3px",  
   },
   mainTitle: {
     fontSize: "clamp(2.5rem, 6vw, 4rem)",

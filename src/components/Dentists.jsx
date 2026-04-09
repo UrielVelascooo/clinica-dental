@@ -24,12 +24,12 @@ function Dentists() {
 
   return (
     <section id="nosotros" style={styles.container}>
-      {/* Elementos decorativos sutiles de fondo (formas orgánicas y limpias) */}
+      
       <div style={styles.burbuja1}></div>
       <div style={styles.burbuja2}></div>
       
       <div style={styles.layout}>
-        {/* COLUMNA IZQUIERDA: TEXTO Y PROPUESTA DE VALOR */}
+        
         <div style={styles.heroContent}>
           <div style={styles.lineaAcento}></div>
           <span style={styles.subtitle}>Excelencia Clínica</span>
@@ -64,14 +64,14 @@ function Dentists() {
           </div>
         </div>
 
-        {/* COLUMNA DERECHA: TARJETAS DE ESPECIALISTAS (ESTILO FLOTANTE LIMPIO) */}
+        
         <div style={styles.teamGrid}>
           {team.map((doc, i) => (
             <div
               key={i}
               style={{
                 ...styles.card,
-                transform: i === 1 ? "translateY(30px)" : "translateY(0)" // Desfase elegante
+                transform: i === 1 ? "translateY(30px)" : "translateY(0)" 
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = i === 1 ? "translateY(15px) scale(1.02)" : "translateY(-15px) scale(1.02)";
@@ -100,7 +100,7 @@ function Dentists() {
 const styles = {
   container: {
     padding: "120px 5%",
-    background: "#fdfeff", // Blanco casi puro, sensación de limpieza
+    background: "#fdfeff", 
     position: "relative",
     overflow: "hidden",
     minHeight: "100vh",
@@ -109,12 +109,12 @@ const styles = {
     fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
   },
 
-  // Formas de fondo suaves y orgánicas (no geométricas/tecnológicas)
+  
   burbuja1: {
     position: "absolute",
     width: "400px",
     height: "400px",
-    background: "rgba(144, 224, 239, 0.2)", // Azul cian muy suave
+    background: "rgba(144, 224, 239, 0.2)", 
     borderRadius: "50%",
     top: "-100px",
     left: "-100px",
@@ -126,7 +126,7 @@ const styles = {
     position: "absolute",
     width: "300px",
     height: "300px",
-    background: "rgba(0, 119, 182, 0.08)", // Azul clínico sutil
+    background: "rgba(0, 119, 182, 0.08)", 
     borderRadius: "50%",
     bottom: "10%",
     right: "5%",
@@ -153,7 +153,7 @@ const styles = {
   lineaAcento: {
     width: "60px",
     height: "4px",
-    background: "#0077b6", // Azul principal
+    background: "#0077b6", 
     borderRadius: "2px",
     marginBottom: "15px"
   },
@@ -171,17 +171,17 @@ const styles = {
     fontWeight: "800",
     lineHeight: "1.15",
     margin: "15px 0 25px 0",
-    color: "#023e8a" // Azul marino oscuro profesional
+    color: "#023e8a" 
   },
 
   highlight: {
-    color: "#00b4d8", // Azul más claro para énfasis
+    color: "#00b4d8", 
   },
 
   text: {
     fontSize: "17px",
     lineHeight: "1.8",
-    color: "#52606d", // Gris suave, no negro
+    color: "#52606d", 
     marginBottom: "45px",
     maxWidth: "550px"
   },
@@ -230,7 +230,7 @@ const styles = {
     display: "flex",
     gap: "25px",
     justifyContent: "center",
-    paddingTop: "40px" // Espacio para el efecto hover superior
+    paddingTop: "40px" 
   },
 
   card: {
@@ -240,7 +240,7 @@ const styles = {
     boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
     transition: "all 0.5s ease",
     border: "1px solid rgba(0,0,0,0.03)",
-    overflow: "hidden", // Importante para que la imagen respete los bordes
+    overflow: "hidden", 
     cursor: "pointer",
     flexShrink: 0
   },

@@ -28,7 +28,7 @@ Fecha: ${form.fecha}`;
 
   return (
     <section style={styles.section}>
-      {/* Decoración de fondo coherente con el resto del sitio */}
+      
       <div style={styles.burbuja1}></div>
       
       <div style={styles.container}>
@@ -110,7 +110,7 @@ Fecha: ${form.fecha}`;
 const styles = {
   section: {
     padding: "100px 20px",
-    background: "#fdfeff", // Fondo limpio coherente
+    background: "#fdfeff", 
     display: "flex",
     justifyContent: "center",
     position: "relative",

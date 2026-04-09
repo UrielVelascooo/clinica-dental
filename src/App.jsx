@@ -9,7 +9,6 @@ import Whatsapp from "./components/Whatsapp";
 import Footer from "./components/Footer";
 import ServiceDetail from "./components/ServiceDetail";
 
-// Página principal: Definimos los ID exactos para el scroll
 function Home() {
   return (
     <>
