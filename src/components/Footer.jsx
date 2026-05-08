@@ -1,135 +1,172 @@
 import React from "react";
 
 function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer style={styles.footer}>
-      
-      <div style={styles.decorShape}></div>
-      <div style={styles.decorCircle}></div>
+     
+      <div style={styles.glowBlue}></div>
       
       <div style={styles.container}>
-        <div style={styles.contentRow}>
+        <div style={styles.mainGrid}>
           
-          
-          <div style={styles.brandBlock}>
+         
+          <div style={styles.brandColumn}>
             <h3 style={styles.logo}>
-              Dental<span style={styles.highlight}>Velasco</span>
+              Dental<span style={styles.highlight}> ITIZ </span>
             </h3>
-            <div style={styles.verticalDivider}></div>
-            <span style={styles.tagline}>Estética & Salud Dental</span>
-          </div>
-
-          
-          <div style={styles.copyBlock}>
-            <p style={styles.copyText}>
-              © 2026 Clínica Dental. Todos los derechos reservados.
-              <span style={styles.location}> | Instituto Tegnologico de Iztapalapa, CDMX</span>
+            <p style={styles.brandDesc}>
+              Elevando los estándares de salud dental con tecnología de vanguardia y un enfoque humano en el corazón de Iztapalapa.
             </p>
           </div>
-          
+
+          <div style={styles.linkColumn}>
+            <h4 style={styles.columnTitle}>Explorar</h4>
+            <ul style={styles.linkList}>
+              <li style={styles.linkItem}><a href="#inicio" style={styles.link}>Inicio</a></li>
+              <li style={styles.linkItem}><a href="#servicios" style={styles.link}>Tratamientos</a></li>
+              <li style={styles.linkItem}><a href="#dentistas" style={styles.link}>Especialistas</a></li>
+              <li style={styles.linkItem}><a href="#citas" style={styles.link}>Agendar Cita</a></li>
+            </ul>
+          </div>
+
+         
+          <div style={styles.contactColumn}>
+            <h4 style={styles.columnTitle}>Sede Institucional</h4>
+            <p style={styles.locationText}>
+              📍 Instituto Tecnológico de Iztapalapa<br/>
+              Ciudad de México, CP 09820
+            </p>
+            <p style={styles.contactPhone}>
+              📞 +52 (55) 1234 5678
+            </p>
+          </div>
+        </div>
+
+       
+        <div style={styles.bottomBar}>
+          <p style={styles.copyText}>
+            © {currentYear} Dental Velasco. Todos los derechos reservados.
+          </p>
+          <div style={styles.legalLinks}>
+            <span style={styles.legalLink}>Privacidad</span>
+            <span style={styles.legalLink}>Términos</span>
+          </div>
         </div>
       </div>
+
+      <style>{`
+        footer a { text-decoration: none; transition: all 0.3s ease; }
+        footer a:hover { color: #00b4d8 !important; transform: translateX(5px); }
+      `}</style>
     </footer>
   );
 }
 
 const styles = {
   footer: {
-    backgroundColor: "#fdfeff", 
-    color: "#1f2937",
-    padding: "60px 5%",
-    marginTop: "0",
+    backgroundColor: "#ffffff",
+    padding: "80px 5% 40px",
+    position: "relative",
+    overflow: "hidden",
+    borderTop: "1px solid #f1f5f9",
     fontFamily: "'Inter', sans-serif",
-    position: "relative", 
-    overflow: "hidden", 
-    borderTop: "1px solid #f1f5f9" 
   },
-
-  
-  decorShape: {
+  glowBlue: {
     position: "absolute",
     width: "400px",
     height: "400px",
-    background: "rgba(144, 224, 239, 0.1)", 
-    borderRadius: "100px",
-    transform: "rotate(45deg)",
-    bottom: "-150px",
-    left: "-100px",
+    background: "radial-gradient(circle, rgba(0, 180, 216, 0.08) 0%, rgba(255,255,255,0) 70%)",
+    top: "-200px",
+    right: "-100px",
     zIndex: 0
   },
-
-  decorCircle: {
-    position: "absolute",
-    width: "150px",
-    height: "150px",
-    background: "rgba(0, 180, 216, 0.05)", 
-    borderRadius: "50%",
-    top: "-50px",
-    right: "10%",
-    zIndex: 0
-  },
-
   container: {
     maxWidth: "1200px",
     margin: "0 auto",
-    zIndex: 1, 
-    position: "relative"
+    position: "relative",
+    zIndex: 1
   },
-
-  contentRow: {
-    display: "flex",
-    justifyContent: "space-between", 
-    alignItems: "center", 
-    flexWrap: "wrap", 
-    gap: "20px"
+  mainGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+    gap: "50px",
+    marginBottom: "60px"
   },
-
-  brandBlock: {
-    display: "flex",
-    alignItems: "center",
-    gap: "20px"
-  },
-
   logo: {
-    fontSize: "1.4rem",
-    fontWeight: "800",
-    margin: 0,
-    color: "#023e8a", 
-    letterSpacing: "-0.5px"
+    fontSize: "1.8rem",
+    fontWeight: "900",
+    color: "#023e8a",
+    margin: "0 0 20px 0",
+    letterSpacing: "-1px"
   },
-
   highlight: {
-    color: "#00b4d8", 
-    fontWeight: "300" 
+    color: "#00b4d8",
+    fontWeight: "300"
   },
-
-  verticalDivider: {
-    width: "1px",
-    height: "24px",
-    background: "#e5e7eb"
+  brandDesc: {
+    color: "#64748b",
+    fontSize: "15px",
+    lineHeight: "1.7",
+    maxWidth: "320px"
   },
-
-  tagline: {
-    fontSize: "13px",
-    color: "#9ca3af",
-    fontWeight: "500",
+  columnTitle: {
+    fontSize: "16px",
+    fontWeight: "800",
+    color: "#1e293b",
+    marginBottom: "25px",
     textTransform: "uppercase",
     letterSpacing: "1px"
   },
-
-  copyBlock: {
-    textAlign: "right"
+  linkList: {
+    listStyle: "none",
+    padding: 0,
+    margin: 0
   },
-
+  linkItem: {
+    marginBottom: "12px"
+  },
+  link: {
+    color: "#64748b",
+    fontSize: "15px",
+    fontWeight: "500",
+    display: "inline-block"
+  },
+  locationText: {
+    color: "#64748b",
+    fontSize: "15px",
+    lineHeight: "1.6",
+    marginBottom: "15px"
+  },
+  contactPhone: {
+    color: "#023e8a",
+    fontWeight: "700",
+    fontSize: "15px"
+  },
+  bottomBar: {
+    paddingTop: "30px",
+    borderTop: "1px solid #f1f5f9",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: "20px"
+  },
   copyText: {
-    fontSize: "13px",
-    color: "#6b7280",
-    margin: 0,
-    lineHeight: "1.5"
+    color: "#94a3b8",
+    fontSize: "14px",
+    margin: 0
   },
-
-  location: {
-    color: "#9ca3af"
+  legalLinks: {
+    display: "flex",
+    gap: "25px"
+  },
+  legalLink: {
+    color: "#94a3b8",
+    fontSize: "13px",
+    fontWeight: "600",
+    cursor: "pointer"
   }
 };
 
