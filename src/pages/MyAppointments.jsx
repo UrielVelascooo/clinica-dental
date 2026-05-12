@@ -35,7 +35,7 @@ function MyAppointments() {
       <div style={styles.container}>
         <header style={styles.header}>
           <span style={styles.topBadge}>Portal Personal</span>
-          <h2 style={styles.mainTitle}>Tu Historial <br/><span style={styles.textBlue}>Dental Velasco</span></h2>
+          <h2 style={styles.mainTitle}>Tu Historial <br/><span style={styles.textBlue}>Dental ITIZ </span></h2>
           <p style={styles.subtitle}>Gestiona tus citas con tecnología de vanguardia.</p>
         </header>
         

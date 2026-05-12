@@ -19,7 +19,7 @@ function Appointment() {
     "Ortodoncia", "Endodoncia", "Periodoncia", "Odontopediatría", "Estética dental", "Cirugía oral"
   ];
 
-  // 1. CARGAR DISPONIBILIDAD (Visible para todos los visitantes)
+  
   useEffect(() => {
     const fetchOccupiedDates = async () => {
       try {
@@ -56,7 +56,7 @@ function Appointment() {
         <div 
           key={d} 
           onClick={() => {
-            // PROTECCIÓN: Si no hay usuario, redirigir al login al intentar seleccionar
+         
             if (!user) {
               navigate("/login");
               return;
@@ -86,7 +86,7 @@ function Appointment() {
   };
 
   const handleBooking = async () => {
-    // PROTECCIÓN: Redirigir si intenta agendar sin sesión
+    
     if (!user) {
       navigate("/login");
       return;
@@ -130,7 +130,7 @@ function Appointment() {
               <div style={styles.pulseEffect}></div>
             </div>
             <h3 style={styles.modalTitle}>¡Todo listo!</h3>
-            <p style={styles.modalText}>Tu cita ha sido registrada con éxito en Dental Velasco.</p>
+            <p style={styles.modalText}>Tu cita ha sido registrada con éxito en Dental ITIZ .</p>
             <div style={styles.progressWrapper}><div style={styles.progressBar}></div></div>
             <span style={styles.redirectText}>Preparando tu historial...</span>
           </div>
