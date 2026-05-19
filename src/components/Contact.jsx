@@ -1,22 +1,46 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 function Contact() {
+  // Detector de pantalla móvil en tiempo real
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    <section id="contacto" style={styles.container}>
+    <section id="contacto" style={{
+      ...styles.container,
+      padding: isMobile ? "60px 16px" : "100px 5%"
+    }}>
       
       <div style={styles.burbuja1}></div>
 
       <div style={styles.header}>
         <div style={styles.lineaAcento}></div>
         <span style={styles.miniSubtitle}>Ubicación y Contacto</span>
-        <h2 style={styles.mainTitle}>Visítanos en nuestra <span style={styles.highlight}>clínica</span></h2>
+        <h2 style={{
+          ...styles.mainTitle,
+          fontSize: isMobile ? "2rem" : "2.8rem"
+        }}>
+          Visítanos en nuestra <span style={styles.highlight}>clínica</span>
+        </h2>
       </div>
 
-      <div style={styles.wrapper}>
+      <div style={{
+        ...styles.wrapper,
+        gap: isMobile ? "20px" : "30px",
+        marginBottom: isMobile ? "40px" : "80px"
+      }}>
         
-       
-        <div style={styles.infoCardMain}>
-          <h3 style={styles.infoTitle}>Información de contacto</h3>
+        {/* TARJETA DE INFORMACIÓN */}
+        <div style={{
+          ...styles.infoCardMain,
+          padding: isMobile ? "25px 20px" : "45px"
+        }}>
+          <h3 style={{...styles.infoTitle, color: "#023e8a"}}>Información de contacto</h3>
           <div style={styles.infoItem}>
             <span style={styles.icon}>📍</span>
             <p style={styles.infoText}>Av Telecomunicaciones, Chinam Pac de Juárez, Iztapalapa, 09208 Ciudad de México, CDMX</p>
@@ -52,9 +76,12 @@ function Contact() {
           </div>
         </div>
 
-      
-        <div style={styles.scheduleCardMain}>
-          <h3 style={styles.infoTitle}>Horarios de atención</h3>
+        {/* TARJETA DE HORARIOS */}
+        <div style={{
+          ...styles.scheduleCardMain,
+          padding: isMobile ? "35px 20px" : "45px"
+        }}>
+          <h3 style={{...styles.infoTitle, color: "white"}}>Horarios de atención</h3>
           <div style={styles.scheduleRow}>
             <span>Lunes - Viernes</span>
             <span style={styles.timeBadge}>9:00 AM - 7:00 PM</span>
@@ -68,13 +95,28 @@ function Contact() {
 
       </div>
 
-     
-      <div style={styles.mapSection}>
-        <div style={styles.mapOverlay}>Dental Velasco — Ubicación</div>
+      {/* SECCIÓN DEL MAPA */}
+      <div style={{
+        ...styles.mapSection,
+        border: isMobile ? "4px solid white" : "8px solid white",
+        borderRadius: isMobile ? "24px" : "40px"
+      }}>
+        <div style={{
+          ...styles.mapOverlay,
+          top: isMobile ? "10px" : "20px",
+          left: isMobile ? "10px" : "20px",
+          padding: isMobile ? "8px 16px" : "12px 24px",
+          fontSize: isMobile ? "12px" : "14px"
+        }}>
+          Dental Velasco — Ubicación
+        </div>
         <iframe
           title="mapa"
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3763.7421416600864!2d-99.05548712406544!3d19.38031478188792!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1fd0614558e4b%3A0x3760847a107a0b9f!2sTecNM%20%7C%20Tecnol%C3%B3gico%20Nacional%20de%20M%C3%A9xico%20Campus%20Iztapalapa!5e0!3m2!1ses-419!2smx!4v1775537153095!5m2!1ses-419!2smx" 
-          style={styles.map}
+          style={{
+            ...styles.map,
+            height: isMobile ? "300px" : "500px"
+          }}
           loading="lazy"
         ></iframe>
       </div>
@@ -90,11 +132,11 @@ function Contact() {
 
 const styles = {
   container: {
-    padding: "100px 5%",
     background: "#fdfeff",
     position: "relative",
     overflow: "hidden",
-    fontFamily: "'Inter', sans-serif"
+    fontFamily: "'Inter', sans-serif",
+    boxSizing: "border-box"
   },
   burbuja1: {
     position: "absolute",
@@ -109,7 +151,7 @@ const styles = {
   },
   header: {
     maxWidth: "1200px",
-    margin: "0 auto 60px auto",
+    margin: "0 auto 40px auto",
     textAlign: "center",
     zIndex: 1,
     position: "relative"
@@ -129,10 +171,10 @@ const styles = {
     letterSpacing: "2px"
   },
   mainTitle: {
-    fontSize: "2.8rem",
     color: "#023e8a",
     fontWeight: "800",
-    marginTop: "10px"
+    marginTop: "10px",
+    lineHeight: "1.2"
   },
   highlight: {
     color: "#00b4d8"
@@ -140,102 +182,104 @@ const styles = {
   wrapper: {
     display: "flex",
     flexWrap: "wrap",
-    gap: "30px",
     justifyContent: "center",
     maxWidth: "1100px",
-    margin: "0 auto 80px auto",
+    margin: "0 auto",
     zIndex: 1,
-    position: "relative"
+    position: "relative",
+    boxSizing: "border-box"
   },
   infoCardMain: {
     flex: "1 1 450px",
     background: "white",
-    padding: "45px",
     borderRadius: "30px",
     boxShadow: "0 20px 50px rgba(2, 62, 138, 0.05)",
-    border: "1px solid rgba(0, 119, 182, 0.05)"
+    border: "1px solid rgba(0, 119, 182, 0.05)",
+    boxSizing: "border-box"
   },
   scheduleCardMain: {
     flex: "1 1 350px",
     background: "linear-gradient(135deg, #023e8a, #0077b6)",
     color: "white",
-    padding: "45px",
     borderRadius: "30px",
     boxShadow: "0 20px 40px rgba(2, 62, 138, 0.15)",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center"
+    justifyContent: "center",
+    boxSizing: "border-box"
   },
   infoTitle: {
     fontSize: "1.5rem",
-    marginBottom: "30px",
+    marginBottom: "25px",
     fontWeight: "800",
-    color: "inherit" // Se adapta si es blanco o azul
+    marginTop: 0
   },
   infoItem: {
     display: "flex",
     alignItems: "center",
-    gap: "18px",
+    gap: "14px",
     marginBottom: "20px"
   },
   icon: {
-    fontSize: "20px",
+    fontSize: "18px",
     width: "45px",
     height: "45px",
     background: "rgba(0, 180, 216, 0.1)",
     borderRadius: "14px",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    flexShrink: 0
   },
   infoText: {
     margin: 0,
     color: "#4a5568",
     fontWeight: "500",
-    lineHeight: "1.5"
+    lineHeight: "1.5",
+    fontSize: "14px"
   },
   scheduleRow: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: "20px",
-    fontSize: "16px",
+    fontSize: "15px",
     fontWeight: "500"
   },
   timeBadge: {
     background: "rgba(255, 255, 255, 0.2)",
-    padding: "8px 16px",
+    padding: "6px 12px",
     borderRadius: "12px",
     fontWeight: "700",
-    fontSize: "14px"
+    fontSize: "13px"
   },
   scheduleNote: {
-    marginTop: "20px",
+    marginTop: "10px",
     fontSize: "13px",
     opacity: 0.8,
     fontStyle: "italic"
   },
   socialWrapper: {
-    marginTop: "35px",
-    paddingTop: "30px",
+    marginTop: "30px",
+    paddingTop: "25px",
     borderTop: "1px solid #f1f5f9"
   },
   socialLabel: {
-    fontSize: "0.75rem",
+    fontSize: "0.72rem",
     color: "#94a3b8",
     fontWeight: "800",
-    marginBottom: "20px",
+    marginBottom: "15px",
     textTransform: "uppercase",
     letterSpacing: "1.5px"
   },
   socialLinks: {
     display: "flex",
-    gap: "15px"
+    gap: "12px"
   },
   socialIcon: {
-    width: "52px",
-    height: "52px",
-    borderRadius: "16px",
+    width: "48px",
+    height: "48px",
+    borderRadius: "14px",
     background: "#f8fafc",
     display: "flex",
     alignItems: "center",
@@ -248,29 +292,24 @@ const styles = {
   mapSection: {
     maxWidth: "1200px",
     margin: "0 auto",
-    borderRadius: "40px",
     overflow: "hidden",
     boxShadow: "0 30px 60px rgba(2, 62, 138, 0.1)",
     position: "relative",
-    border: "8px solid white" 
+    boxSizing: "border-box"
   },
   mapOverlay: {
     position: "absolute",
-    top: "20px",
-    left: "20px",
     background: "white",
-    padding: "12px 24px",
-    borderRadius: "15px",
+    borderRadius: "12px",
     fontWeight: "800",
-    fontSize: "14px",
     color: "#023e8a",
     boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
     zIndex: 10
   },
   map: {
     width: "100%",
-    height: "500px",
-    border: "0"
+    border: "0",
+    display: "block"
   }
 };
 

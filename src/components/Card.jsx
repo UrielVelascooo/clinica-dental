@@ -1,17 +1,42 @@
+// src/components/Card.jsx
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 function Card({ title, text, image }) {
+  // Hook para detectar si la pantalla es móvil en tiempo real
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    <div style={styles.card}>
+    <div style={{
+      ...styles.card,
+      width: isMobile ? "100%" : "340px", // Ancho fluido en móvil
+      maxWidth: isMobile ? "360px" : "340px", // Evita que se deforme en pantallas medianas
+      margin: isMobile ? "10px 0" : "20px" // Reduce espacio exterior en móvil
+    }}>
       
-      <div style={styles.imageBox}>
+      <div style={{
+        ...styles.imageBox,
+        height: isMobile ? "180px" : "220px" // Imagen ligeramente más baja en celulares
+      }}>
         <img src={image} alt={title} style={styles.image} />
         <div style={styles.imageOverlay}></div>
       </div>
 
-      
-      <div style={styles.cardContent}>
-        <h3 style={styles.cardTitle}>{title}</h3>
+      <div style={{
+        ...styles.cardContent,
+        padding: isMobile ? "0 20px 25px 20px" : "0 30px 35px 30px", // Relleno más compacto
+        marginTop: isMobile ? "-30px" : "-40px" // Ajuste del desfase visual
+      }}>
+        <h3 style={{
+          ...styles.cardTitle,
+          fontSize: isMobile ? "1.35rem" : "1.5rem" // Fuente adaptada para celulares
+        }}>{title}</h3>
         <p style={styles.cardText}>{text}</p>
         
         <Link to="/servicios" style={styles.button}>
@@ -25,7 +50,6 @@ function Card({ title, text, image }) {
 
 const styles = {
   card: {
-    width: "340px",
     backgroundColor: "#ffffff",
     borderRadius: "32px", 
     overflow: "hidden",
@@ -33,12 +57,10 @@ const styles = {
     border: "1px solid #f0f0f0",
     display: "flex",
     flexDirection: "column",
-    transition: "all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1)",
-    margin: "20px"
+    transition: "all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1)"
   },
   imageBox: {
     width: "100%",
-    height: "220px",
     position: "relative",
     overflow: "hidden"
   },
@@ -53,8 +75,6 @@ const styles = {
     background: "linear-gradient(to bottom, transparent 30%, #ffffff 100%)"
   },
   cardContent: {
-    padding: "0 30px 35px 30px",
-    marginTop: "-40px", 
     position: "relative",
     zIndex: 2,
     flexGrow: 1,
@@ -63,7 +83,6 @@ const styles = {
     textAlign: "left"
   },
   cardTitle: {
-    fontSize: "1.5rem",
     color: "#0a2540",
     fontWeight: "900", 
     marginBottom: "12px",

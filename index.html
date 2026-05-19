@@ -4,34 +4,48 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     
+    <!-- Configuración del viewport optimizada para dispositivos móviles modernos -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover" />
     
+    <!-- Configuración e Integración Estética con Barras de Estado Nativas -->
     <meta name="theme-color" content="#0a2540" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-    <title>Clinica Dental | Clínica Dental Premium</title>
+    <!-- SEO Básico Esencial -->
+    <title>Clínica Dental Velasco | Cuidado Dental Premium</title>
+    <meta name="description" content="Descubre una experiencia odontológica premium. Servicios especializados, agendamiento de citas en línea y la mejor atención para tu sonrisa." />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <!-- Optimización de Carga para Google Fonts (Pre-conexión de recursos) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Cargamos pesos equilibrados para optimizar el rendimiento (Regular, Semi-bold, Bold, Black) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" />
 
     <style>
-      /* RESET GLOBAL PARA VERCEL: Evita desbordamientos laterales en móvil */
-      * {
+      /* --- RESET GLOBAL DE ALTO RENDIMIENTO --- */
+      *, *::before, *::after {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
-      body {
-        overflow-x: hidden; /* ¡CLAVE! Evita que la página se mueva hacia los lados */
+      
+      html, body {
         width: 100%;
-        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        overflow-x: hidden; /* Evita scrolls horizontales indeseados por animaciones */
         background-color: #fdfeff;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
       }
+
       #root {
         width: 100%;
-        overflow-x: hidden;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
       }
     </style>
   </head>

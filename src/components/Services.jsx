@@ -1,6 +1,15 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 function Services() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const servicesData = [
     {
       title: "Consulta y diagnóstico general",
@@ -68,40 +77,67 @@ function Services() {
   ];
 
   return (
-    <section id="servicios" style={styles.container}>
+    <section id="servicios" style={{
+      ...styles.container,
+      padding: isMobile ? "60px 4%" : "100px 5%"
+    }}>
       {/* Elementos decorativos de fondo */}
       <div style={styles.bgBlob1}></div>
       <div style={styles.bgBlob2}></div>
       
       <div style={styles.wrapper}>
-        <header style={styles.header}>
+        <header style={{
+          ...styles.header,
+          textAlign: isMobile ? "center" : "left",
+          marginBottom: isMobile ? "40px" : "60px"
+        }}>
           <div style={styles.badgeContainer}>
             <span style={styles.badgeText}>Servicios Profesionales</span>
           </div>
           <h2 style={styles.mainTitle}>
-            Cuidado integral para <br /> 
+            Cuidado integral para {isMobile ? "" : <br />} 
             <span style={styles.gradientText}>cada una de tus necesidades</span>
           </h2>
-          <div style={styles.miniDivider}></div>
+          <div style={{
+            ...styles.miniDivider,
+            margin: isMobile ? "0 auto" : "0"
+          }}></div>
         </header>
 
-        <div style={styles.gridContainer}>
+        <div style={{
+          ...styles.gridContainer,
+          gridTemplateColumns: isMobile ? "repeat(auto-fill, minmax(280px, 1fr))" : "repeat(auto-fill, minmax(350px, 1fr))",
+          gap: isMobile ? "20px" : "35px"
+        }}>
           {servicesData.map((service, i) => (
             <Link to={`/servicios/${service.path}`} key={i} className="service-card" style={styles.card}>
-              <div style={styles.imageContainer}>
+              <div style={{
+                ...styles.imageContainer,
+                height: isMobile ? "190px" : "240px"
+              }}>
                 <img src={service.image} alt={service.title} style={styles.img} className="card-image" />
                 <div style={styles.categoryBadge}>{service.category}</div>
                 <div style={styles.numberIndicator}>0{i + 1}</div>
               </div>
               
-              <div style={styles.cardBody}>
-                <h3 style={styles.cardTitle}>{service.title}</h3>
-                <p style={styles.cardDescription}>{service.desc}</p>
+              <div style={{
+                ...styles.cardBody,
+                padding: isMobile ? "20px" : "30px"
+              }}>
+                <h3 style={{
+                  ...styles.cardTitle,
+                  fontSize: isMobile ? "1.3rem" : "1.5rem"
+                }}>{service.title}</h3>
+                <p style={{
+                  ...styles.cardDescription,
+                  fontSize: isMobile ? "0.95rem" : "1.05rem",
+                  marginBottom: isMobile ? "15px" : "25px"
+                }}>{service.desc}</p>
                 
                 <div style={styles.cardFooter} className="card-footer-info">
                   <span style={styles.moreInfo}>Más información</span>
                   <div style={styles.arrowCircle} className="arrow-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <line x1="5" y1="12" x2="19" y2="12"></line>
                       <polyline points="12 5 19 12 12 19"></polyline>
                     </svg>
@@ -119,31 +155,24 @@ function Services() {
           display: flex;
           flex-direction: column;
           background: #ffffff;
-          border-radius: 28px;
+          border-radius: 24px;
           overflow: hidden;
-          transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
           border: 1px solid rgba(2, 62, 138, 0.08);
           position: relative;
+          box-sizing: border-box;
         }
 
-        .service-card:hover {
-          transform: translateY(-10px);
-          box-shadow: 0 30px 60px -15px rgba(2, 62, 138, 0.15);
-          border-color: #00b4d8;
-        }
-
-        .service-card:hover .card-image {
-          transform: scale(1.1);
-        }
-
-        .service-card:hover .arrow-icon {
-          background: #023e8a;
-          color: white;
-          transform: rotate(-45deg);
-        }
-
-        .service-card:hover .card-footer-info {
-          color: #00b4d8;
+        @media (min-width: 769px) {
+          .service-card { border-radius: 28px; }
+          .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px -15px rgba(2, 62, 138, 0.12);
+            border-color: #00b4d8;
+          }
+          .service-card:hover .card-image { transform: scale(1.08); }
+          .service-card:hover .arrow-icon { background: #023e8a; color: white; transform: rotate(-45deg); }
+          .service-card:hover .card-footer-info { color: #00b4d8; }
         }
       `}</style>
     </section>
@@ -152,17 +181,17 @@ function Services() {
 
 const styles = {
   container: {
-    padding: "100px 5%",
     backgroundColor: "#f8fbff",
     position: "relative",
     overflow: "hidden",
-    fontFamily: "'Inter', sans-serif"
+    fontFamily: "'Inter', sans-serif",
+    boxSizing: "border-box"
   },
   bgBlob1: {
     position: "absolute",
     width: "600px",
     height: "600px",
-    background: "radial-gradient(circle, rgba(0, 180, 216, 0.08) 0%, transparent 70%)",
+    background: "radial-gradient(circle, rgba(0, 180, 216, 0.06) 0%, transparent 70%)",
     top: "-150px",
     left: "-100px",
     zIndex: 0
@@ -171,7 +200,7 @@ const styles = {
     position: "absolute",
     width: "500px",
     height: "500px",
-    background: "radial-gradient(circle, rgba(2, 62, 138, 0.05) 0%, transparent 70%)",
+    background: "radial-gradient(circle, rgba(2, 62, 138, 0.04) 0%, transparent 70%)",
     bottom: "-100px",
     right: "-100px",
     zIndex: 0
@@ -180,33 +209,33 @@ const styles = {
     maxWidth: "1300px",
     margin: "0 auto",
     position: "relative",
-    zIndex: 1
+    zIndex: 1,
+    boxSizing: "border-box"
   },
   header: {
-    marginBottom: "60px",
-    textAlign: "left"
+    boxSizing: "border-box"
   },
   badgeContainer: {
     display: "inline-block",
-    padding: "8px 20px",
-    background: "rgba(2, 62, 138, 0.1)",
+    padding: "6px 16px",
+    background: "rgba(2, 62, 138, 0.08)",
     borderRadius: "50px",
-    marginBottom: "20px"
+    marginBottom: "16px"
   },
   badgeText: {
     color: "#023e8a",
-    fontSize: "0.85rem",
+    fontSize: "0.8rem",
     fontWeight: "800",
     textTransform: "uppercase",
-    letterSpacing: "1px"
+    letterSpacing: "0.5px"
   },
   mainTitle: {
-    fontSize: "clamp(2.2rem, 5vw, 3.5rem)",
+    fontSize: "clamp(1.75rem, 4.5vw, 3.2rem)",
     fontWeight: "900",
     color: "#0a2540",
-    lineHeight: "1.1",
-    margin: "0 0 20px 0",
-    letterSpacing: "-1px"
+    lineHeight: "1.2",
+    margin: "0 0 16px 0",
+    letterSpacing: "-0.5px"
   },
   gradientText: {
     background: "linear-gradient(135deg, #023e8a 0%, #00b4d8 100%)",
@@ -214,67 +243,64 @@ const styles = {
     WebkitTextFillColor: "transparent",
   },
   miniDivider: {
-    width: "60px",
+    width: "50px",
     height: "5px",
     background: "#00b4d8",
     borderRadius: "10px"
   },
   gridContainer: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
-    gap: "35px",
+    boxSizing: "border-box"
   },
   imageContainer: {
-    height: "240px",
     position: "relative",
-    overflow: "hidden"
+    overflow: "hidden",
+    width: "100%"
   },
   img: {
     width: "100%",
     height: "100%",
     objectFit: "cover",
-    transition: "transform 0.7s ease"
+    transition: "transform 0.5s ease"
   },
   categoryBadge: {
     position: "absolute",
-    bottom: "20px",
-    left: "20px",
+    bottom: "15px",
+    left: "15px",
     background: "rgba(255, 255, 255, 0.95)",
-    padding: "6px 15px",
-    borderRadius: "10px",
-    fontSize: "0.75rem",
+    padding: "5px 12px",
+    borderRadius: "8px",
+    fontSize: "0.7rem",
     fontWeight: "700",
     color: "#023e8a",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+    boxShadow: "0 4px 10px rgba(0,0,0,0.06)"
   },
   numberIndicator: {
     position: "absolute",
-    top: "20px",
-    right: "25px",
-    fontSize: "2rem",
+    top: "15px",
+    right: "20px",
+    fontSize: "1.6rem",
     fontWeight: "900",
-    color: "rgba(255, 255, 255, 0.4)",
+    color: "rgba(255, 255, 255, 0.35)",
     fontStyle: "italic"
   },
   cardBody: {
-    padding: "30px",
     flexGrow: 1,
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    boxSizing: "border-box"
   },
   cardTitle: {
-    fontSize: "1.5rem",
     fontWeight: "800",
     color: "#0a2540",
-    marginBottom: "15px",
-    letterSpacing: "-0.5px"
+    marginBottom: "10px",
+    letterSpacing: "-0.3px",
+    lineHeight: "1.2"
   },
   cardDescription: {
-    fontSize: "1.05rem",
     color: "#475569",
-    lineHeight: "1.6",
-    marginBottom: "25px"
+    lineHeight: "1.5"
   },
   cardFooter: {
     display: "flex",
@@ -283,17 +309,17 @@ const styles = {
     color: "#023e8a",
     fontWeight: "800",
     transition: "all 0.3s ease",
-    fontSize: "0.95rem"
+    fontSize: "0.9rem"
   },
   arrowCircle: {
-    width: "40px",
-    height: "40px",
+    width: "36px",
+    height: "36px",
     borderRadius: "50%",
     backgroundColor: "#f1f5f9",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    transition: "all 0.4s ease"
+    transition: "all 0.3s ease"
   }
 };
 

@@ -1,3 +1,4 @@
+// src/pages/MisCitas.jsx
 import { useEffect, useState } from "react";
 import { db } from "../firebaseConfig";
 import { collection, query, where, getDocs } from "firebase/firestore";
@@ -9,6 +10,13 @@ function MyAppointments() {
   const [citas, setCitas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchCitas = async () => {
@@ -17,11 +25,16 @@ function MyAppointments() {
           const q = query(collection(db, "citas"), where("userId", "==", user.uid));
           const querySnapshot = await getDocs(q);
           const docs = [];
-          querySnapshot.forEach((doc) => docs.push({ id: doc.id, ...doc.data() }));
+          
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            docs.push({ id: doc.id, ...data });
+          });
+
           docs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
           setCitas(docs);
         } catch (error) {
-          console.error("Error:", error);
+          console.error("Error cargando citas del usuario:", error);
         } finally {
           setLoading(false);
         }
@@ -30,12 +43,22 @@ function MyAppointments() {
     fetchCitas();
   }, [user]);
 
+  const toggleExpand = (id) => {
+    setExpandedId(expandedId === id ? null : id);
+  };
+
   return (
-    <div style={styles.pageWrapper}>
+    <div style={{
+      ...styles.pageWrapper,
+      padding: isMobile ? "100px 16px 60px" : "140px 20px 80px"
+    }}>
       <div style={styles.container}>
         <header style={styles.header}>
           <span style={styles.topBadge}>Portal Personal</span>
-          <h2 style={styles.mainTitle}>Tu Historial <br/><span style={styles.textBlue}>Dental ITIZ </span></h2>
+          <h2 style={{
+            ...styles.mainTitle,
+            fontSize: isMobile ? "1.8rem" : "2.5rem"
+          }}>Tu Historial <br/><span style={styles.textBlue}>Dental ITIZ </span></h2>
           <p style={styles.subtitle}>Gestiona tus citas con tecnología de vanguardia.</p>
         </header>
         
@@ -45,52 +68,125 @@ function MyAppointments() {
           <div style={styles.grid}>
             {citas.length > 0 ? (
               citas.map(cita => {
-                const fechaObj = new Date(cita.fecha + "T00:00:00");
-                const dia = fechaObj.getDate();
-                const mes = fechaObj.toLocaleDateString('es-ES', { month: 'short' }).toUpperCase();
-                const diaSemana = fechaObj.toLocaleDateString('es-ES', { weekday: 'long' });
+                const fechaCita = cita.fecha || cita.date || "";
+                const fechaObj = fechaCita ? new Date(fechaCita + "T00:00:00") : new Date();
+                const dia = fechaObj.getDate() || "--";
+                const mes = fechaCita ? fechaObj.toLocaleDateString('es-ES', { month: 'short' }).toUpperCase() : "ND";
+                const diaSemana = fechaCita ? fechaObj.toLocaleDateString('es-ES', { weekday: 'long' }) : "Fecha no asignada";
+
+                const estadoReal = (String(cita.estado || '').toLowerCase() === 'cancelada' || String(cita.status || '').toLowerCase() === 'cancelada') 
+                  ? 'cancelada' 
+                  : (cita.estado || cita.status || 'pendiente');
+
+                let chipColor = '#10b981'; 
+                let chipBg = '#f0fdf4';
+                let chipShadow = '0 0 15px rgba(16, 185, 129, 0.3)';
+
+                if (estadoReal === 'cancelada') {
+                  chipColor = '#ef4444'; 
+                  chipBg = '#fef2f2';
+                  chipShadow = '0 0 15px rgba(239, 68, 68, 0.3)';
+                } else if (estadoReal === 'reprogramada') {
+                  chipColor = '#ea580c'; 
+                  chipBg = '#ffedd5';
+                  chipShadow = '0 0 15px rgba(234, 88, 12, 0.3)';
+                } else if (estadoReal === 'pendiente') {
+                  chipColor = '#00b4d8'; 
+                  chipBg = '#e0f2fe';
+                  chipShadow = '0 0 15px rgba(0, 180, 216, 0.3)';
+                }
 
                 return (
-                  <div key={cita.id} style={styles.card}>
-                    <div style={styles.dateSection}>
-                      <div style={styles.bigDate}>
+                  <div 
+                    key={cita.id} 
+                    style={{
+                      ...styles.card,
+                      flexDirection: isMobile ? "column" : "row"
+                    }} 
+                    onClick={() => toggleExpand(cita.id)}
+                  >
+                    {/* SECCIÓN DE LA FECHA */}
+                    <div style={{
+                      ...styles.dateSection,
+                      flexDirection: isMobile ? "row" : "column",
+                      justifyContent: isMobile ? "space-between" : "center",
+                      padding: isMobile ? "15px 20px" : "25px",
+                      minWidth: isMobile ? "auto" : "110px",
+                    }}>
+                      <div style={{
+                        ...styles.bigDate,
+                        flexDirection: isMobile ? "row" : "column",
+                        gap: isMobile ? "8px" : "0px",
+                        alignItems: "center"
+                      }}>
                         <span style={styles.dateNum}>{dia}</span>
-                        <span style={styles.dateMonth}>{mes}</span>
+                        <span style={{
+                          ...styles.dateMonth,
+                          fontSize: isMobile ? "14px" : "12px"
+                        }}>{mes}</span>
                       </div>
-                      <div style={styles.divider}></div>
-                      <div style={styles.timeInfo}>
+                      
+                      <div style={{
+                        ...styles.divider,
+                        display: isMobile ? "none" : "block"
+                      }}></div>
+                      
+                      <div style={{
+                        ...styles.timeInfo,
+                        alignItems: isMobile ? "flex-end" : "center"
+                      }}>
                         <span style={styles.dayName}>{diaSemana}</span>
+                        <span style={{ fontSize: "14px", color: isMobile ? "#67e8f9" : "#00b4d8", fontWeight: "bold", marginTop: "4px" }}>
+                          {cita.hora || cita.time || "Pendiente"}
+                        </span>
                       </div>
                     </div>
 
-                    <div style={styles.mainInfo}>
-                      <div style={styles.serviceHeader}>
-                        <h3 style={styles.serviceName}>{cita.servicio}</h3>
+                    {/* INFORMACIÓN CLÍNICA PRINCIPAL */}
+                    <div style={{
+                      ...styles.mainInfo,
+                      padding: isMobile ? "20px" : "25px"
+                    }}>
+                      <div style={{
+                        ...styles.serviceHeader,
+                        flexDirection: isMobile ? "column-reverse" : "row",
+                        alignItems: isMobile ? "flex-start" : "start",
+                        gap: isMobile ? "10px" : "15px"
+                      }}>
+                        <h3 style={styles.serviceName}>{cita.servicio || cita.service || "Servicio General"}</h3>
                         <div style={{
                           ...styles.statusChip,
-                          color: cita.estado === 'pendiente' ? '#00b4d8' : '#10b981',
-                          boxShadow: cita.estado === 'pendiente' ? '0 0 15px rgba(0, 180, 216, 0.3)' : '0 0 15px rgba(16, 185, 129, 0.3)'
+                          color: chipColor,
+                          backgroundColor: chipBg,
+                          boxShadow: chipShadow,
+                          alignSelf: isMobile ? "flex-end" : "auto"
                         }}>
-                          {cita.estado || "pendiente"}
+                          {estadoReal}
                         </div>
                       </div>
 
-                      <div style={styles.detailsRow}>
+                      <div style={{
+                        ...styles.detailsRow,
+                        gap: isMobile ? "15px" : "30px"
+                      }}>
                         <div style={styles.patientBox}>
                           <span style={styles.label}>PACIENTE</span>
-                          <span style={styles.value}>{cita.nombrePaciente}</span>
+                          <span style={styles.value}>{cita.nombrePaciente || cita.nombre || "No registrado"}</span>
                         </div>
                         
-                        {/* SEDE RESALTADA */}
                         <div style={styles.sedeBox}>
-                          <span style={styles.label}>SEDE CLINICA</span>
+                          <span style={styles.label}>SEDE CLÍNICA</span>
                           <span style={styles.sedeValue}>🏥 Instituto Tecnológico de Iztapalapa</span>
                         </div>
                       </div>
 
+                      {/* CONTENIDO EXTENDIDO (PROTOCOLO CLÍNICO) */}
                       {expandedId === cita.id && (
                         <div style={styles.expandedContent}>
-                          <div style={styles.instructionCard}>
+                          <div style={{
+                            ...styles.instructionCard,
+                            padding: isMobile ? "15px" : "20px"
+                          }}>
                             <h4 style={styles.instrTitle}>Protocolo para tu cita:</h4>
                             <div style={styles.instrGrid}>
                               <div style={styles.instrItem}>
@@ -106,113 +202,61 @@ function MyAppointments() {
                                 <strong>Acompañantes:</strong> Por protocolos de salud, se permite máximo un acompañante en sala de espera.
                               </div>
                             </div>
-                            <p style={styles.instrFooter}>Tratamiento: <strong>{cita.servicio}</strong></p>
+                            <p style={styles.instrFooter}>Tratamiento: <strong>{cita.servicio || cita.service || "Consulta"}</strong></p>
                           </div>
                         </div>
                       )}
-
-                      <button 
-                        onClick={() => setExpandedId(expandedId === cita.id ? null : cita.id)}
-                        style={{
-                          ...styles.btnExpand,
-                          backgroundColor: expandedId === cita.id ? "#023e8a" : "rgba(2, 62, 138, 0.05)",
-                          color: expandedId === cita.id ? "white" : "#023e8a"
-                        }}
-                      >
-                        {expandedId === cita.id ? "Ocultar protocolo" : "Ver indicaciones obligatorias"}
-                      </button>
                     </div>
                   </div>
                 );
               })
             ) : (
-              <div style={styles.emptyState}>
-                <div style={styles.emptyCircle}>🦷</div>
-                <h3>¿Listo para tu próxima sonrisa?</h3>
-                <Link to="/#citas" style={styles.primaryBtn}>Agendar Cita Ahora</Link>
+              <div style={{ textAlign: "center", padding: "40px", color: "#64748b" }}>
+                <p>No tienes citas registradas actualmente.</p>
+                <Link to="/agendar" style={{ color: "#00b4d8", fontWeight: "bold", textDecoration: "none" }}>Agendar una cita ahora</Link>
               </div>
             )}
           </div>
         )}
       </div>
-
-      <style>{`
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .spinner {
-          width: 40px; height: 40px; border: 4px solid #f3f3f3;
-          border-top: 4px solid #00b4d8; border-radius: 50%;
-          animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-      `}</style>
     </div>
   );
 }
 
 const styles = {
-  pageWrapper: { padding: "160px 5% 80px", minHeight: "100vh", backgroundColor: "#f8fbff", fontFamily: "'Inter', sans-serif" },
-  container: { maxWidth: "1200px", margin: "0 auto" },
-  header: { marginBottom: "60px" },
-  topBadge: { color: "#00b4d8", fontWeight: "800", fontSize: "12px", textTransform: "uppercase", letterSpacing: "2px" },
-  mainTitle: { color: "#023e8a", fontSize: "3.5rem", fontWeight: "900", margin: "10px 0", lineHeight: "1" },
+  pageWrapper: { minHeight: "100vh", backgroundColor: "#f8fafc", boxSizing: "border-box" },
+  container: { maxWidth: "900px", margin: "0 auto", fontFamily: "'Inter', sans-serif", boxSizing: "border-box" },
+  header: { marginBottom: "40px", textAlign: "center" },
+  topBadge: { fontSize: "11px", fontWeight: "700", color: "#00b4d8", textTransform: "uppercase", letterSpacing: "1px" },
+  mainTitle: { fontWeight: "900", color: "#023e8a", margin: "10px 0", lineHeight: "1.2" },
   textBlue: { color: "#00b4d8" },
-  subtitle: { color: "#64748b", fontSize: "1.2rem", maxWidth: "500px" },
-  grid: { display: "flex", flexDirection: "column", gap: "30px" },
-  
-  card: {
-    display: "flex", backgroundColor: "white", borderRadius: "40px", overflow: "hidden",
-    boxShadow: "0 20px 50px rgba(2, 62, 138, 0.06)", border: "1px solid rgba(255, 255, 255, 0.8)",
-    animation: "slideUp 0.6s ease forwards", flexWrap: "wrap"
-  },
-  dateSection: {
-    backgroundColor: "#023e8a", color: "white", padding: "40px",
-    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-    minWidth: "180px", textAlign: "center"
-  },
-  bigDate: { display: "flex", flexDirection: "column", lineHeight: "1" },
-  dateNum: { fontSize: "4rem", fontWeight: "900" },
-  dateMonth: { fontSize: "1.2rem", fontWeight: "700", opacity: 0.8 },
-  divider: { width: "30px", height: "4px", backgroundColor: "#00b4d8", margin: "20px 0", borderRadius: "10px" },
-  dayName: { textTransform: "capitalize", fontWeight: "600", fontSize: "1rem" },
-
-  mainInfo: { flex: 1, padding: "40px", display: "flex", flexDirection: "column", justifyContent: "space-between", minWidth: "300px" },
-  serviceHeader: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "25px" },
-  serviceName: { fontSize: "1.8rem", color: "#023e8a", fontWeight: "800", margin: 0 },
-  statusChip: { padding: "8px 18px", borderRadius: "100px", fontSize: "12px", fontWeight: "900", textTransform: "uppercase", backgroundColor: "white", border: "1px solid" },
-  
-  detailsRow: { display: "flex", gap: "40px", marginBottom: "30px", flexWrap: "wrap" },
-  patientBox: { flex: 1 },
-  sedeBox: { flex: 2 }, // Más espacio para la sede
-  label: { fontSize: "11px", fontWeight: "800", color: "#94a3b8", letterSpacing: "1.5px", textTransform: "uppercase" },
-  value: { fontSize: "1.3rem", fontWeight: "700", color: "#1e293b", display: "block", marginTop: "5px" },
-  
-  // SEDE RESALTADA
-  sedeValue: { 
-    fontSize: "1.4rem", // Más grande como pediste
-    fontWeight: "800", 
-    color: "#023e8a", 
-    display: "block", 
-    marginTop: "5px",
-    borderLeft: "4px solid #00b4d8",
-    paddingLeft: "15px"
-  },
-
-  expandedContent: { marginBottom: "25px", animation: "slideUp 0.3s ease" },
-  instructionCard: { backgroundColor: "#f0f9ff", padding: "30px", borderRadius: "30px", border: "1px solid #e0f2fe" },
-  instrTitle: { color: "#023e8a", margin: "0 0 20px 0", fontSize: "16px", fontWeight: "900", textTransform: "uppercase" },
-  instrGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "15px" },
-  instrItem: { fontSize: "14px", color: "#475569", lineHeight: "1.5", backgroundColor: "white", padding: "12px", borderRadius: "15px" },
-  instrFooter: { marginTop: "20px", fontSize: "13px", color: "#00b4d8", fontWeight: "700", borderTop: "1px solid #e0f2fe", paddingTop: "15px" },
-
-  btnExpand: { padding: "18px", borderRadius: "20px", border: "none", fontWeight: "800", cursor: "pointer", transition: "all 0.3s" },
-  
-  emptyState: { textAlign: "center", padding: "100px 20px", backgroundColor: "white", borderRadius: "50px" },
-  emptyCircle: { fontSize: "4rem", marginBottom: "20px" },
-  primaryBtn: { display: "inline-block", backgroundColor: "#00b4d8", color: "white", padding: "20px 40px", borderRadius: "100px", textDecoration: "none", fontWeight: "800" },
-  loaderContainer: { display: "flex", justifyContent: "center", padding: "100px" }
+  subtitle: { color: "#64748b", fontSize: "16px" },
+  loaderContainer: { display: "flex", justifyContent: "center", padding: "60px" },
+  grid: { display: "flex", flexDirection: "column", gap: "20px" },
+  card: { display: "flex", backgroundColor: "white", borderRadius: "20px", overflow: "hidden", boxShadow: "0 10px 30px rgba(2, 62, 138, 0.05)", border: "1px solid #edf2f7", cursor: "pointer", transition: "transform 0.2s", boxSizing: "border-box" },
+  dateSection: { backgroundColor: "#023e8a", color: "white", display: "flex", alignItems: "center", textAlign: "center", boxSizing: "border-box" },
+  bigDate: { display: "flex" },
+  dateNum: { fontSize: "2rem", fontWeight: "900", lineHeight: "1" },
+  dateMonth: { fontWeight: "700", opacity: 0.8, textTransform: "uppercase" },
+  divider: { width: "30px", height: "2px", backgroundColor: "rgba(255,255,255,0.2)", margin: "10px 0" },
+  timeInfo: { display: "flex", flexDirection: "column" },
+  dayName: { fontSize: "11px", textTransform: "uppercase", opacity: 0.7, letterSpacing: "0.5px", whiteSpace: "nowrap" },
+  mainInfo: { flex: 1, display: "flex", flexDirection: "column", gap: "15px", boxSizing: "border-box" },
+  serviceHeader: { display: "flex", width: "100%", boxSizing: "border-box" },
+  serviceName: { margin: 0, color: "#023e8a", fontSize: "1.3rem", fontWeight: "800" },
+  statusChip: { padding: "4px 12px", borderRadius: "50px", fontSize: "11px", fontWeight: "800", textTransform: "uppercase", transition: "all 0.3s ease", whiteSpace: "nowrap" },
+  detailsRow: { display: "flex", flexWrap: "wrap" },
+  patientBox: { display: "flex", flexDirection: "column", gap: "4px" },
+  sedeBox: { display: "flex", flexDirection: "column", gap: "4px" },
+  label: { fontSize: "10px", fontWeight: "700", color: "#94a3b8", letterSpacing: "0.5px" },
+  value: { fontSize: "14px", fontWeight: "600", color: "#1e293b" },
+  sedeValue: { fontSize: "14px", fontWeight: "600", color: "#023e8a" },
+  expandedContent: { marginTop: "15px", paddingTop: "15px", borderTop: "1px solid #edf2f7", boxSizing: "border-box" },
+  instructionCard: { backgroundColor: "#f8fafc", borderRadius: "14px", border: "1px solid #e2e8f0", boxSizing: "border-box" },
+  instrTitle: { margin: "0 0 12px 0", color: "#023e8a", fontSize: "14px", fontWeight: "700" },
+  instrGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "12px", fontSize: "12px", color: "#475569", lineHeight: "1.5" },
+  instrItem: { background: "white", padding: "10px", borderRadius: "8px", border: "1px solid #edf2f7", boxSizing: "border-box" },
+  instrFooter: { marginTop: "15px", margin: "15px 0 0 0", fontSize: "12px", color: "#64748b", textAlign: "right" }
 };
 
 export default MyAppointments;

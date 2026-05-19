@@ -1,3 +1,4 @@
+// src/pages/Appointment.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; 
 import { db } from "../firebaseConfig"; 
@@ -13,14 +14,19 @@ function Appointment() {
   const [loading, setLoading] = useState(false); 
   const [showSuccessModal, setShowSuccessModal] = useState(false); 
   const [occupiedDates, setOccupiedDates] = useState([]);
+  
+  // Hook para detectar si la pantalla es móvil en tiempo real
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const servicios = [
     "Consulta y diagnóstico general", "Limpieza y profilaxis dental", "Tratamientos de restauración",
     "Ortodoncia", "Endodoncia", "Periodoncia", "Odontopediatría", "Estética dental", "Cirugía oral"
   ];
 
-  
   useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+
     const fetchOccupiedDates = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "citas"));
@@ -31,6 +37,8 @@ function Appointment() {
       }
     };
     fetchOccupiedDates();
+
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const renderCalendar = () => {
@@ -56,7 +64,6 @@ function Appointment() {
         <div 
           key={d} 
           onClick={() => {
-         
             if (!user) {
               navigate("/login");
               return;
@@ -86,14 +93,13 @@ function Appointment() {
   };
 
   const handleBooking = async () => {
-    
     if (!user) {
       navigate("/login");
       return;
     }
     
-    if (!selectedDate || !form.nombre || !form.servicio) {
-      alert("Por favor completa todos los datos y selecciona una fecha.");
+    if (!form.nombre.trim() || !form.telefono.trim() || !form.servicio || !selectedDate) {
+      alert("⚠️ Todos los campos (Nombre, WhatsApp, Tratamiento) son obligatorios y debes seleccionar una fecha en el calendario.");
       return;
     }
 
@@ -121,32 +127,37 @@ function Appointment() {
   };
 
   return (
-    <section id="citas" style={styles.section}>
+    <section id="citas" style={{...styles.section, padding: isMobile ? "100px 15px 40px" : "140px 5% 80px"}}>
       {showSuccessModal && (
         <div style={styles.modalOverlay}>
-          <div style={styles.modalCard}>
+          <div style={{...styles.modalCard, padding: isMobile ? "40px 24px" : "50px 40px"}}>
             <div style={styles.iconContainer}>
               <div style={styles.checkIconBig}>✓</div>
               <div style={styles.pulseEffect}></div>
             </div>
             <h3 style={styles.modalTitle}>¡Todo listo!</h3>
-            <p style={styles.modalText}>Tu cita ha sido registrada con éxito en Dental ITIZ .</p>
+            <p style={styles.modalText}>Tu cita ha sido registrada con éxito en Dental ITIZ.</p>
             <div style={styles.progressWrapper}><div style={styles.progressBar}></div></div>
             <span style={styles.redirectText}>Preparando tu historial...</span>
           </div>
         </div>
       )}
 
-      <div style={styles.mainTitleContainer}>
-        <h2 style={styles.mainSectionTitle}>Agendar Cita</h2>
+      <div style={{...styles.mainTitleContainer, marginBottom: isMobile ? "30px" : "50px"}}>
+        <h2 style={{...styles.mainSectionTitle, fontSize: isMobile ? "2rem" : "3rem"}}>Agendar Cita</h2>
         <div style={styles.titleUnderline}></div>
       </div>
 
-      <div style={styles.mainWrapper}>
-        <div style={styles.infoPanel}>
+      <div style={{
+        ...styles.mainWrapper,
+        gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fit, minmax(400px, 1fr))",
+        borderRadius: isMobile ? "24px" : "40px"
+      }}>
+        {/* Panel Izquierdo: Calendario */}
+        <div style={{...styles.infoPanel, padding: isMobile ? "25px 18px" : "50px"}}>
           <div style={styles.calendarHeader}>
             <span style={styles.topBadge}>Disponibilidad</span>
-            <h2 style={styles.panelTitle}>Reserva <br/> <span style={styles.textBlue}>tu espacio dental.</span></h2>
+            <h2 style={{...styles.panelTitle, fontSize: isMobile ? "1.8rem" : "2.4rem"}}>Reserva <br/> <span style={styles.textBlue}>tu espacio dental.</span></h2>
             
             <div style={styles.monthNav}>
               <button onClick={() => changeMonth(-1)} style={styles.navBtn}>←</button>
@@ -154,11 +165,11 @@ function Appointment() {
               <button onClick={() => changeMonth(1)} style={styles.navBtn}>→</button>
             </div>
 
-            <div style={styles.calendarBody}>
+            <div style={{...styles.calendarBody, padding: isMobile ? "12px" : "20px"}}>
               <div style={styles.weekDays}>
                 {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map(d => <span key={d} style={styles.weekDay}>{d}</span>)}
               </div>
-              <div style={styles.daysGrid}>{renderCalendar()}</div>
+              <div style={{...styles.daysGrid, gap: isMobile ? "6px" : "10px"}}>{renderCalendar()}</div>
             </div>
 
             <div style={styles.legend}>
@@ -168,26 +179,27 @@ function Appointment() {
           </div>
         </div>
 
-        <div style={styles.formPanel}>
+        {/* Panel Derecho: Formulario */}
+        <div style={{...styles.formPanel, padding: isMobile ? "30px 20px" : "55px"}}>
           <div style={styles.formHeader}>
-            <h3 style={styles.formTitle}>Datos de Reserva</h3>
+            <h3 style={{...styles.formTitle, fontSize: isMobile ? "1.5rem" : "1.8rem"}}>Datos de Reserva</h3>
             <p style={styles.formSubtitle}>
               {!user ? "Inicia sesión para elegir un día" : selectedDate ? `Día: ${selectedDate.toLocaleDateString()}` : "Selecciona una fecha en el calendario"}
             </p>
           </div>
 
-          <div style={styles.formContent}>
+          <div style={{...styles.formContent, marginTop: isMobile ? "24px" : "35px"}}>
             <div style={styles.inputGroup}>
-              <label style={styles.label}>Nombre Completo</label>
-              <input type="text" placeholder="Nombre" onChange={(e) => setForm({...form, nombre: e.target.value})} style={styles.input} />
+              <label style={styles.label}>Nombre Completo *</label>
+              <input type="text" placeholder="Nombre" value={form.nombre} onChange={(e) => setForm({...form, nombre: e.target.value})} style={styles.input} />
             </div>
             <div style={styles.inputGroup}>
-              <label style={styles.label}>WhatsApp</label>
-              <input type="tel" placeholder="Tu número de contacto" onChange={(e) => setForm({...form, telefono: e.target.value})} style={styles.input} />
+              <label style={styles.label}>WhatsApp *</label>
+              <input type="tel" placeholder="Tu número de contacto" value={form.telefono} onChange={(e) => setForm({...form, telefono: e.target.value})} style={styles.input} />
             </div>
             <div style={styles.inputGroup}>
-              <label style={styles.label}>Tratamiento</label>
-              <select onChange={(e) => setForm({...form, servicio: e.target.value})} style={styles.select}>
+              <label style={styles.label}>Tratamiento *</label>
+              <select value={form.servicio} onChange={(e) => setForm({...form, servicio: e.target.value})} style={styles.select}>
                 <option value="">Selecciona el servicio</option>
                 {servicios.map((s, i) => <option key={i} value={s}>{s}</option>)}
               </select>
@@ -196,7 +208,12 @@ function Appointment() {
             <button 
               onClick={handleBooking} 
               disabled={loading}
-              style={{...styles.button, backgroundColor: loading ? "#94a3b8" : "#023e8a"}}
+              style={{
+                ...styles.button, 
+                backgroundColor: loading ? "#94a3b8" : "#023e8a",
+                padding: isMobile ? "16px" : "20px",
+                fontSize: isMobile ? "15px" : "16px"
+              }}
             >
               {loading ? "Procesando..." : user ? "Confirmar Cita" : "Inicia sesión para agendar"}
             </button>
@@ -214,21 +231,21 @@ function Appointment() {
 }
 
 const styles = {
-  section: { padding: "100px 5%", backgroundColor: "#fdfeff", display: "flex", flexDirection: "column", alignItems: "center", fontFamily: "'Inter', sans-serif" },
-  mainTitleContainer: { textAlign: "center", marginBottom: "50px" },
-  mainSectionTitle: { fontSize: "3rem", fontWeight: "900", color: "#023e8a", margin: 0 },
+  section: { backgroundColor: "#fdfeff", display: "flex", flexDirection: "column", alignItems: "center", fontFamily: "'Inter', sans-serif" },
+  mainTitleContainer: { textAlign: "center" },
+  mainSectionTitle: { fontWeight: "900", color: "#023e8a", margin: 0 },
   titleUnderline: { width: "60px", height: "5px", backgroundColor: "#00b4d8", margin: "10px auto 0", borderRadius: "10px" },
-  mainWrapper: { width: "100%", maxWidth: "1100px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", backgroundColor: "white", borderRadius: "40px", overflow: "hidden", boxShadow: "0 40px 100px rgba(2, 62, 138, 0.08)" },
-  infoPanel: { backgroundColor: "#023e8a", padding: "50px", color: "white" },
+  mainWrapper: { width: "100%", maxWidth: "1100px", display: "grid", backgroundColor: "white", overflow: "hidden", boxShadow: "0 40px 100px rgba(2, 62, 138, 0.08)" },
+  infoPanel: { backgroundColor: "#023e8a", color: "white" },
   topBadge: { fontSize: "11px", fontWeight: "700", color: "#00b4d8", textTransform: "uppercase" },
-  panelTitle: { fontSize: "2.4rem", fontWeight: "800", margin: "15px 0", lineHeight: "1.1" },
+  panelTitle: { fontWeight: "800", margin: "15px 0", lineHeight: "1.1" },
   textBlue: { color: "#00b4d8" },
   monthNav: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", background: "rgba(255,255,255,0.05)", padding: "10px 15px", borderRadius: "15px" },
   navBtn: { background: "none", border: "none", color: "#00b4d8", fontSize: "18px", cursor: "pointer" },
   currentMonth: { fontWeight: "700", textTransform: "capitalize" },
-  calendarBody: { background: "rgba(255,255,255,0.03)", padding: "20px", borderRadius: "25px", border: "1px solid rgba(255,255,255,0.08)" },
+  calendarBody: { background: "rgba(255,255,255,0.03)", borderRadius: "25px", border: "1px solid rgba(255,255,255,0.08)" },
   weekDays: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", textAlign: "center", marginBottom: "15px", opacity: 0.5, fontSize: "12px" },
-  daysGrid: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "10px" },
+  daysGrid: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)" },
   dayCell: { aspectRatio: "1/1", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "14px", fontSize: "14px", cursor: "pointer", position: "relative" },
   dayCellActive: { background: "#00b4d8", color: "white", fontWeight: "800" },
   dayOccupied: { opacity: 0.4, cursor: "not-allowed", color: "#64748b" },
@@ -238,22 +255,22 @@ const styles = {
   legend: { marginTop: "20px", display: "flex", gap: "15px" },
   legendItem: { fontSize: "12px", display: "flex", alignItems: "center", gap: "5px" },
   dot: { width: "8px", height: "8px", borderRadius: "50%" },
-  formPanel: { padding: "55px", backgroundColor: "white" },
-  formTitle: { fontSize: "1.8rem", color: "#023e8a", fontWeight: "800", margin: 0 },
+  formPanel: { backgroundColor: "white" },
+  formTitle: { color: "#023e8a", fontWeight: "800", margin: 0 },
   formSubtitle: { color: "#64748b", fontSize: "15px", marginTop: "8px" },
-  formContent: { marginTop: "35px", display: "flex", flexDirection: "column", gap: "22px" },
+  formContent: { display: "flex", flexDirection: "column", gap: "22px" },
   inputGroup: { display: "flex", flexDirection: "column", gap: "8px" },
   label: { fontSize: "12px", fontWeight: "700", color: "#023e8a", textTransform: "uppercase" },
-  input: { padding: "16px", borderRadius: "14px", border: "1px solid #edf2f7", backgroundColor: "#f8fafc", outline: "none" },
-  select: { padding: "16px", borderRadius: "14px", border: "1px solid #edf2f7", backgroundColor: "#f8fafc", outline: "none" },
-  button: { marginTop: "10px", padding: "20px", color: "white", borderRadius: "18px", border: "none", fontWeight: "700", cursor: "pointer", transition: "0.3s" },
+  input: { padding: "16px", borderRadius: "14px", border: "1px solid #edf2f7", backgroundColor: "#f8fafc", outline: "none", fontSize: "14px" },
+  select: { padding: "16px", borderRadius: "14px", border: "1px solid #edf2f7", backgroundColor: "#f8fafc", outline: "none", fontSize: "14px" },
+  button: { marginTop: "10px", color: "white", borderRadius: "18px", border: "none", fontWeight: "700", cursor: "pointer", transition: "0.3s" },
   modalOverlay: { position: "fixed", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(1, 22, 39, 0.6)", backdropFilter: "blur(12px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 10000 },
-  modalCard: { backgroundColor: "white", width: "90%", maxWidth: "450px", padding: "50px 40px", borderRadius: "40px", textAlign: "center", boxShadow: "0 30px 70px rgba(0,0,0,0.3)", position: "relative", display: "flex", flexDirection: "column", alignItems: "center" },
+  modalCard: { backgroundColor: "white", width: "90%", maxWidth: "420px", borderRadius: "30px", textAlign: "center", boxShadow: "0 30px 70px rgba(0,0,0,0.3)", position: "relative", display: "flex", flexDirection: "column", alignItems: "center" },
   iconContainer: { position: "relative", marginBottom: "25px" },
   checkIconBig: { width: "80px", height: "80px", backgroundColor: "#00b4d8", color: "white", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "40px", fontWeight: "900", position: "relative", zIndex: 2 },
   pulseEffect: { position: "absolute", top: 0, left: 0, width: "80px", height: "80px", backgroundColor: "#00b4d8", borderRadius: "50%", zIndex: 1, animation: "pulseIn 1.5s infinite" },
   modalTitle: { fontSize: "2rem", color: "#023e8a", fontWeight: "900", margin: "10px 0" },
-  modalText: { color: "#64748b", fontSize: "16px", lineHeight: "1.6", margin: "10px 0 30px 0" },
+  modalText: { color: "#64748b", fontSize: "15px", lineHeight: "1.6", margin: "10px 0 25px 0" },
   progressWrapper: { width: "100%", height: "8px", backgroundColor: "#f1f5f9", borderRadius: "10px", overflow: "hidden", marginBottom: "15px" },
   progressBar: { height: "100%", backgroundColor: "#00b4d8", animation: "progressRun 3s linear forwards" },
   redirectText: { fontSize: "12px", color: "#94a3b8", fontWeight: "600", textTransform: "uppercase", letterSpacing: "1px" }

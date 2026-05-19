@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 function Dentists() {
   const team = [
@@ -22,21 +22,47 @@ function Dentists() {
     }
   ];
 
+  // Detector de pantalla móvil en tiempo real
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1100);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 1100);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    <section id="nosotros" style={styles.container}>
+    <section id="nosotros" style={{
+      ...styles.container,
+      padding: isMobile ? "60px 16px" : "120px 5%"
+    }}>
       <div style={styles.burbuja1}></div>
       <div style={styles.burbuja2}></div>
       
       <div style={styles.wrapper}>
-        <div style={styles.layout}>
+        <div style={{
+          ...styles.layout,
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+          gap: isMobile ? "40px" : "50px"
+        }}>
           
-          <div style={styles.heroContent}>
-            <div style={styles.lineaAcento}></div>
+          {/* COLUMNA: TEXTO E INTRODUCCIÓN */}
+          <div style={{
+            ...styles.heroContent,
+            textAlign: isMobile ? "center" : "left"
+          }}>
+            <div style={{
+              ...styles.lineaAcento,
+              margin: isMobile ? "0 auto 20px auto" : "0 0 20px 0"
+            }}></div>
             <span style={styles.subtitle}>Excelencia Clínica</span>
             <h2 style={styles.title}>
               Liderando el futuro de tu <span style={styles.highlight}>salud bucal</span>
             </h2>
-            <p style={styles.text}>
+            <p style={{
+              ...styles.text,
+              marginBottom: isMobile ? "30px" : "40px"
+            }}>
               Combinamos la calidez humana con la odontología de vanguardia. Nuestro equipo
               de especialistas garantiza una experiencia segura y confortable.
             </p>
@@ -46,7 +72,7 @@ function Dentists() {
                 <div style={styles.iconCircle}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0077b6" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                 </div>
-                <div>
+                <div style={{ textAlign: "left" }}>
                   <h4 style={styles.featureTitle}>Diagnóstico Preciso</h4>
                   <p style={styles.featureText}>Tecnología digital de última generación.</p>
                 </div>
@@ -55,7 +81,7 @@ function Dentists() {
                 <div style={styles.iconCircle}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0077b6" strokeWidth="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                 </div>
-                <div>
+                <div style={{ textAlign: "left" }}>
                   <h4 style={styles.featureTitle}>Cuidado Paciente-Céntrico</h4>
                   <p style={styles.featureText}>Tu bienestar es nuestra prioridad real.</p>
                 </div>
@@ -63,15 +89,23 @@ function Dentists() {
             </div>
           </div>
 
-         
-          <div style={styles.teamGrid} className="team-grid-container">
+          {/* COLUMNA: TARJETAS DEL EQUIPO */}
+          <div style={{
+            ...styles.teamGrid,
+            flexDirection: isMobile ? "column" : "row",
+            alignItems: isMobile ? "center" : "stretch",
+            justifyContent: isMobile ? "center" : "flex-end",
+            gap: isMobile ? "24px" : "20px"
+          }}>
             {team.map((doc, i) => (
               <div
                 key={i}
                 className="dentist-card"
                 style={{
                   ...styles.card,
-                  transform: i === 1 ? "translateY(30px)" : "translateY(0)" 
+                  width: isMobile ? "100%" : "240px",
+                  maxWidth: isMobile ? "320px" : "none",
+                  transform: (!isMobile && i === 1) ? "translateY(30px)" : "translateY(0)" 
                 }}
               >
                 <div style={styles.imageWrapper}>
@@ -87,26 +121,23 @@ function Dentists() {
               </div>
             ))}
           </div>
+
         </div>
       </div>
 
       <style>{`
         .dentist-card {
-          transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .dentist-card:hover {
-          box-shadow: 0 40px 70px rgba(1, 42, 74, 0.15) !important;
+          box-shadow: 0 40px 70px rgba(1, 42, 74, 0.12) !important;
           border-color: #00b4d8 !important;
           background: #ffffff !important;
-          transform: translateY(-10px) !important;
+          transform: ${isMobile ? "translateY(-8px) !important" : "translateY(-10px) !important"};
         }
-        .dentist-card:hover .dentist-img { transform: scale(1.1); }
-        .feature-card:hover { transform: translateX(10px); background: #fff !important; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        
-        @media (max-width: 1100px) {
-          .team-grid-container { flex-wrap: wrap; margin-top: 40px; }
-          .dentist-card { width: 100% !important; max-width: 300px; transform: none !important; }
-        }
+        .dentist-card:hover .dentist-img { transform: scale(1.08); }
+        .feature-card { transition: all 0.3s ease; }
+        .feature-card:hover { transform: translateX(${isMobile ? "0px" : "8px"}); background: #fff !important; box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
       `}</style>
     </section>
   );
@@ -114,97 +145,118 @@ function Dentists() {
 
 const styles = {
   container: {
-    padding: "120px 5%",
     background: "#f8fbfd", 
     position: "relative",
     overflow: "hidden",
-    fontFamily: "'Inter', sans-serif"
+    fontFamily: "'Inter', sans-serif",
+    boxSizing: "border-box"
+  },
+  burbuja1: {
+    position: "absolute",
+    width: "500px",
+    height: "500px",
+    background: "rgba(144, 224, 239, 0.12)",
+    borderRadius: "50%",
+    top: "10%",
+    right: "-100px",
+    filter: "blur(100px)",
+    zIndex: 0
+  },
+  burbuja2: {
+    position: "absolute",
+    width: "400px",
+    height: "400px",
+    background: "rgba(0, 119, 182, 0.05)",
+    borderRadius: "50%",
+    bottom: "-50px",
+    left: "-100px",
+    filter: "blur(90px)",
+    zIndex: 0
   },
   wrapper: {
     maxWidth: "1300px", 
     margin: "0 auto",
     position: "relative",
-    zIndex: 1
+    zIndex: 1,
+    boxSizing: "border-box"
   },
   layout: {
     display: "grid",
-    gridTemplateColumns: "1fr 1fr", 
-    gap: "50px",
-    alignItems: "center"
+    alignItems: "center",
+    boxSizing: "border-box"
   },
-  heroContent: { textAlign: "left" },
+  heroContent: { boxSizing: "border-box" },
   lineaAcento: {
-    width: "80px",
-    height: "6px",
+    width: "70px",
+    height: "5px",
     background: "#00b4d8", 
-    borderRadius: "10px",
-    marginBottom: "20px"
+    borderRadius: "10px"
   },
   subtitle: {
     color: "#0077b6",
-    fontSize: "0.9rem",
+    fontSize: "0.88rem",
     fontWeight: "800",
     textTransform: "uppercase",
-    letterSpacing: "3px"
+    letterSpacing: "2.5px"
   },
   title: {
-    fontSize: "clamp(2.5rem, 5vw, 3.5rem)",
+    fontSize: "clamp(2.2rem, 4.5vw, 3.2rem)",
     fontWeight: "900",
-    lineHeight: "1.1",
-    margin: "15px 0 25px 0",
+    lineHeight: "1.15",
+    margin: "12px 0 22px 0",
     color: "#012a4a",
     letterSpacing: "-1px"
   },
   highlight: { color: "#00b4d8" },
   text: {
-    fontSize: "1.1rem",
-    lineHeight: "1.7",
+    fontSize: "1.05rem",
+    lineHeight: "1.65",
     color: "#475569", 
-    marginBottom: "40px",
     fontWeight: "500"
   },
-  features: { display: "flex", flexDirection: "column", gap: "15px" },
+  features: { display: "flex", flexDirection: "column", gap: "14px" },
   featureItem: {
     display: "flex",
     alignItems: "center",
-    gap: "20px",
-    background: "rgba(255,255,255,0.7)",
-    padding: "20px",
+    gap: "18px",
+    background: "rgba(255,255,255,0.75)",
+    padding: "18px",
     borderRadius: "20px",
-    border: "1px solid rgba(0, 180, 216, 0.1)"
+    border: "1px solid rgba(0, 180, 216, 0.08)",
+    boxSizing: "border-box"
   },
   iconCircle: {
-    width: "50px",
-    height: "50px",
-    borderRadius: "15px",
-    background: "rgba(0, 180, 216, 0.1)",
+    width: "46px",
+    height: "46px",
+    borderRadius: "14px",
+    background: "rgba(0, 180, 216, 0.08)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0
   },
-  featureTitle: { margin: "0", fontSize: "1.1rem", color: "#012a4a", fontWeight: "800" },
-  featureText: { margin: 0, fontSize: "0.95rem", color: "#64748b" },
+  featureTitle: { margin: "0 0 4px 0", fontSize: "1.05rem", color: "#012a4a", fontWeight: "800" },
+  featureText: { margin: 0, fontSize: "0.92rem", color: "#64748b", lineHeight: "1.4" },
   teamGrid: {
     display: "flex",
-    gap: "20px",
-    justifyContent: "flex-end" 
+    boxSizing: "border-box",
+    width: "100%"
   },
   card: {
     background: "#ffffff",
-    borderRadius: "30px",
-    width: "240px",
-    boxShadow: "0 10px 40px rgba(0,0,0,0.04)",
-    border: "1px solid rgba(0, 180, 216, 0.1)",
+    borderRadius: "28px",
+    boxShadow: "0 10px 40px rgba(0,0,0,0.03)",
+    border: "1px solid rgba(0, 180, 216, 0.08)",
     overflow: "hidden",
-    flexShrink: 0
+    flexShrink: 0,
+    boxSizing: "border-box"
   },
-  imageWrapper: { height: "260px", overflow: "hidden" },
-  image: { width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.6s ease" },
-  cardInfo: { padding: "20px", textAlign: "center" },
-  cardName: { color: "#012a4a", fontSize: "1.2rem", margin: "0 0 5px 0", fontWeight: "900" },
-  cardRole: { color: "#00b4d8", fontSize: "0.9rem", fontWeight: "800", textTransform: "uppercase" },
-  divider: { height: "2px", background: "rgba(0, 180, 216, 0.1)", margin: "12px auto", width: "30px" },
+  imageWrapper: { height: "270px", overflow: "hidden", background: "#f1f5f9" },
+  image: { width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" },
+  cardInfo: { padding: "22px 16px", textAlign: "center" },
+  cardName: { color: "#012a4a", fontSize: "1.18rem", margin: "0 0 4px 0", fontWeight: "900" },
+  cardRole: { color: "#00b4d8", fontSize: "0.85rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.5px" },
+  divider: { height: "2px", background: "rgba(0, 180, 216, 0.1)", margin: "12px auto", width: "25px" },
   cardSpecialty: { color: "#64748b", fontSize: "0.85rem", fontWeight: "600" }
 };
 

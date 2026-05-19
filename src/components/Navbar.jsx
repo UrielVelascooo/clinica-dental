@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
+import { useCart } from "../context/CartContext";
 
 const serviciosMenu = [
   { name: "Diagnóstico General", path: "diagnostico" },
@@ -15,8 +15,9 @@ const serviciosMenu = [
   { name: "Cirugía e Implantes", path: "cirugia" },
 ];
 
-const HashLink = ({ to, children, className, style, smooth = true }) => {
+const HashLink = ({ to, children, className, style, smooth = true, onClick }) => {
   const handleClick = (e) => {
+    if (onClick) onClick();
     const hash = to.split('#')[1];
     if (hash && document.getElementById(hash)) {
       e.preventDefault();
@@ -31,7 +32,7 @@ const HashLink = ({ to, children, className, style, smooth = true }) => {
 };
 
 const DentalLogoIcon = () => (
-  <svg width="42" height="42" viewBox="0 0 64 64" fill="none">
+  <svg width="36" height="36" viewBox="0 0 64 64" fill="none" style={{ shrink: 0 }}>
     <circle cx="32" cy="32" r="30" fill="url(#gradAero)" fillOpacity="0.9" />
     <defs>
       <linearGradient id="gradAero" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -43,65 +44,118 @@ const DentalLogoIcon = () => (
   </svg>
 );
 
+const CartIcon = ({ size = 22, color }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "stroke 0.3s ease" }}>
+    <circle cx="9" cy="21" r="1" />
+    <circle cx="20" cy="21" r="1" />
+    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+  </svg>
+);
+
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showUserDropdown, setShowUserDropdown] = useState(false); 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
+
   const { user, logout } = useAuth() || {};
+  const { cart } = useCart() || { cart: [] };
+
+  const isAdmin = user && user.email === "uro.ve90@gmail.com";
+  const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 1024);
+      if (window.innerWidth > 1024) setMobileMenuOpen(false);
+    };
+
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   const textColor = scrolled ? "#FFFFFF" : "#023e8a";
 
   return (
-    <nav style={styles.navWrapper}>
+    <nav style={{
+      ...styles.navWrapper,
+      padding: isMobile ? "10px 0" : "20px 0"
+    }}>
       <div style={{ 
         ...styles.navContainer, 
-        ...(scrolled ? styles.navScrolled : styles.navDefault)
+        ...(scrolled ? styles.navScrolled : styles.navDefault),
+        width: isMobile ? "94%" : "92%",
+        padding: isMobile ? "10px 20px" : "12px 35px",
       }}>
         
-        <HashLink to="/#inicio" style={styles.logoContainer}>
+        {/* LOGO */}
+        <HashLink to="/#inicio" style={styles.logoContainer} onClick={() => setMobileMenuOpen(false)}>
           <DentalLogoIcon />
           <div style={styles.textStack}>
-            <span style={{...styles.logoMain, color: textColor}}>DENTAL</span>
+            <span style={{...styles.logoMain, color: textColor, fontSize: isMobile ? "1.2rem" : "1.5rem"}}>DENTAL</span>
             <span style={styles.logoSub}>ITIZ</span>
           </div>
         </HashLink>
 
-        <ul style={styles.menuList}>
+        {/* CONTENEDOR DERECHO EN MÓVIL (CARRITO + HAMBURGUESA) */}
+        {isMobile && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', pointerEvents: 'auto' }}>
+            <Link to="/carrito" style={styles.cartContainer} className="nav-cart-btn">
+              <CartIcon color={textColor} size={20} />
+              {totalItems > 0 && <span style={styles.cartBadge}>{totalItems}</span>}
+            </Link>
+            
+            <button 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+              style={{ ...styles.burgerBtn, color: textColor }}
+              aria-label="Menu"
+            >
+              {mobileMenuOpen ? "✕" : "☰"}
+            </button>
+          </div>
+        )}
+
+        {/* MENÚ DE NAVEGACIÓN (ESCRITORIO / MÓVIL DESPLEGABLE) */}
+        <ul style={{
+          ...styles.menuList,
+          ...(isMobile ? (mobileMenuOpen ? styles.menuMobileOpen : styles.menuMobileClosed) : {})
+        }}>
           <li>
-            <HashLink to="/#inicio" style={{...styles.link, color: textColor}} className="nav-aero-link">
+            <HashLink to="/#inicio" style={{...styles.link, color: isMobile ? "#023e8a" : textColor}} className="nav-aero-link" onClick={() => setMobileMenuOpen(false)}>
               Inicio
             </HashLink>
           </li>
           
-         
+          {/* DESPLEGABLE DE SERVICIOS */}
           <li 
             style={{ position: 'relative' }}
-            onMouseEnter={() => setShowDropdown(true)}
-            onMouseLeave={() => setShowDropdown(false)}
+            onMouseEnter={() => !isMobile && setShowDropdown(true)}
+            onMouseLeave={() => !isMobile && setShowDropdown(false)}
+            onClick={() => isMobile && setShowDropdown(!showDropdown)}
           >
-            <HashLink 
-              to="/#servicios" 
-              style={{...styles.link, color: textColor, display: 'flex', alignItems: 'center', gap: '5px'}} 
+            <span 
+              style={{...styles.link, color: isMobile ? "#023e8a" : textColor, display: 'flex', alignItems: 'center', gap: '5px'}} 
               className="nav-aero-link"
             >
               Servicios <span style={{ fontSize: '0.7rem', transition: '0.3s', transform: showDropdown ? 'rotate(180deg)' : 'rotate(0)' }}>▼</span>
-            </HashLink>
+            </span>
 
             {showDropdown && (
-              <div style={styles.dropdownContainer}>
-                <ul style={styles.dropdownMenu}>
+              <div style={{...styles.dropdownContainer, position: isMobile ? 'static' : 'absolute'}}>
+                <ul style={{...styles.dropdownMenu, maxHeight: isMobile ? "250px" : "none", overflowY: isMobile ? "auto" : "visible"}}>
                   {serviciosMenu.map((servicio, index) => (
                     <li key={index}>
                       <Link 
                         to={`/servicios/${servicio.path}`} 
                         style={styles.dropdownItem}
                         className="dropdown-hover-effect"
-                        onClick={() => setShowDropdown(false)}
+                        onClick={() => { setShowDropdown(false); setMobileMenuOpen(false); }}
                       >
                         {servicio.name}
                       </Link>
@@ -113,54 +167,87 @@ function Navbar() {
           </li>
 
           <li>
-            <HashLink to="/#dentistas" style={{...styles.link, color: textColor}} className="nav-aero-link">
+            <HashLink to="/#dentistas" style={{...styles.link, color: isMobile ? "#023e8a" : textColor}} className="nav-aero-link" onClick={() => setMobileMenuOpen(false)}>
               Dentistas
             </HashLink>
           </li>
           
           <li>
-            <HashLink to="/#galeria" style={{...styles.link, color: textColor}} className="nav-aero-link">
+            <HashLink to="/#galeria" style={{...styles.link, color: isMobile ? "#023e8a" : textColor}} className="nav-aero-link" onClick={() => setMobileMenuOpen(false)}>
               Galería
             </HashLink>
           </li>
 
           <li>
-            <HashLink to="/#citas" style={{...styles.link, color: textColor}} className="nav-aero-link">
+            <Link to="/tienda" style={{...styles.link, color: isMobile ? "#023e8a" : textColor, display: 'flex', alignItems: 'center', gap: '6px'}} className="nav-aero-link" onClick={() => setMobileMenuOpen(false)}>
+              <span style={{ fontSize: '1.1rem' }}>🛍️</span> Tienda
+            </Link>
+          </li>
+
+          <li>
+            <HashLink to="/#citas" style={{...styles.link, color: isMobile ? "#023e8a" : textColor}} className="nav-aero-link" onClick={() => setMobileMenuOpen(false)}>
               Citas
             </HashLink>
           </li>
 
           {user ? (
             <>
-              <li>
-                <Link to="/mis-citas" className="nav-aero-link" style={{...styles.link, color: "#00b4d8"}}>
-                  MIS CITAS
-                </Link>
+              <li 
+                style={{ position: 'relative' }}
+                onMouseEnter={() => !isMobile && setShowUserDropdown(true)}
+                onMouseLeave={() => !isMobile && setShowUserDropdown(false)}
+                onClick={() => isMobile && setShowUserDropdown(!showUserDropdown)}
+              >
+                <button className="nav-aero-link" style={{...styles.link, color: isAdmin ? "#10b981" : "#00b4d8", background: "none", border: "none", fontFamily: "inherit", display: 'flex', alignItems: 'center', gap: '5px', padding: "10px 15px", width: isMobile ? "100%" : "auto", justifyContent: isMobile ? "center" : "flex-start"}}>
+                  {isAdmin ? "PANEL" : "MIS UNIDADES"} <span style={{ fontSize: '0.7rem', transition: '0.3s', transform: showUserDropdown ? 'rotate(180deg)' : 'rotate(0)' }}>▼</span>
+                </button>
+
+                {showUserDropdown && (
+                  <div style={{...styles.dropdownContainer, position: isMobile ? 'static' : 'absolute'}}>
+                    <ul style={styles.dropdownMenu}>
+                      {isAdmin && (
+                        <li>
+                          <Link to="/admin" style={{...styles.dropdownItem, color: "#10b981"}} className="dropdown-hover-effect" onClick={() => { setShowUserDropdown(false); setMobileMenuOpen(false); }}>
+                            ⚙️ Panel de Control
+                          </Link>
+                        </li>
+                      )}
+                      <li><Link to="/mis-citas" style={styles.dropdownItem} className="dropdown-hover-effect" onClick={() => { setShowUserDropdown(false); setMobileMenuOpen(false); }}>📅 Mis Citas</Link></li>
+                      <li><Link to="/mis-compras" style={styles.dropdownItem} className="dropdown-hover-effect" onClick={() => { setShowUserDropdown(false); setMobileMenuOpen(false); }}>🛍️ Mis Compras</Link></li>
+                    </ul>
+                  </div>
+                )}
               </li>
-              <li style={{...styles.userLabel, color: scrolled ? "#00b4d8" : "#0077b6"}}>
+
+              <li style={{...styles.userLabel, color: "#0077b6", borderRight: isMobile ? "none" : "1px solid rgba(0, 180, 216, 0.3)", padding: isMobile ? "10px 0" : "0 10px"}}>
                 {user.email?.split('@')[0].toUpperCase()}
               </li>
               <li>
-                <button onClick={logout} className="nav-aero-link" style={{...styles.logoutBtn, color: textColor}}>
+                <button onClick={() => { logout(); setMobileMenuOpen(false); }} className="nav-aero-link" style={{...styles.logoutBtn, color: isMobile ? "#e11d48" : textColor, width: isMobile ? "100%" : "auto"}}>
                   SALIR
                 </button>
               </li>
             </>
           ) : (
             <li>
-              <Link to="/login" className="nav-aero-link" style={{...styles.link, color: textColor}}>
+              <Link to="/login" className="nav-aero-link" style={{...styles.link, color: isMobile ? "#023e8a" : textColor}} onClick={() => setMobileMenuOpen(false)}>
                 MI CUENTA
               </Link>
             </li>
           )}
           
-          <li>
-            <HashLink 
-              smooth 
-              to="/#contacto" 
-              className="btn-energy-pulse"
-              style={{ textDecoration: 'none' }}
-            >
+          {/* Carrito en menú de escritorio solamente */}
+          {!isMobile && (
+            <li>
+              <Link to="/carrito" style={styles.cartContainer} className="nav-cart-btn">
+                <CartIcon color={textColor} />
+                {totalItems > 0 && <span style={styles.cartBadge} className="badge-pop">{totalItems}</span>}
+              </Link>
+            </li>
+          )}
+
+          <li style={{ width: isMobile ? "100%" : "auto", textAlign: "center" }}>
+            <HashLink smooth to="/#contacto" className="btn-energy-pulse" style={{ textDecoration: 'none', width: isMobile ? "80%" : "auto" }} onClick={() => setMobileMenuOpen(false)}>
               CONTACTO
             </HashLink>
           </li>
@@ -176,9 +263,8 @@ function Navbar() {
           display: inline-block;
           cursor: pointer;
         }
-        .nav-aero-link:hover {
-          background-color: rgba(0, 180, 216, 0.1);
-          color: #00b4d8 !important;
+        @media (min-width: 1025px) {
+          .nav-aero-link:hover { background-color: rgba(0, 180, 216, 0.1); color: #00b4d8 !important; }
         }
         .dropdown-hover-effect {
           display: block;
@@ -190,11 +276,8 @@ function Navbar() {
           transition: all 0.3s ease;
           border-radius: 10px;
         }
-        .dropdown-hover-effect:hover {
-          background-color: #f0f9ff;
-          color: #00b4d8;
-          padding-left: 25px;
-        }
+        .dropdown-hover-effect:hover { background-color: #f0f9ff; color: #00b4d8; padding-left: 25px; }
+        .nav-cart-btn { display: flex; align-items: center; justify-content: center; padding: 10px; border-radius: 50%; transition: all 0.3s ease; position: relative; }
         .btn-energy-pulse {
           background: linear-gradient(135deg, #00b4d8, #0077b6);
           color: white !important;
@@ -204,91 +287,38 @@ function Navbar() {
           font-weight: 900;
           transition: all 0.3s ease;
           display: inline-block;
-          margin-left: 10px;
           box-shadow: 0 4px 15px rgba(0, 180, 216, 0.3);
         }
-        @keyframes slideIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
     </nav>
   );
 }
 
 const styles = {
-  navWrapper: {
-    position: "fixed",
-    top: "0",
-    left: 0,
-    right: 0,
-    zIndex: 5000,
-    display: "flex",
-    justifyContent: "center",
-    padding: "20px 0",
-    pointerEvents: "none"
-  },
-  navContainer: {
-    pointerEvents: "auto",
-    width: "92%",
-    maxWidth: "1350px", 
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderRadius: "100px",
-    padding: "12px 35px",
-    transition: "all 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
-  },
-  navDefault: {
-    backgroundColor: "rgba(255, 255, 255, 0.85)",
-    backdropFilter: "blur(12px)",
-    border: "1px solid rgba(255, 255, 255, 0.5)",
-    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.05)",
-  },
-  navScrolled: {
-    backgroundColor: "rgba(1, 22, 39, 0.95)",
-    backdropFilter: "blur(20px)",
-    boxShadow: "0 15px 40px rgba(0, 0, 0, 0.2)",
-    transform: "translateY(-5px) scale(0.98)",
-  },
-  logoContainer: { display: "flex", alignItems: "center", gap: "15px", textDecoration: "none" },
+  navWrapper: { position: "fixed", top: "0", left: 0, right: 0, zIndex: 5000, display: "flex", justifyContent: "center", pointerEvents: "none", boxSizing: "border-box" },
+  navContainer: { pointerEvents: "auto", maxWidth: "1350px", display: "flex", justifyContent: "space-between", alignItems: "center", borderRadius: "100px", transition: "all 0.6s cubic-bezier(0.16, 1, 0.3, 1)", boxSizing: "border-box" },
+  navDefault: { backgroundColor: "rgba(255, 255, 255, 0.85)", backdropFilter: "blur(12px)", border: "1px solid rgba(255, 255, 255, 0.5)", boxShadow: "0 10px 30px rgba(0, 0, 0, 0.05)" },
+  navScrolled: { backgroundColor: "rgba(1, 22, 39, 0.95)", backdropFilter: "blur(20px)", boxShadow: "0 15px 40px rgba(0, 0, 0, 0.2)", transform: "translateY(-5px) scale(0.98)" },
+  logoContainer: { display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" },
   textStack: { display: "flex", flexDirection: "column", lineHeight: "1" },
-  logoMain: { fontSize: "1.5rem", fontWeight: "900", letterSpacing: "0.5px" },
+  logoMain: { fontWeight: "900", letterSpacing: "0.5px" },
   logoSub: { fontSize: "0.85rem", fontWeight: "700", color: "#00b4d8", letterSpacing: "2px" },
+  
+  // NAVEGACIÓN COMPORTAMIENTO MÓVIL VS ESCRITORIO
   menuList: { listStyle: "none", margin: 0, padding: 0, display: "flex", alignItems: "center", gap: "5px" },
+  menuMobileClosed: { position: "fixed", top: "80px", right: "-100%", width: "280px", height: "calc(100vh - 100px)", backgroundColor: "white", flexDirection: "column", padding: "30px 20px", gap: "15px", borderRadius: "24px", boxShadow: "0 20px 40px rgba(0,0,0,0.1)", transition: "all 0.5s ease", overflowY: "auto", pointerEvents: "none" },
+  menuMobileOpen: { position: "fixed", top: "80px", right: "4%", width: "280px", height: "calc(100vh - 100px)", backgroundColor: "white", flexDirection: "column", padding: "30px 20px", gap: "15px", borderRadius: "24px", boxShadow: "0 20px 40px rgba(1, 22, 39, 0.15)", transition: "all 0.5s ease", overflowY: "auto", pointerEvents: "auto" },
+  
+  burgerBtn: { background: "none", border: "none", fontSize: "1.8rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: "5px", transition: "0.3s" },
   link: { fontWeight: "800", fontSize: "1rem" },
-  dropdownContainer: {
-    position: "absolute",
-    top: "100%",
-    left: "0",
-    paddingTop: "15px",
-    animation: "slideIn 0.3s ease forwards"
-  },
-  dropdownMenu: {
-    backgroundColor: "white",
-    minWidth: "240px",
-    borderRadius: "24px",
-    boxShadow: "0 20px 50px rgba(0,0,0,0.15)",
-    padding: "15px",
-    listStyle: "none",
-    margin: 0,
-    border: "1px solid #f1f5f9"
-  },
-  userLabel: {
-    fontWeight: "900",
-    fontSize: "0.85rem",
-    padding: "0 10px",
-    letterSpacing: "1px",
-    borderRight: "1px solid rgba(0, 180, 216, 0.3)"
-  },
-  logoutBtn: {
-    fontWeight: "800",
-    fontSize: "0.9rem",
-    background: "transparent",
-    border: "none",
-    cursor: "pointer",
-    fontFamily: "inherit"
-  }
+  dropdownContainer: { top: "100%", left: "0", paddingTop: "10px", zIndex: 10, animation: "slideIn 0.3s ease forwards", width: "100%" },
+  dropdownMenu: { backgroundColor: "white", minWidth: "220px", borderRadius: "20px", boxShadow: "0 15px 40px rgba(0,0,0,0.08)", padding: "10px", listStyle: "none", margin: 0, border: "1px solid #f1f5f9" },
+  dropdownItem: { display: "block", padding: "10px 15px", textDecoration: "none", color: "#023e8a", fontWeight: "700", fontSize: "0.9rem", borderRadius: "10px" },
+  userLabel: { fontWeight: "900", fontSize: "0.85rem", letterSpacing: "1px" },
+  logoutBtn: { fontWeight: "800", fontSize: "0.9rem", background: "transparent", border: "none", cursor: "pointer", fontFamily: "inherit" },
+  cartContainer: { position: "relative", display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none" },
+  cartBadge: { position: "absolute", top: "-5px", right: "-5px", background: "#00b4d8", color: "white", fontSize: "10px", fontWeight: "900", borderRadius: "50%", width: "16px", height: "16px", display: "flex", alignItems: "center", justifyContent: "center" }
 };
 
 export default Navbar;

@@ -13,8 +13,17 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  
+  // Estado para controlar la responsividad dinámica en línea
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 480);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -46,8 +55,18 @@ function Login() {
       <div style={styles.blob1}></div>
       <div style={styles.blob2}></div>
 
-      <div style={styles.card} className="glass-morphism">
-        <header style={styles.header}>
+      <div 
+        style={{
+          ...styles.card,
+          padding: isMobile ? "40px 24px" : "60px 45px",
+          borderRadius: isMobile ? "30px" : "40px"
+        }} 
+        className="glass-morphism"
+      >
+        <header style={{
+          ...styles.header,
+          marginBottom: isMobile ? "30px" : "40px"
+        }}>
           <div style={styles.logoWrapper}>
             <div style={styles.logoIcon}>
                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -56,17 +75,23 @@ function Login() {
               </svg>
             </div>
           </div>
-          <h2 style={styles.title}>
+          <h2 style={{
+            ...styles.title,
+            fontSize: isMobile ? "26px" : "32px"
+          }}>
             {isRegistering ? "Únete a la familia" : "Bienvenido"}
           </h2>
-          <p style={styles.subtitle}>
+          <p style={{
+            ...styles.subtitle,
+            fontSize: isMobile ? "14px" : "16px"
+          }}>
             {isRegistering ? "Crea tu perfil en Dental ITIZ" : "Tu salud bucal, en un solo lugar"}
           </p>
         </header>
 
         {errorMsg && (
           <div style={styles.errorBadge} className="shake-anim">
-            <span style={{marginRight: '8px'}}>✕</span> {errorMsg}
+            <span style={{marginRight: '8px', shrink: 0}}>✕</span> {errorMsg}
           </div>
         )}
 
@@ -77,8 +102,10 @@ function Login() {
               <input
                 type="email"
                 required
-                
-                style={styles.input}
+                style={{
+                  ...styles.input,
+                  padding: isMobile ? "16px 18px" : "18px 20px"
+                }}
                 className="premium-input"
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -88,14 +115,15 @@ function Login() {
           <div style={styles.inputGroup}>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                <label style={styles.label}>CONTRASEÑA</label>
-              
             </div>
             <div style={styles.inputWrapper}>
               <input
                 type={showPassword ? "text" : "password"}
                 required
-                
-                style={styles.input}
+                style={{
+                  ...styles.input,
+                  padding: isMobile ? "16px 45px 16px 18px" : "18px 50px 18px 20px"
+                }}
                 className="premium-input"
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -109,12 +137,22 @@ function Login() {
             </div>
           </div>
 
-          <button type="submit" style={styles.mainButton} className="premium-btn">
+          <button 
+            type="submit" 
+            style={{
+              ...styles.mainButton,
+              padding: isMobile ? "16px" : "20px"
+            }} 
+            className="premium-btn"
+          >
             {isRegistering ? "CREAR CUENTA" : "ENTRAR"}
           </button>
         </form>
 
-        <div style={styles.footer}>
+        <div style={{
+          ...styles.footer,
+          marginTop: isMobile ? "25px" : "35px"
+        }}>
           <p style={styles.footerText}>
             {isRegistering ? "¿Ya tienes cuenta?" : "¿No tienes una cuenta todavía?"}
           </p>
@@ -126,7 +164,7 @@ function Login() {
           </button>
         </div>
 
-        <button onClick={() => navigate("/")} style={styles.backHome}>
+        <button onClick={() => navigate("/")} style={styles.backHome} className="back-home-btn">
           ← Volver al inicio
         </button>
       </div>
@@ -136,11 +174,12 @@ function Login() {
           animation: cardAppear 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         @keyframes cardAppear {
-          from { opacity: 0; transform: scale(0.95) translateY(20px); }
+          from { opacity: 0; transform: scale(0.97) translateY(15px); }
           to { opacity: 1; transform: scale(1) translateY(0); }
         }
         .premium-input {
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          -webkit-appearance: none; /* Elimina estilos por defecto de iOS */
         }
         .premium-input:focus {
           background: #ffffff !important;
@@ -161,6 +200,9 @@ function Login() {
         .premium-btn:active {
           transform: translateY(-1px);
         }
+        .back-home-btn:hover {
+          color: #023e8a !important;
+        }
         @keyframes shake {
           0%, 100% { transform: translateX(0); }
           25% { transform: translateX(-4px); }
@@ -179,128 +221,130 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     background: "#f0f4f8",
-    padding: "20px",
+    padding: "16px",
     fontFamily: "'Inter', sans-serif",
     position: "relative",
-    overflow: "hidden"
+    overflow: "hidden",
+    boxSizing: "border-box"
   },
   blob1: {
     position: "absolute",
-    width: "500px",
-    height: "500px",
+    width: "40vw",
+    height: "40vw",
+    minWidth: "280px",
     background: "linear-gradient(135deg, rgba(0, 180, 216, 0.2), rgba(2, 62, 138, 0.2))",
     borderRadius: "50%",
-    top: "-100px",
-    right: "-100px",
+    top: "-10%",
+    right: "-10%",
     filter: "blur(80px)",
     zIndex: 0
   },
   blob2: {
     position: "absolute",
-    width: "400px",
-    height: "400px",
+    width: "35vw",
+    height: "35vw",
+    minWidth: "250px",
     background: "linear-gradient(135deg, rgba(0, 119, 182, 0.15), rgba(0, 180, 216, 0.1))",
     borderRadius: "50%",
-    bottom: "-50px",
-    left: "-50px",
+    bottom: "-8%",
+    left: "-8%",
     filter: "blur(80px)",
     zIndex: 0
   },
   card: {
-    background: "rgba(255, 255, 255, 0.8)",
-    backdropFilter: "blur(25px)",
-    padding: "60px 45px",
-    borderRadius: "40px",
-    boxShadow: "0 50px 100px -20px rgba(2, 62, 138, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.5)",
+    background: "rgba(255, 255, 255, 0.85)",
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)", /* Soporte nativo Safari móvil */
+    boxShadow: "0 40px 80px -15px rgba(2, 62, 138, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.6)",
     width: "100%",
-    maxWidth: "460px",
+    maxWidth: "450px",
     zIndex: 1,
-    position: "relative"
+    position: "relative",
+    boxSizing: "border-box"
   },
-  header: { textAlign: "center", marginBottom: "40px" },
+  header: { textAlign: "center" },
   logoWrapper: {
     display: "flex",
     justifyContent: "center",
-    marginBottom: "20px"
+    marginBottom: "16px"
   },
   logoIcon: {
-    width: "60px",
-    height: "60px",
+    width: "55px",
+    height: "55px",
     background: "linear-gradient(135deg, #023e8a, #00b4d8)",
-    borderRadius: "20px",
+    borderRadius: "18px",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    boxShadow: "0 10px 20px rgba(2, 62, 138, 0.2)"
+    boxShadow: "0 10px 20px rgba(2, 62, 138, 0.15)"
   },
-  title: { color: "#0a2540", fontSize: "32px", fontWeight: "900", marginBottom: "10px", letterSpacing: "-1px" },
-  subtitle: { color: "#64748b", fontSize: "16px", fontWeight: "500" },
+  title: { color: "#0a2540", fontWeight: "900", marginBottom: "8px", letterSpacing: "-1px" },
+  subtitle: { color: "#64748b", fontWeight: "500" },
   errorBadge: {
     background: "#fff1f2",
     color: "#e11d48",
-    padding: "14px",
-    borderRadius: "16px",
-    fontSize: "14px",
+    padding: "12px 14px",
+    borderRadius: "14px",
+    fontSize: "13.5px",
     fontWeight: "600",
-    marginBottom: "25px",
+    marginBottom: "20px",
     border: "1px solid rgba(225, 29, 72, 0.1)",
     display: "flex",
-    alignItems: "center"
+    alignItems: "center",
+    boxSizing: "border-box"
   },
-  form: { display: "flex", flexDirection: "column", gap: "25px" },
-  inputGroup: { display: "flex", flexDirection: "column", gap: "10px" },
+  form: { display: "flex", flexDirection: "column", gap: "20px" },
+  inputGroup: { display: "flex", flexDirection: "column", gap: "8px" },
   label: { fontSize: "11px", fontWeight: "800", color: "#023e8a", letterSpacing: "1.5px", paddingLeft: "4px" },
-  forgotPass: { fontSize: "11px", fontWeight: "700", color: "#00b4d8", cursor: "pointer" },
   inputWrapper: { position: "relative" },
   input: {
     width: "100%",
-    padding: "18px 20px",
-    borderRadius: "18px",
+    borderRadius: "16px",
     border: "1px solid #e2e8f0",
     fontSize: "15px",
     outline: "none",
-    background: "rgba(255, 255, 255, 0.5)",
+    background: "rgba(255, 255, 255, 0.6)",
     color: "#1e293b",
     fontWeight: "600",
     boxSizing: "border-box"
   },
   eyeButton: {
     position: "absolute",
-    right: "18px",
+    right: "16px",
     top: "50%",
     transform: "translateY(-50%)",
     background: "none",
     border: "none",
     cursor: "pointer",
     fontSize: "18px",
-    opacity: 0.6
+    opacity: 0.6,
+    padding: "4px"
   },
   mainButton: {
-    padding: "20px",
-    borderRadius: "20px",
+    borderRadius: "16px",
     border: "none",
     background: "linear-gradient(135deg, #023e8a 0%, #0077b6 100%)",
     color: "white",
     fontWeight: "800",
-    fontSize: "16px",
+    fontSize: "15px",
     cursor: "pointer",
-    boxShadow: "0 20px 40px -10px rgba(2, 62, 138, 0.3)",
+    boxShadow: "0 15px 30px -8px rgba(2, 62, 138, 0.25)",
     letterSpacing: "0.5px"
   },
-  footer: { marginTop: "35px", textAlign: "center" },
-  footerText: { color: "#64748b", fontSize: "14px", marginBottom: "8px" },
+  footer: { textAlign: "center" },
+  footerText: { color: "#64748b", fontSize: "13.5px", marginBottom: "6px" },
   switchButton: {
     background: "none",
     border: "none",
     color: "#023e8a",
-    fontSize: "15px",
+    fontSize: "14.5px",
     fontWeight: "800",
     cursor: "pointer",
     textDecoration: "underline",
     textUnderlineOffset: "4px"
   },
   backHome: {
-    marginTop: "30px",
+    marginTop: "25px",
     background: "none",
     border: "none",
     color: "#94a3b8",
@@ -309,7 +353,8 @@ const styles = {
     cursor: "pointer",
     display: "block",
     width: "100%",
-    transition: "color 0.2s ease"
+    transition: "color 0.2s ease",
+    padding: "4px"
   }
 };
 

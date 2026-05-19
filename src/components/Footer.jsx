@@ -1,38 +1,69 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 function Footer() {
   const currentYear = new Date().getFullYear();
 
+  // Detector de pantalla móvil en tiempo real
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    <footer style={styles.footer}>
+    <footer style={{
+      ...styles.footer,
+      padding: isMobile ? "50px 16px 30px" : "80px 5% 40px"
+    }}>
      
       <div style={styles.glowBlue}></div>
       
       <div style={styles.container}>
-        <div style={styles.mainGrid}>
+        <div style={{
+          ...styles.mainGrid,
+          gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fit, minmax(250px, 1fr))",
+          gap: isMobile ? "35px" : "50px",
+          marginBottom: isMobile ? "40px" : "60px"
+        }}>
           
-         
-          <div style={styles.brandColumn}>
+          {/* COLUMNA: MARCA */}
+          <div style={{
+            ...styles.brandColumn,
+            textAlign: isMobile ? "center" : "left"
+          }}>
             <h3 style={styles.logo}>
               Dental<span style={styles.highlight}> ITIZ </span>
             </h3>
-            <p style={styles.brandDesc}>
+            <p style={{
+              ...styles.brandDesc,
+              margin: isMobile ? "0 auto" : "0",
+              maxWidth: "320px"
+            }}>
               Elevando los estándares de salud dental con tecnología de vanguardia y un enfoque humano en el corazón de Iztapalapa.
             </p>
           </div>
 
-          <div style={styles.linkColumn}>
+          {/* COLUMNA: ENLACES */}
+          <div style={{
+            ...styles.linkColumn,
+            textAlign: isMobile ? "center" : "left"
+          }}>
             <h4 style={styles.columnTitle}>Explorar</h4>
             <ul style={styles.linkList}>
               <li style={styles.linkItem}><a href="#inicio" style={styles.link}>Inicio</a></li>
               <li style={styles.linkItem}><a href="#servicios" style={styles.link}>Tratamientos</a></li>
-              <li style={styles.linkItem}><a href="#dentistas" style={styles.link}>Especialistas</a></li>
-              <li style={styles.linkItem}><a href="#citas" style={styles.link}>Agendar Cita</a></li>
+              <li style={styles.linkItem}><a href="#nosotros" style={styles.link}>Especialistas</a></li>
+              <li style={styles.linkItem}><a href="#contacto" style={styles.link}>Ubicación</a></li>
             </ul>
           </div>
 
-         
-          <div style={styles.contactColumn}>
+          {/* COLUMNA: SEDE / CONTACTO */}
+          <div style={{
+            ...styles.contactColumn,
+            textAlign: isMobile ? "center" : "left"
+          }}>
             <h4 style={styles.columnTitle}>Sede Institucional</h4>
             <p style={styles.locationText}>
               📍 Instituto Tecnológico de Iztapalapa<br/>
@@ -44,12 +75,22 @@ function Footer() {
           </div>
         </div>
 
-       
-        <div style={styles.bottomBar}>
+        {/* BARRA INFERIOR DE DERECHOS */}
+        <div style={{
+          ...styles.bottomBar,
+          flexDirection: isMobile ? "column" : "row",
+          justifyContent: isMobile ? "center" : "space-between",
+          textAlign: isMobile ? "center" : "left",
+          gap: isMobile ? "15px" : "20px",
+          paddingTop: isMobile ? "25px" : "30px"
+        }}>
           <p style={styles.copyText}>
             © {currentYear} Dental Velasco. Todos los derechos reservados.
           </p>
-          <div style={styles.legalLinks}>
+          <div style={{
+            ...styles.legalLinks,
+            justifyContent: isMobile ? "center" : "flex-end"
+          }}>
             <span style={styles.legalLink}>Privacidad</span>
             <span style={styles.legalLink}>Términos</span>
           </div>
@@ -58,7 +99,7 @@ function Footer() {
 
       <style>{`
         footer a { text-decoration: none; transition: all 0.3s ease; }
-        footer a:hover { color: #00b4d8 !important; transform: translateX(5px); }
+        footer a:hover { color: #00b4d8 !important; transform: ${isMobile ? "none" : "translateX(5px)"}; }
       `}</style>
     </footer>
   );
@@ -67,17 +108,17 @@ function Footer() {
 const styles = {
   footer: {
     backgroundColor: "#ffffff",
-    padding: "80px 5% 40px",
     position: "relative",
     overflow: "hidden",
     borderTop: "1px solid #f1f5f9",
     fontFamily: "'Inter', sans-serif",
+    boxSizing: "border-box"
   },
   glowBlue: {
     position: "absolute",
     width: "400px",
     height: "400px",
-    background: "radial-gradient(circle, rgba(0, 180, 216, 0.08) 0%, rgba(255,255,255,0) 70%)",
+    background: "radial-gradient(circle, rgba(0, 180, 216, 0.06) 0%, rgba(255,255,255,0) 70%)",
     top: "-200px",
     right: "-100px",
     zIndex: 0
@@ -86,19 +127,18 @@ const styles = {
     maxWidth: "1200px",
     margin: "0 auto",
     position: "relative",
-    zIndex: 1
+    zIndex: 1,
+    boxSizing: "border-box"
   },
   mainGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-    gap: "50px",
-    marginBottom: "60px"
+    boxSizing: "border-box"
   },
   logo: {
     fontSize: "1.8rem",
     fontWeight: "900",
     color: "#023e8a",
-    margin: "0 0 20px 0",
+    margin: "0 0 15px 0",
     letterSpacing: "-1px"
   },
   highlight: {
@@ -107,15 +147,14 @@ const styles = {
   },
   brandDesc: {
     color: "#64748b",
-    fontSize: "15px",
-    lineHeight: "1.7",
-    maxWidth: "320px"
+    fontSize: "14.5px",
+    lineHeight: "1.65"
   },
   columnTitle: {
-    fontSize: "16px",
+    fontSize: "15px",
     fontWeight: "800",
     color: "#1e293b",
-    marginBottom: "25px",
+    marginBottom: "20px",
     textTransform: "uppercase",
     letterSpacing: "1px"
   },
@@ -125,37 +164,36 @@ const styles = {
     margin: 0
   },
   linkItem: {
-    marginBottom: "12px"
+    marginBottom: "10px"
   },
   link: {
     color: "#64748b",
-    fontSize: "15px",
+    fontSize: "14.5px",
     fontWeight: "500",
     display: "inline-block"
   },
   locationText: {
     color: "#64748b",
-    fontSize: "15px",
+    fontSize: "14.5px",
     lineHeight: "1.6",
-    marginBottom: "15px"
+    marginBottom: "12px"
   },
   contactPhone: {
     color: "#023e8a",
     fontWeight: "700",
-    fontSize: "15px"
+    fontSize: "14.5px",
+    margin: 0
   },
   bottomBar: {
-    paddingTop: "30px",
     borderTop: "1px solid #f1f5f9",
     display: "flex",
-    justifyContent: "space-between",
     alignItems: "center",
     flexWrap: "wrap",
-    gap: "20px"
+    boxSizing: "border-box"
   },
   copyText: {
     color: "#94a3b8",
-    fontSize: "14px",
+    fontSize: "13.5px",
     margin: 0
   },
   legalLinks: {

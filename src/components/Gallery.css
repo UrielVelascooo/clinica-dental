@@ -1,3 +1,7 @@
+/* ==========================================================================
+   ESTILOS BASE DEL CARRUSEL (ESCRITORIO)
+   ========================================================================== */
+
 .gallery-card {
   position: absolute;
   width: 65%;
@@ -5,37 +9,65 @@
   background-size: cover;
   background-position: center;
   border-radius: 40px;
+  /* Transición suave para el efecto 3D */
   transition: all 0.9s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 0;
   display: flex;
   align-items: flex-end;
   pointer-events: none;
+  box-sizing: border-box;
+  will-change: transform, opacity;
 }
 
+/* Estado de la tarjeta Central / Enfocada */
 .is-active {
   opacity: 1;
   z-index: 10;
   transform: translateX(0) scale(1);
   pointer-events: auto;
-  box-shadow: 0 25px 50px rgba(0,0,0,0.12);
+  box-shadow: 0 25px 50px rgba(2, 62, 138, 0.15);
 }
 
+/* Estado de la tarjeta Izquierda */
 .is-prev {
   opacity: 0.4;
   z-index: 5;
-  transform: translateX(-45%) scale(0.8) rotateY(20deg);
-  filter: blur(3px);
+  transform: translateX(-42%) scale(0.8) rotateY(25deg);
+  filter: blur(2px);
 }
 
+/* Estado de la tarjeta Derecha */
 .is-next {
   opacity: 0.4;
   z-index: 5;
-  transform: translateX(45%) scale(0.8) rotateY(-20deg);
-  filter: blur(3px);
+  transform: translateX(42%) scale(0.8) rotateY(-25deg);
+  filter: blur(2px);
 }
 
-.is-hidden { transform: scale(0.5); opacity: 0; }
+/* Tarjetas en cola (no visibles) */
+.is-hidden { 
+  transform: scale(0.5); 
+  opacity: 0; 
+  z-index: 0;
+}
 
+/* ==========================================================================
+   CONTROLES Y COMPONENTES INTERNOS
+   ========================================================================== */
+
+/* Efecto hover refinado para las flechas de navegación */
+.nav-control {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+.nav-control:hover { 
+  background: #ffffff !important; 
+  color: #00b4d8 !important; 
+  transform: translateY(-50%) scale(1.1); 
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Animación lineal de la barra de progreso */
 .progress-fill {
   height: 100%;
   background: #00b4d8;
@@ -48,11 +80,51 @@
   to { width: 100%; }
 }
 
-.nav-control:hover { background: white !important; color: #00b4d8 !important; transform: translateY(-50%) scale(1.1); }
-.thumb-box { width: 75px; height: 50px; border-radius: 12px; background-size: cover; cursor: pointer; transition: 0.3s; opacity: 0.4; border: 2px solid transparent; }
-.thumb-on { opacity: 1; border-color: #00b4d8; transform: translateY(-4px); }
+/* Miniaturas / Thumbnails (si decides usarlas en un futuro) */
+.thumb-box { 
+  width: 75px; 
+  height: 50px; 
+  border-radius: 12px; 
+  background-size: cover; 
+  cursor: pointer; 
+  transition: all 0.3s ease; 
+  opacity: 0.4; 
+  border: 2px solid transparent; 
+}
+
+.thumb-on { 
+  opacity: 1; 
+  border-color: #00b4d8; 
+  transform: translateY(-4px); 
+  box-shadow: 0 8px 16px rgba(0, 180, 216, 0.2);
+}
+
+/* ==========================================================================
+   MEDIA QUERY: RESPONSIVE (MÓVILES Y TABLETS)
+   ========================================================================== */
 
 @media (max-width: 768px) {
-  .gallery-card { width: 100%; border-radius: 20px; }
-  .is-prev, .is-next { display: none; }
+  .gallery-card { 
+    width: 100%; 
+    max-width: 340px; /* Evita que la tarjeta se estire demasiado en pantallas intermedias */
+    height: 100%;
+    border-radius: 32px; 
+    /* Transición un poco más rápida en móvil para mejorar la respuesta táctil */
+    transition: all 0.4s ease-in-out; 
+  }
+
+  /* Forzamos la remoción de las tarjetas laterales del flujo visual */
+  .is-prev, 
+  .is-next { 
+    display: none !important; 
+    opacity: 0;
+    transform: none;
+  }
+
+  /* Estado activo simplificado (plano, sin rotación 3D) */
+  .is-active {
+    transform: none;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    position: relative; /* Ajuste para el flujo inline del slider móvil */
+  }
 }

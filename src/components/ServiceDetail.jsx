@@ -1,5 +1,5 @@
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-
 
 const infoServicios = {
   diagnostico: {
@@ -64,7 +64,7 @@ const infoServicios = {
   },
   periodoncia: {
     title: "Periodoncia",
-    subtitle: "Salud de Encías",
+    subtitle: "Salva tus Encías",
     fullDesc: "Tratamos las enfermedades que afectan el soporte de tus dientes. Unas encías sanas son el cimiento de una boca saludable.",
     ventajas: [
       "Tratamiento de gingivitis y periodontitis",
@@ -115,10 +115,17 @@ const infoServicios = {
 function ServiceDetail() {
   const { id } = useParams();
   const service = infoServicios[id];
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   if (!service) {
     return (
-      <div style={styles.errorContainer}>
+      <div style={{...styles.errorContainer, padding: isMobile ? "80px 20px" : "150px"}}>
         <h2>Servicio no encontrado</h2>
         <Link to="/" style={styles.backButton}>Regresar al inicio</Link>
       </div>
@@ -126,48 +133,101 @@ function ServiceDetail() {
   }
 
   return (
-    <div style={styles.pageContainer}>
+    <div style={{
+      ...styles.pageContainer,
+      padding: isMobile ? "90px 4% 40px 4%" : "120px 5% 60px 5%"
+    }}>
       
       <div style={styles.glow} />
 
       <div style={styles.contentWrapper}>
-        <Link to="/" style={styles.backButton}>
+        <Link to="/" style={styles.backButton} className="back-btn-hover">
           <span>←</span> Volver a Especialidades
         </Link>
 
-        <div style={styles.mainGrid}>
+        <div style={{
+          ...styles.mainGrid,
+          gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fit, minmax(450px, 1fr))",
+          gap: isMobile ? "30px" : "60px"
+        }}>
           
+          {/* LATERAL VISUAL (IMAGEN) */}
           <div style={styles.visualSide}>
-            <div style={styles.imageContainer}>
+            <div style={{
+              ...styles.imageContainer,
+              height: isMobile ? "clamp(280px, 45vh, 400px)" : "550px",
+              borderRadius: isMobile ? "24px" : "40px"
+            }}>
               <img src={service.image} alt={service.title} style={styles.image} />
-              <div style={styles.imageBadge}>{service.subtitle}</div>
+              <div style={{
+                ...styles.imageBadge,
+                top: isMobile ? "15px" : "30px",
+                right: isMobile ? "15px" : "30px",
+                padding: isMobile ? "6px 14px" : "10px 20px",
+                fontSize: isMobile ? "0.7rem" : "0.8rem"
+              }}>
+                {service.subtitle}
+              </div>
             </div>
           </div>
 
-          
+          {/* LATERAL DE DETALLES (TARJETA) */}
           <div style={styles.infoSide}>
-            <div style={styles.card}>
+            <div style={{
+              ...styles.card,
+              padding: isMobile ? "24px" : "50px",
+              borderRadius: isMobile ? "24px" : "32px"
+            }}>
               <h1 style={styles.title}>{service.title}</h1>
               <div style={styles.accent} />
-              <p style={styles.description}>{service.fullDesc}</p>
+              <p style={{
+                ...styles.description,
+                fontSize: isMobile ? "1.05rem" : "1.2rem",
+                lineHeight: isMobile ? "1.6" : "1.8"
+              }}>{service.fullDesc}</p>
               
               <h3 style={styles.sectionLabel}>Lo que incluye este servicio:</h3>
               <div style={styles.benefitsGrid}>
                 {service.ventajas.map((v, i) => (
                   <div key={i} style={styles.benefitItem}>
                     <div style={styles.check}>✓</div>
-                    <span>{v}</span>
+                    <span style={{ fontSize: isMobile ? "0.95rem" : "1.05rem" }}>{v}</span>
                   </div>
                 ))}
               </div>
 
-              <a href="https://wa.me/tu_numero" target="_blank" rel="noreferrer" style={styles.cta}>
+              <a 
+                href="https://wa.me/tu_numero" 
+                target="_blank" 
+                rel="noreferrer" 
+                style={{
+                  ...styles.cta,
+                  padding: isMobile ? "16px" : "20px",
+                  fontSize: isMobile ? "1rem" : "1.1rem"
+                }}
+                className="cta-btn-pulse"
+              >
                 Agendar Consulta de Valoración
               </a>
             </div>
           </div>
         </div>
       </div>
+
+      <style>{`
+        .back-btn-hover:hover {
+          transform: translateX(-5px);
+          color: #00b4d8 !important;
+        }
+        .cta-btn-pulse {
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .cta-btn-pulse:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 12px 30px rgba(10, 37, 64, 0.3);
+          background-color: #0077b6 !important;
+        }
+      `}</style>
     </div>
   );
 }
@@ -176,10 +236,10 @@ const styles = {
   pageContainer: {
     minHeight: "100vh",
     backgroundColor: "#ffffff",
-    padding: "120px 5% 60px 5%",
     position: "relative",
     overflow: "hidden",
-    fontFamily: "'Inter', sans-serif"
+    fontFamily: "'Inter', sans-serif",
+    boxSizing: "border-box"
   },
   glow: {
     position: "absolute",
@@ -203,25 +263,23 @@ const styles = {
     textDecoration: "none",
     color: "#0a2540",
     fontWeight: "700",
-    marginBottom: "40px",
+    marginBottom: "25px",
     fontSize: "0.9rem",
-    transition: "transform 0.2s ease"
+    transition: "transform 0.2s ease, color 0.2s ease"
   },
   mainGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
-    gap: "60px",
     alignItems: "start"
   },
   visualSide: {
-    position: "relative"
+    position: "relative",
+    width: "100%"
   },
   imageContainer: {
-    borderRadius: "40px",
     overflow: "hidden",
-    boxShadow: "0 30px 60px rgba(10, 37, 64, 0.15)",
-    height: "550px",
-    position: "relative"
+    boxShadow: "0 25px 50px rgba(10, 37, 64, 0.12)",
+    position: "relative",
+    width: "100%"
   },
   image: {
     width: "100%",
@@ -230,99 +288,90 @@ const styles = {
   },
   imageBadge: {
     position: "absolute",
-    top: "30px",
-    right: "30px",
     backgroundColor: "#ffffff",
-    padding: "10px 20px",
-    borderRadius: "15px",
+    borderRadius: "12px",
     fontWeight: "800",
-    fontSize: "0.8rem",
     textTransform: "uppercase",
     letterSpacing: "1px",
     color: "#0a2540",
-    boxShadow: "0 10px 20px rgba(0,0,0,0.1)"
+    boxShadow: "0 8px 16px rgba(0,0,0,0.08)"
   },
   infoSide: {
-    textAlign: "left"
+    textAlign: "left",
+    width: "100%"
   },
   card: {
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    backgroundColor: "rgba(255, 255, 255, 0.85)",
     backdropFilter: "blur(10px)",
-    padding: "50px",
-    borderRadius: "32px",
     border: "1px solid #f0f4f8",
-    boxShadow: "0 20px 40px rgba(10, 37, 64, 0.05)"
+    boxShadow: "0 20px 40px rgba(10, 37, 64, 0.04)"
   },
   title: {
-    fontSize: "clamp(2rem, 4vw, 3.2rem)",
+    fontSize: "clamp(1.8rem, 4vw, 3rem)",
     fontWeight: "900",
     color: "#0a2540",
-    lineHeight: "1.1",
-    marginBottom: "20px",
-    letterSpacing: "-2px"
+    lineHeight: "1.15",
+    marginBottom: "15px",
+    letterSpacing: "-1px"
   },
   accent: {
-    width: "70px",
-    height: "5px",
+    width: "60px",
+    height: "4px",
     backgroundColor: "#00b4d8",
     borderRadius: "10px",
-    marginBottom: "35px"
+    marginBottom: "25px"
   },
   description: {
-    fontSize: "1.2rem",
-    lineHeight: "1.8",
     color: "#52606d",
-    marginBottom: "40px"
+    marginBottom: "30px"
   },
   sectionLabel: {
-    fontSize: "1.1rem",
+    fontSize: "1rem",
     fontWeight: "800",
     color: "#0a2540",
-    marginBottom: "20px",
+    marginBottom: "15px",
     textTransform: "uppercase",
     letterSpacing: "1px"
   },
   benefitsGrid: {
     display: "flex",
     flexDirection: "column",
-    gap: "15px",
-    marginBottom: "50px"
+    gap: "12px",
+    marginBottom: "35px"
   },
   benefitItem: {
     display: "flex",
     alignItems: "center",
-    gap: "15px",
-    fontSize: "1.05rem",
+    gap: "12px",
     color: "#52606d",
-    fontWeight: "500"
+    fontWeight: "500",
+    lineHeight: "1.4"
   },
   check: {
-    width: "24px",
-    height: "24px",
+    width: "22px",
+    height: "22px",
     backgroundColor: "rgba(0, 180, 216, 0.1)",
     color: "#00b4d8",
     borderRadius: "50%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "0.8rem",
-    fontWeight: "900"
+    fontSize: "0.75rem",
+    fontWeight: "900",
+    flexShrink: 0
   },
   cta: {
     display: "block",
     textAlign: "center",
     backgroundColor: "#0a2540",
     color: "#ffffff",
-    padding: "20px",
-    borderRadius: "18px",
+    borderRadius: "16px",
     textDecoration: "none",
     fontWeight: "700",
-    fontSize: "1.1rem",
-    boxShadow: "0 10px 25px rgba(10, 37, 64, 0.2)",
-    transition: "transform 0.3s ease"
+    boxShadow: "0 8px 20px rgba(10, 37, 64, 0.15)",
+    boxSizing: "border-box"
   },
   errorContainer: {
-    padding: "150px",
     textAlign: "center",
     fontFamily: "sans-serif"
   }

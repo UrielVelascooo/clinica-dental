@@ -1,3 +1,4 @@
+/* --- CONFIGURACIÓN GLOBAL Y VARIABLES --- */
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -8,8 +9,7 @@
   --accent-bg: rgba(170, 59, 255, 0.1);
   --accent-border: rgba(170, 59, 255, 0.5);
   --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -30,6 +30,7 @@
   }
 }
 
+/* --- SOPORTE NATIVO PARA MODO OSCURO --- */
 @media (prefers-color-scheme: dark) {
   :root {
     --text: #9ca3af;
@@ -41,8 +42,7 @@
     --accent-bg: rgba(192, 132, 252, 0.15);
     --accent-border: rgba(192, 132, 252, 0.5);
     --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+    --shadow: rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
   }
 
   #social .button-icon {
@@ -50,8 +50,21 @@
   }
 }
 
+/* --- RESET & MAQUETACIÓN BASE --- */
+html {
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit; /* Asegura el cálculo de caja correcto en layouts internos */
+}
+
 body {
   margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
 }
 
 #root {
@@ -63,138 +76,20 @@ body {
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
+
+  @media (max-width: 1024px) {
+    border-inline: none;
+    /* Eliminado el padding horizontal global para evitar que rompa componentes full-width como la Navbar */
+  }
 }
 
 .app-root {
-  font-family: Arial, sans-serif;
+  font-family: var(--sans);
   width: 100%;
 }
 
-.navbar {
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #0a2540;
-  color: white;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  padding: 15px 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.navbar ul {
-  display: flex;
-  gap: 15px;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.navbar a {
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.hero-section {
-  width: 100%;
-  height: 85vh;
-  min-height: 420px;
-}
-
-.hero-overlay {
-  background-color: rgba(10, 37, 64, 0.7);
-  padding: 32px;
-  border-radius: 12px;
-}
-
-.service-card,
-.dentists-cards > div,
-.gallery-grid img {
-  width: 100%;
-  max-width: 300px;
-  margin: 0 auto;
-}
-
-.contact-section .content {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 18px;
-  justify-content: center;
-  align-items: center;
-}
-
-@media (max-width: 1024px) {
-  #root {
-    border-inline: none;
-    padding: 0 10px;
-  }
-
-  h1 {
-    font-size: 36px;
-  }
-
-  h2 {
-    font-size: 22px;
-  }
-
-  .hero-overlay {
-    padding: 18px;
-  }
-
-  .hero-title {
-    font-size: 2rem;
-  }
-
-  .hero-text {
-    font-size: 1rem;
-  }
-
-  .navbar {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 15px 14px !important;
-  }
-
-  .navbar ul {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .services-section,
-  .gallery-section,
-  .dentists-section,
-  .contact-section {
-    padding: 30px 15px;
-  }
-
-  .services-cards,
-  .dentists-cards {
-    justify-content: center;
-    gap: 16px;
-  }
-
-  .service-card,
-  .dentists-cards > div {
-    width: 100% !important;
-    max-width: 280px;
-  }
-
-  .footer .links {
-    flex-direction: column;
-    gap: 8px;
-  }
-}
-
-h1,
-h2 {
+/* --- TIPOGRAFÍAS --- */
+h1, h2 {
   font-family: var(--heading);
   font-weight: 500;
   color: var(--text-h);
@@ -204,26 +99,29 @@ h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
   margin: 32px 0;
+
   @media (max-width: 1024px) {
     font-size: 36px;
     margin: 20px 0;
   }
 }
+
 h2 {
   font-size: 24px;
   line-height: 118%;
   letter-spacing: -0.24px;
   margin: 0 0 8px;
+
   @media (max-width: 1024px) {
     font-size: 20px;
   }
 }
+
 p {
   margin: 0;
 }
 
-code,
-.counter {
+code, .counter {
   font-family: var(--mono);
   display: inline-flex;
   border-radius: 4px;
@@ -236,6 +134,136 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
-html {
-  scroll-behavior: smooth;
+
+/* --- COMPONENTE: NAVBAR --- */
+.navbar {
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0a2540;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 15px 5%; /* Padding dinámico para alinearse con los contenedores */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  ul {
+    display: flex;
+    gap: 15px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--accent);
+    }
+  }
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 15px 20px !important;
+
+    ul {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+}
+
+/* --- COMPONENTE: HERO --- */
+.hero-section {
+  width: 100%;
+  height: 85vh;
+  min-height: 420px;
+}
+
+.hero-overlay {
+  background-color: rgba(10, 37, 64, 0.7);
+  padding: 32px;
+  border-radius: 12px;
+
+  @media (max-width: 1024px) {
+    padding: 20px;
+    margin: 0 16px; /* Evita colisiones laterales en móviles */
+  }
+}
+
+.hero-title {
+  @media (max-width: 1024px) {
+    font-size: 2rem;
+  }
+}
+
+.hero-text {
+  @media (max-width: 1024px) {
+    font-size: 1rem;
+  }
+}
+
+/* --- COMPONENTE: TARJETAS & CONTENEDORES --- */
+.service-card,
+.dentists-cards > div,
+.gallery-grid img {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.services-section,
+.gallery-section,
+.dentists-section,
+.contact-section {
+  padding: 60px 20px; /* Padding unificado para escritorio */
+
+  @media (max-width: 1024px) {
+    padding: 40px 16px;
+  }
+}
+
+.services-cards,
+.dentists-cards {
+  @media (max-width: 1024px) {
+    justify-content: center;
+    gap: 16px;
+  }
+}
+
+.service-card,
+.dentists-cards > div {
+  @media (max-width: 1024px) {
+    width: 100% !important;
+    max-width: 280px;
+  }
+}
+
+/* --- COMPONENTE: CONTACTO Y FOOTER --- */
+.contact-section .content {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer {
+  .links {
+    @media (max-width: 1024px) {
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
 }
