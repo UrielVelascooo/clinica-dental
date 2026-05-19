@@ -291,7 +291,7 @@ function AdminDashboard() {
                     <th style={styles.th}>Fecha</th>
                     <th style={styles.th}>Hora</th>
                     <th style={styles.th}>Estatus</th>
-                    <th style={styles.th}>Notas</th>
+                    <th style={styles.th}>Notes</th>
                     <th style={styles.th}>Acciones de Control</th>
                   </tr>
                 </thead>
@@ -341,13 +341,15 @@ function AdminDashboard() {
         </div>
       )}
 
+      {/* TAB: PRODUCTOS */}
       {activeTab === "productos" && (
         <div style={{ 
           display: "grid", 
           gridTemplateColumns: isMobile ? "1fr" : "1fr 2fr", 
           gap: isMobile ? "20px" : "30px", 
           alignItems: "start",
-          width: "100%"
+          width: "100%",
+          boxSizing: "border-box"
         }}>
           {/* CARTA FORMULARIO */}
           <div style={{ ...styles.formCard, padding: isMobile ? "16px" : "30px" }}>
@@ -407,6 +409,7 @@ function AdminDashboard() {
         </div>
       )}
 
+      {/* TAB: VENTAS */}
       {activeTab === "ventas" && (
         <div style={{ ...styles.tableCard, padding: isMobile ? "15px" : "35px" }}>
           <h2 style={{...styles.tableHeading, fontSize: isMobile ? "1.1rem" : "1.4rem", marginBottom: isMobile ? "15px" : "25px"}}>Registro de Ventas Históricas</h2>
