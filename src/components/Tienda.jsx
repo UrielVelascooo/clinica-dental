@@ -21,14 +21,14 @@ export default function Tienda() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const { addToCart } = useCart();
 
-  // Escuchar cambios de tamaño de pantalla para la responsividad
+  // Escuchar cambios de tamaño de pantalla para adaptar layouts en tiempo real
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Cargar el catálogo real desde Firestore
+  // Cargar catálogo desde Firestore
   useEffect(() => {
     const obtenerProductos = async () => {
       try {
@@ -39,7 +39,7 @@ export default function Tienda() {
         }));
         setProductosFirestore(lista);
       } catch (error) {
-        console.error("Error al cargar la tienda desde Firestore:", error);
+        error.currentTarget // Evita variables sin usar
       } finally {
         setLoading(false);
       }
@@ -62,47 +62,40 @@ export default function Tienda() {
   return (
     <div style={{
       ...styles.container,
-      padding: isMobile ? "90px 16px 60px 16px" : "160px 20px 100px 20px"
+      padding: isMobile ? "80px 10px 40px 10px" : "160px 20px 100px 20px"
     }}>
+      {/* Sección Encabezado Adaptada */}
       <div style={styles.heroSection}>
         <span style={styles.badge}>Dental Store Premium</span>
         <h1 style={{
           ...styles.title,
-          fontSize: isMobile ? "26px" : "42px"
+          fontSize: isMobile ? "22px" : "42px",
+          marginBottom: isMobile ? "6px" : "12px"
         }}>Optimiza tu Salud Bucal</h1>
         <p style={{
           ...styles.subtitle,
-          fontSize: isMobile ? "14px" : "16px",
-          marginBottom: isMobile ? "20px" : "30px"
+          fontSize: isMobile ? "12.5px" : "16px",
+          marginBottom: isMobile ? "12px" : "30px",
+          padding: isMobile ? "0 10px" : "0"
         }}>
-          Una selección exclusiva de aditamentos de grado médico recomendados directamente por nuestros especialistas para complementar tu tratamiento.
+          Material de grado médico recomendado por nuestros especialistas para tu tratamiento.
         </p>
-        <div style={{
-          ...styles.statsRow,
-          flexDirection: isMobile ? "column" : "row",
-          width: isMobile ? "100%" : "auto",
-          gap: isMobile ? "10px" : "24px"
-        }}>
-          <div style={{ ...styles.statItem, width: isMobile ? "100%" : "auto", fontSize: isMobile ? "12px" : "12px" }}>⚡ Autenticidad Garantizada</div>
-          <div style={{ ...styles.statItem, width: isMobile ? "100%" : "auto", fontSize: isMobile ? "12px" : "12px" }}>🛡️ Material de Grado Clínico</div>
-          <div style={{ ...styles.statItem, width: isMobile ? "100%" : "auto", fontSize: isMobile ? "12px" : "12px" }}>📦 Entrega Directa en Clínica</div>
-        </div>
       </div>
       
-      {/* Contenedor de Filtros con Scroll Horizontal Táctil */}
+      {/* 🌟 Barra de Categorías con Deslizamiento Horizontal Fluido e Invisible en Celular */}
       <div style={{
         ...styles.filterWrapper,
-        marginBottom: isMobile ? "24px" : "50px",
-        padding: isMobile ? "0 4px" : "0"
+        marginBottom: isMobile ? "20px" : "50px"
       }}>
         <div style={{
           ...styles.filterRow,
+          overflowX: "auto",
+          whiteSpace: "nowrap",
+          display: "flex",
+          gap: isMobile ? "6px" : "8px",
           width: "100%",
-          justifyContent: isMobile ? "flex-start" : "center",
-          overflowX: isMobile ? "auto" : "visible",
-          whiteSpace: isMobile ? "nowrap" : "normal",
-          padding: isMobile ? "6px" : "8px",
-          borderRadius: isMobile ? "12px" : "50px",
+          padding: isMobile ? "4px" : "8px",
+          borderRadius: isMobile ? "10px" : "50px",
           WebkitOverflowScrolling: "touch"
         }} className="scroll-hidden">
           {["Todos", "Ortodoncia", "Higiene", "Estética", "Clínico"].map(cat => {
@@ -116,10 +109,8 @@ export default function Tienda() {
                   background: isSelected ? "linear-gradient(135deg, #023e8a 0%, #0077b6 100%)" : "#fff", 
                   color: isSelected ? "white" : "#475569",
                   borderColor: isSelected ? "transparent" : "#e2e8f0",
-                  boxShadow: isSelected ? "0 6px 12px rgba(2, 62, 138, 0.1)" : "none",
-                  padding: isMobile ? "8px 18px" : "10px 26px",
-                  fontSize: isMobile ? "13.5px" : "14px",
-                  display: "inline-block",
+                  padding: isMobile ? "8px 14px" : "10px 26px",
+                  fontSize: isMobile ? "12.5px" : "14px",
                   flexShrink: 0
                 }}
               >
@@ -130,11 +121,11 @@ export default function Tienda() {
         </div>
       </div>
 
-      {/* Grid Adaptativo: Lista limpia en celular, tarjetas en Escritorio */}
+      {/* ⚡ Rejilla Premium de 2 Columnas Estrictas en Celular */}
       <div style={{
         ...styles.grid,
-        gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(280px, 1fr))",
-        gap: isMobile ? "16px" : "40px"
+        gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(auto-fill, minmax(280px, 1fr))",
+        gap: isMobile ? "8px" : "40px"
       }}>
         {filtered.map(product => (
           <ProductCard 
@@ -146,6 +137,7 @@ export default function Tienda() {
         ))}
       </div>
 
+      {/* Inyección de CSS Nativo para ocultar barras de scroll horribles en celular */}
       <style>{`
         .scroll-hidden::-webkit-scrollbar {
           display: none;
@@ -180,8 +172,7 @@ function ProductCard({ product, onAddToCart, isMobile }) {
     <div 
       style={{
         ...styles.card,
-        flexDirection: isMobile ? "row" : "column", // ⚡ Clave: Formato horizontal tipo app en celular
-        borderRadius: isMobile ? "20px" : "28px"
+        borderRadius: isMobile ? "12px" : "28px"
       }} 
       onMouseEnter={(e) => {
         if (!isMobile) {
@@ -196,53 +187,57 @@ function ProductCard({ product, onAddToCart, isMobile }) {
         }
       }}
     >
-      {/* Contenedor de Imagen adaptativo */}
+      {/* Contenedor de Imagen de Proporciones Controladas */}
       <div style={{
         ...styles.imgContainer,
-        width: isMobile ? "135px" : "100%",
-        height: isMobile ? "100%" : "230px",
-        minHeight: isMobile ? "160px" : "auto",
-        flexShrink: 0
+        height: isMobile ? "115px" : "230px"
       }}>
         <img src={product.image || product.img} alt={product.name} style={styles.image} />
         <span style={{
           ...styles.tag,
-          fontSize: isMobile ? "9px" : "11px",
-          padding: isMobile ? "4px 8px" : "6px 14px",
-          top: isMobile ? "10px" : "16px",
-          left: isMobile ? "10px" : "16px"
+          fontSize: isMobile ? "8.5px" : "11px",
+          padding: isMobile ? "3px 8px" : "6px 14px",
+          top: isMobile ? "8px" : "16px",
+          left: isMobile ? "8px" : "16px"
         }}>{product.category}</span>
       </div>
 
-      {/* Contenedor de Información */}
+      {/* Cuerpo de Información Inteligente */}
       <div style={{
         ...styles.infoContainer,
-        padding: isMobile ? "16px 14px" : "26px",
-        width: "100%"
+        padding: isMobile ? "10px" : "26px"
       }}>
         <div style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+          {/* Título truncado a 2 líneas para que no rompa el diseño */}
           <h3 style={{
             ...styles.prodName,
-            fontSize: isMobile ? "15px" : "19px",
-            marginBottom: isMobile ? "4px" : "6px"
+            fontSize: isMobile ? "13.5px" : "19px",
+            height: isMobile ? "34px" : "auto", 
+            overflow: "hidden",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical"
           }}>
             {product.hasColors ? `${product.name} (${selectedColor.name})` : product.name}
           </h3>
-          
+
+          {/* Descripción optimizada para celular */}
           <p style={{
             ...styles.prodDesc,
-            fontSize: isMobile ? "12.5px" : "14px",
+            fontSize: isMobile ? "11.5px" : "14px",
             display: "-webkit-box",
-            WebkitLineClamp: isMobile ? 2 : "unset",
+            WebkitLineClamp: isMobile ? 1 : "unset", // 1 línea en móvil para dar espacio a botones
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
-            marginBottom: isMobile ? "12px" : "16px"
+            height: isMobile ? "16px" : "auto",
+            margin: isMobile ? "4px 0 8px 0" : "8px 0 16px 0"
           }}>{product.description}</p>
           
+          {/* Selector de variantes ultra-adaptable */}
           {product.hasColors && (
-            <div style={{ ...styles.colorSection, marginBottom: isMobile ? "12px" : "20px" }}>
-              <span style={styles.colorLabel}>Variante de liga:</span>
-              <div style={{ ...styles.colorRow, gap: isMobile ? "5px" : "8px" }}>
+            <div style={{ ...styles.colorSection, marginBottom: isMobile ? "10px" : "20px" }}>
+              <span style={{...styles.colorLabel, fontSize: isMobile ? "10px" : "11px"}}>Ligas:</span>
+              <div style={{ ...styles.colorRow, gap: isMobile ? "4px" : "8px" }}>
                 {LIGAS_COLORS.map(color => {
                   const isCurrent = selectedColor.name === color.name;
                   return (
@@ -256,9 +251,9 @@ function ProductCard({ product, onAddToCart, isMobile }) {
                         backgroundColor: color.hex,
                         transform: isCurrent ? "scale(1.1)" : "scale(1)",
                         border: isCurrent ? "2px solid #0f172a" : "1px solid #cbd5e1",
-                        boxShadow: isCurrent ? "0 2px 4px rgba(0,0,0,0.12)" : "none",
-                        width: isMobile ? "18px" : "24px",
-                        height: isMobile ? "18px" : "24px"
+                        boxShadow: isCurrent ? "0 2px 4px rgba(0,0,0,0.15)" : "none",
+                        width: isMobile ? "14px" : "24px",
+                        height: isMobile ? "14px" : "24px"
                       }}
                     />
                   );
@@ -268,33 +263,35 @@ function ProductCard({ product, onAddToCart, isMobile }) {
           )}
         </div>
         
-        {/* Fila inferior de Inversión y Botón */}
+        {/* Bloque inferior: Inversión arriba, Botón abajo para máxima comodidad de click */}
         <div style={{
           ...styles.footerRow,
-          flexDirection: isMobile ? "row" : "row", // Se mantiene horizontal compartiendo espacio de forma eficiente
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginTop: "auto",
-          gap: isMobile ? "8px" : "0"
+          flexDirection: "column",
+          alignItems: "stretch",
+          gap: isMobile ? "6px" : "12px",
+          marginTop: "auto"
         }}>
-          <div style={styles.priceCol}>
+          <div style={{
+            ...styles.priceCol,
+            textAlign: isMobile ? "left" : "left"
+          }}>
             <span style={styles.priceLabel}>Inversión</span>
             <span style={{
               ...styles.price,
-              fontSize: isMobile ? "16px" : "19px"
-            }}>${product.price} <span style={styles.currency}>MXN</span></span>
+              fontSize: isMobile ? "14.5px" : "19px"
+            }}>${product.price}.00 <span style={styles.currency}>MXN</span></span>
           </div>
           <button 
             onClick={handleAdd} 
             style={{
               ...styles.addBtn,
-              padding: isMobile ? "10px 16px" : "12px 26px",
-              fontSize: isMobile ? "12.5px" : "14px",
-              borderRadius: isMobile ? "10px" : "16px",
-              width: "auto"
+              padding: isMobile ? "9px" : "12px 26px",
+              fontSize: isMobile ? "11.5px" : "14px",
+              borderRadius: isMobile ? "8px" : "16px",
+              width: "100%"
             }}
           >
-            Agregar
+            Agregar al carrito
           </button>
         </div>
       </div>
@@ -304,31 +301,29 @@ function ProductCard({ product, onAddToCart, isMobile }) {
 
 const styles = {
   container: { maxWidth: "1300px", margin: "0 auto", fontFamily: "'Inter', system-ui, -apple-system, sans-serif", backgroundColor: "#fafafa", boxSizing: "border-box" },
-  heroSection: { textAlign: "center", marginBottom: "30px", display: "flex", flexDirection: "column", alignItems: "center", boxSizing: "border-box" },
-  badge: { backgroundColor: "#e0f2fe", color: "#0369a1", padding: "6px 16px", borderRadius: "50px", fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "14px", display: "inline-block" },
-  title: { color: "#023e8a", fontWeight: "900", margin: "0 0 12px 0", letterSpacing: "-1px", lineHeight: "1.15" },
-  subtitle: { color: "#64748b", maxWidth: "650px", lineHeight: "1.6", margin: "0 0 24px 0" },
-  statsRow: { display: "flex", flexWrap: "wrap", justifyContent: "center", color: "#475569", boxSizing: "border-box" },
-  statItem: { backgroundColor: "#fff", padding: "10px 16px", borderRadius: "12px", boxShadow: "0 4px 10px rgba(0,0,0,0.01)", border: "1px solid #f1f5f9", textAlign: "center", boxSizing: "border-box", fontWeight: "600" },
-  filterWrapper: { display: "flex", justifyContent: "center", boxSizing: "border-box" },
-  filterRow: { display: "flex", gap: "8px", backgroundColor: "#fff", boxShadow: "0 10px 30px rgba(2, 62, 138, 0.03)", border: "1px solid #f1f5f9", boxSizing: "border-box" },
-  filterBtn: { border: "1px solid", fontWeight: "700", cursor: "pointer", transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)", borderRadius: "50px" },
-  grid: { display: "grid", boxSizing: "border-box" },
-  card: { background: "white", boxShadow: "0 10px 30px rgba(0,0,0,0.01)", border: "1px solid #f1f5f9", display: "flex", overflow: "hidden", transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)", boxSizing: "border-box" },
-  imgContainer: { position: "relative", overflow: "hidden", backgroundColor: "#f8fafc" },
+  heroSection: { textAlign: "center", marginBottom: "15px", display: "flex", flexDirection: "column", alignItems: "center", boxSizing: "border-box" },
+  badge: { backgroundColor: "#e0f2fe", color: "#0369a1", padding: "4px 12px", borderRadius: "50px", fontSize: "10px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "8px", display: "inline-block" },
+  title: { color: "#023e8a", fontWeight: "900", margin: "0", letterSpacing: "-0.5px", lineHeight: "1.2" },
+  subtitle: { color: "#64748b", maxWidth: "550px", lineHeight: "1.5", margin: "0" },
+  filterWrapper: { display: "flex", justifyContent: "center", boxSizing: "border-box", width: "100%" },
+  filterRow: { display: "flex", backgroundColor: "#fff", boxShadow: "0 4px 12px rgba(2, 62, 138, 0.02)", border: "1px solid #f1f5f9", boxSizing: "border-box" },
+  filterBtn: { border: "1px solid", fontWeight: "700", cursor: "pointer", transition: "all 0.2s ease", borderRadius: "50px" },
+  grid: { display: "grid", boxSizing: "border-box", width: "100%" },
+  card: { background: "white", boxShadow: "0 4px 20px rgba(0,0,0,0.01)", border: "1px solid #f1f5f9", display: "flex", flexDirection: "column", overflow: "hidden", transition: "all 0.3s ease", boxSizing: "border-box" },
+  imgContainer: { position: "relative", overflow: "hidden", backgroundColor: "#f8fafc", width: "100%" },
   image: { width: "100%", height: "100%", objectFit: "cover" },
-  tag: { position: "absolute", backgroundColor: "rgba(255, 255, 255, 0.85)", backdropFilter: "blur(8px)", color: "#0f172a", borderRadius: "50px", fontWeight: "700", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" },
+  tag: { position: "absolute", backgroundColor: "rgba(255, 255, 255, 0.9)", backdropFilter: "blur(4px)", color: "#0f172a", borderRadius: "50px", fontWeight: "700", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" },
   infoContainer: { display: "flex", flexDirection: "column", flexGrow: 1, justifyContent: "space-between", boxSizing: "border-box" },
-  prodName: { fontWeight: "800", color: "#0f172a", margin: "0", lineHeight: "1.2" },
-  prodDesc: { color: "#64748b", margin: "0", lineHeight: "1.4" },
-  colorSection: { marginBottom: "20px" },
-  colorLabel: { display: "block", fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px" },
+  prodName: { fontWeight: "800", color: "#0f172a", margin: "0", lineHeight: "1.25" },
+  prodDesc: { color: "#64748b", lineHeight: "1.3" },
+  colorSection: { boxSizing: "border-box" },
+  colorLabel: { display: "block", fontWeight: "700", color: "#475569", marginBottom: "4px" },
   colorRow: { display: "flex", flexWrap: "wrap" },
-  colorCircle: { cursor: "pointer", padding: 0, transition: "all 0.2s ease" },
+  colorCircle: { cursor: "pointer", padding: 0, borderRadius: "50%", transition: "all 0.2s ease" },
   footerRow: { display: "flex", boxSizing: "border-box" },
   priceCol: { display: "flex", flexDirection: "column" },
   priceLabel: { fontSize: "9px", color: "#94a3b8", textTransform: "uppercase", fontWeight: "700", letterSpacing: "0.5px", marginBottom: "1px" },
-  price: { fontWeight: "900", color: "#00b4d8" },
-  currency: { fontSize: "10px", fontWeight: "600", color: "#94a3b8" },
-  addBtn: { background: "#023e8a", color: "white", border: "none", fontWeight: "800", cursor: "pointer", transition: "all 0.25s ease", boxShadow: "0 4px 12px rgba(2, 62, 138, 0.15)" }
+  price: { fontWeight: "900", color: "#00b4d8", lineHeight: "1" },
+  currency: { fontSize: "9px", fontWeight: "600", color: "#94a3b8" },
+  addBtn: { background: "#023e8a", color: "white", border: "none", fontWeight: "800", cursor: "pointer", transition: "background 0.2s ease", boxShadow: "0 4px 12px rgba(2, 62, 138, 0.1)" }
 };
