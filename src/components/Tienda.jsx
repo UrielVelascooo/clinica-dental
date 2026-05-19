@@ -11,7 +11,7 @@ const LIGAS_COLORS = [
   { name: "Verde", hex: "#10b981" },
   { name: "Rosa", hex: "#ec4899" },
   { name: "Morado", hex: "#8b5cf6" },
-  { name: "Gris", hex: "#94a3b8" } // Nombre acortado para evitar desbordamientos en móvil
+  { name: "Gris", hex: "#94a3b8" }
 ];
 
 export default function Tienda() {
@@ -62,18 +62,18 @@ export default function Tienda() {
   return (
     <div style={{
       ...styles.container,
-      padding: isMobile ? "100px 12px 60px 12px" : "160px 20px 100px 20px"
+      padding: isMobile ? "90px 16px 60px 16px" : "160px 20px 100px 20px"
     }}>
       <div style={styles.heroSection}>
         <span style={styles.badge}>Dental Store Premium</span>
         <h1 style={{
           ...styles.title,
-          fontSize: isMobile ? "24px" : "42px"
+          fontSize: isMobile ? "26px" : "42px"
         }}>Optimiza tu Salud Bucal</h1>
         <p style={{
           ...styles.subtitle,
-          fontSize: isMobile ? "13px" : "16px",
-          marginBottom: isMobile ? "16px" : "30px"
+          fontSize: isMobile ? "14px" : "16px",
+          marginBottom: isMobile ? "20px" : "30px"
         }}>
           Una selección exclusiva de aditamentos de grado médico recomendados directamente por nuestros especialistas para complementar tu tratamiento.
         </p>
@@ -81,11 +81,11 @@ export default function Tienda() {
           ...styles.statsRow,
           flexDirection: isMobile ? "column" : "row",
           width: isMobile ? "100%" : "auto",
-          gap: isMobile ? "8px" : "24px"
+          gap: isMobile ? "10px" : "24px"
         }}>
-          <div style={{ ...styles.statItem, width: isMobile ? "100%" : "auto", fontSize: isMobile ? "11px" : "12px" }}>⚡ Autenticidad Garantizada</div>
-          <div style={{ ...styles.statItem, width: isMobile ? "100%" : "auto", fontSize: isMobile ? "11px" : "12px" }}>🛡️ Material de Grado Clínico</div>
-          <div style={{ ...styles.statItem, width: isMobile ? "100%" : "auto", fontSize: isMobile ? "11px" : "12px" }}>📦 Entrega Directa en Clínica</div>
+          <div style={{ ...styles.statItem, width: isMobile ? "100%" : "auto", fontSize: isMobile ? "12px" : "12px" }}>⚡ Autenticidad Garantizada</div>
+          <div style={{ ...styles.statItem, width: isMobile ? "100%" : "auto", fontSize: isMobile ? "12px" : "12px" }}>🛡️ Material de Grado Clínico</div>
+          <div style={{ ...styles.statItem, width: isMobile ? "100%" : "auto", fontSize: isMobile ? "12px" : "12px" }}>📦 Entrega Directa en Clínica</div>
         </div>
       </div>
       
@@ -93,7 +93,7 @@ export default function Tienda() {
       <div style={{
         ...styles.filterWrapper,
         marginBottom: isMobile ? "24px" : "50px",
-        padding: isMobile ? "0 2px" : "0"
+        padding: isMobile ? "0 4px" : "0"
       }}>
         <div style={{
           ...styles.filterRow,
@@ -117,8 +117,8 @@ export default function Tienda() {
                   color: isSelected ? "white" : "#475569",
                   borderColor: isSelected ? "transparent" : "#e2e8f0",
                   boxShadow: isSelected ? "0 6px 12px rgba(2, 62, 138, 0.1)" : "none",
-                  padding: isMobile ? "8px 16px" : "10px 26px",
-                  fontSize: isMobile ? "13px" : "14px",
+                  padding: isMobile ? "8px 18px" : "10px 26px",
+                  fontSize: isMobile ? "13.5px" : "14px",
                   display: "inline-block",
                   flexShrink: 0
                 }}
@@ -130,11 +130,11 @@ export default function Tienda() {
         </div>
       </div>
 
-      {/* Grid de Productos Adaptativo - ¡2 columnas en celular! */}
+      {/* Grid Adaptativo: Lista limpia en celular, tarjetas en Escritorio */}
       <div style={{
         ...styles.grid,
-        gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(auto-fill, minmax(280px, 1fr))",
-        gap: isMobile ? "12px" : "40px"
+        gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(280px, 1fr))",
+        gap: isMobile ? "16px" : "40px"
       }}>
         {filtered.map(product => (
           <ProductCard 
@@ -180,7 +180,8 @@ function ProductCard({ product, onAddToCart, isMobile }) {
     <div 
       style={{
         ...styles.card,
-        borderRadius: isMobile ? "16px" : "28px"
+        flexDirection: isMobile ? "row" : "column", // ⚡ Clave: Formato horizontal tipo app en celular
+        borderRadius: isMobile ? "20px" : "28px"
       }} 
       onMouseEnter={(e) => {
         if (!isMobile) {
@@ -195,9 +196,13 @@ function ProductCard({ product, onAddToCart, isMobile }) {
         }
       }}
     >
+      {/* Contenedor de Imagen adaptativo */}
       <div style={{
         ...styles.imgContainer,
-        height: isMobile ? "140px" : "230px"
+        width: isMobile ? "135px" : "100%",
+        height: isMobile ? "100%" : "230px",
+        minHeight: isMobile ? "160px" : "auto",
+        flexShrink: 0
       }}>
         <img src={product.image || product.img} alt={product.name} style={styles.image} />
         <span style={{
@@ -209,34 +214,35 @@ function ProductCard({ product, onAddToCart, isMobile }) {
         }}>{product.category}</span>
       </div>
 
+      {/* Contenedor de Información */}
       <div style={{
         ...styles.infoContainer,
-        padding: isMobile ? "12px" : "26px"
+        padding: isMobile ? "16px 14px" : "26px",
+        width: "100%"
       }}>
         <div style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
           <h3 style={{
             ...styles.prodName,
-            fontSize: isMobile ? "14px" : "19px",
-            height: isMobile ? "38px" : "auto", // Mantiene alineados los elementos con nombres de hasta 2 líneas
-            overflow: "hidden"
+            fontSize: isMobile ? "15px" : "19px",
+            marginBottom: isMobile ? "4px" : "6px"
           }}>
             {product.hasColors ? `${product.name} (${selectedColor.name})` : product.name}
           </h3>
+          
           <p style={{
             ...styles.prodDesc,
-            fontSize: isMobile ? "12px" : "14px",
+            fontSize: isMobile ? "12.5px" : "14px",
             display: "-webkit-box",
             WebkitLineClamp: isMobile ? 2 : "unset",
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
-            height: isMobile ? "36px" : "auto",
-            marginBottom: isMobile ? "10px" : "16px"
+            marginBottom: isMobile ? "12px" : "16px"
           }}>{product.description}</p>
           
           {product.hasColors && (
             <div style={{ ...styles.colorSection, marginBottom: isMobile ? "12px" : "20px" }}>
-              <span style={styles.colorLabel}>Liga:</span>
-              <div style={{ ...styles.colorRow, gap: isMobile ? "4px" : "8px" }}>
+              <span style={styles.colorLabel}>Variante de liga:</span>
+              <div style={{ ...styles.colorRow, gap: isMobile ? "5px" : "8px" }}>
                 {LIGAS_COLORS.map(color => {
                   const isCurrent = selectedColor.name === color.name;
                   return (
@@ -250,9 +256,9 @@ function ProductCard({ product, onAddToCart, isMobile }) {
                         backgroundColor: color.hex,
                         transform: isCurrent ? "scale(1.1)" : "scale(1)",
                         border: isCurrent ? "2px solid #0f172a" : "1px solid #cbd5e1",
-                        boxShadow: isCurrent ? "0 2px 4px rgba(0,0,0,0.15)" : "none",
-                        width: isMobile ? "16px" : "24px",
-                        height: isMobile ? "16px" : "24px"
+                        boxShadow: isCurrent ? "0 2px 4px rgba(0,0,0,0.12)" : "none",
+                        width: isMobile ? "18px" : "24px",
+                        height: isMobile ? "18px" : "24px"
                       }}
                     />
                   );
@@ -262,34 +268,30 @@ function ProductCard({ product, onAddToCart, isMobile }) {
           )}
         </div>
         
-        {/* Fila inferior de Precio y Botón */}
+        {/* Fila inferior de Inversión y Botón */}
         <div style={{
           ...styles.footerRow,
-          flexDirection: isMobile ? "column" : "row",
-          alignItems: isMobile ? "stretch" : "center",
-          gap: isMobile ? "10px" : "0px"
+          flexDirection: isMobile ? "row" : "row", // Se mantiene horizontal compartiendo espacio de forma eficiente
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginTop: "auto",
+          gap: isMobile ? "8px" : "0"
         }}>
-          <div style={{
-            ...styles.priceCol,
-            textAlign: isMobile ? "center" : "left",
-            backgroundColor: isMobile ? "#f8fafc" : "transparent",
-            padding: isMobile ? "4px" : "0",
-            borderRadius: isMobile ? "8px" : "0"
-          }}>
+          <div style={styles.priceCol}>
             <span style={styles.priceLabel}>Inversión</span>
             <span style={{
               ...styles.price,
-              fontSize: isMobile ? "15px" : "19px"
-            }}>${product.price}.00 <span style={styles.currency}>MXN</span></span>
+              fontSize: isMobile ? "16px" : "19px"
+            }}>${product.price} <span style={styles.currency}>MXN</span></span>
           </div>
           <button 
             onClick={handleAdd} 
             style={{
               ...styles.addBtn,
-              padding: isMobile ? "10px" : "12px 26px",
-              fontSize: isMobile ? "12px" : "14px",
+              padding: isMobile ? "10px 16px" : "12px 26px",
+              fontSize: isMobile ? "12.5px" : "14px",
               borderRadius: isMobile ? "10px" : "16px",
-              width: isMobile ? "100%" : "auto"
+              width: "auto"
             }}
           >
             Agregar
@@ -312,18 +314,18 @@ const styles = {
   filterRow: { display: "flex", gap: "8px", backgroundColor: "#fff", boxShadow: "0 10px 30px rgba(2, 62, 138, 0.03)", border: "1px solid #f1f5f9", boxSizing: "border-box" },
   filterBtn: { border: "1px solid", fontWeight: "700", cursor: "pointer", transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)", borderRadius: "50px" },
   grid: { display: "grid", boxSizing: "border-box" },
-  card: { background: "white", boxShadow: "0 10px 30px rgba(0,0,0,0.02)", border: "1px solid #f1f5f9", display: "flex", flexDirection: "column", overflow: "hidden", transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)", boxSizing: "border-box" },
-  imgContainer: { position: "relative", overflow: "hidden", backgroundColor: "#f8fafc", width: "100%" },
+  card: { background: "white", boxShadow: "0 10px 30px rgba(0,0,0,0.01)", border: "1px solid #f1f5f9", display: "flex", overflow: "hidden", transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)", boxSizing: "border-box" },
+  imgContainer: { position: "relative", overflow: "hidden", backgroundColor: "#f8fafc" },
   image: { width: "100%", height: "100%", objectFit: "cover" },
   tag: { position: "absolute", backgroundColor: "rgba(255, 255, 255, 0.85)", backdropFilter: "blur(8px)", color: "#0f172a", borderRadius: "50px", fontWeight: "700", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" },
   infoContainer: { display: "flex", flexDirection: "column", flexGrow: 1, justifyContent: "space-between", boxSizing: "border-box" },
-  prodName: { fontWeight: "800", color: "#0f172a", margin: "0 0 4px 0", lineHeight: "1.2" },
+  prodName: { fontWeight: "800", color: "#0f172a", margin: "0", lineHeight: "1.2" },
   prodDesc: { color: "#64748b", margin: "0", lineHeight: "1.4" },
   colorSection: { marginBottom: "20px" },
   colorLabel: { display: "block", fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px" },
   colorRow: { display: "flex", flexWrap: "wrap" },
   colorCircle: { cursor: "pointer", padding: 0, transition: "all 0.2s ease" },
-  footerRow: { display: "flex", justifyContent: "space-between", marginTop: "auto", boxSizing: "border-box" },
+  footerRow: { display: "flex", boxSizing: "border-box" },
   priceCol: { display: "flex", flexDirection: "column" },
   priceLabel: { fontSize: "9px", color: "#94a3b8", textTransform: "uppercase", fontWeight: "700", letterSpacing: "0.5px", marginBottom: "1px" },
   price: { fontWeight: "900", color: "#00b4d8" },
