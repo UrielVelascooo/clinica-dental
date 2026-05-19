@@ -179,71 +179,71 @@ export default function Checkout() {
   return (
     <div style={{
       ...styles.container,
-      padding: isMobile ? "95px 16px 40px" : "160px 20px 80px"
+      padding: isMobile ? "80px 10px 40px 10px" : "160px 20px 80px 20px"
     }}>
       <div style={{
         ...styles.grid,
         gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
-        gap: isMobile ? "20px" : "40px"
+        gap: isMobile ? "12px" : "40px"
       }}>
         
-        {/* COLUMNA: Resumen de Compra O Ficha Digital OXXO Pay (En móvil pasa arriba) */}
+        {/* COLUMNA: Resumen de Compra O Ficha Digital OXXO Pay */}
         <div style={{
           ...styles.summaryCard,
-          order: isMobile && !fichaOxxo ? 1 : 0, // Muestra el resumen arriba del formulario en celulares
-          padding: isMobile ? "20px" : "30px"
+          order: isMobile && !fichaOxxo ? 1 : 0, 
+          padding: isMobile ? "15px" : "30px"
         }}>
           {fichaOxxo ? (
             <div style={styles.oxxoTicket}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                <span style={{ fontSize: isMobile ? "20px" : "24px", fontWeight: "900", color: "#E31B23" }}>OXXO<span style={{ color: "#000" }}>PAY</span></span>
-                <span style={styles.badgeEfectivo}>Efectivo</span>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
+                <span style={{ fontSize: isMobile ? "18px" : "24px", fontWeight: "900", color: "#E31B23" }}>OXXO<span style={{ color: "#000" }}>PAY</span></span>
+                <span style={{...styles.badgeEfectivo, fontSize: isMobile ? "11px" : "12px"}}>Efectivo</span>
               </div>
               
-              <h4 style={{ margin: "0 0 5px 0", fontSize: "13px", color: "#64748b" }}>MONTO A PAGAR TOTAL</h4>
-              <p style={{ margin: "0 0 20px 0", fontSize: isMobile ? "1.8rem" : "2.2rem", fontWeight: "900", color: "#0f172a" }}>${fichaOxxo.monto}.00 MXN</p>
+              <h4 style={{ margin: "0 0 4px 0", fontSize: "11px", color: "#64748b" }}>MONTO A PAGAR TOTAL</h4>
+              <p style={{ margin: "0 0 15px 0", fontSize: isMobile ? "1.5rem" : "2.2rem", fontWeight: "900", color: "#0f172a" }}>${fichaOxxo.monto}.00 MXN</p>
               
-              <div style={{ background: "#fff", padding: "12px", borderRadius: "12px", border: "1px dashed #cbd5e1", marginBottom: "20px", overflowX: "auto" }}>
-                <span style={{ display: "block", fontSize: "11px", fontWeight: "700", color: "#64748b", marginBottom: "5px", letterSpacing: "0.5px" }}>REFERENCIA DE PAGO DIGITAL</span>
-                <span style={{ fontFamily: "monospace", fontSize: isMobile ? "15px" : "18px", fontWeight: "bold", color: "#0f172a", letterSpacing: "1px", whiteSpace: "nowrap" }}>{fichaOxxo.referencia}</span>
+              <div style={{ background: "#fff", padding: "10px", borderRadius: "10px", border: "1px dashed #cbd5e1", marginBottom: "15px", width: "100%", boxSizing: "border-box" }}>
+                <span style={{ display: "block", fontSize: "10px", fontWeight: "700", color: "#64748b", marginBottom: "4px", letterSpacing: "0.5px" }}>REFERENCIA DE PAGO DIGITAL</span>
+                <span style={{ fontFamily: "monospace", fontSize: isMobile ? "13px" : "18px", fontWeight: "bold", color: "#0f172a", letterSpacing: "0.5px", display: "block", width: "100%" }}>{fichaOxxo.referencia}</span>
               </div>
 
               <div style={styles.barcodeContainer}>
-                <div style={{...styles.barcodeLines, fontSize: isMobile ? "20px" : "28px"}}>{isMobile ? "|||| |||| |||| ||||" : "||||| | |||| || ||| |||| | |||| || ||| ||||| | |||"}</div>
-                <span style={{ fontSize: "11px", color: "#94a3b8", fontFamily: "monospace", marginTop: "5px" }}>{fichaOxxo.referencia.replace(/-/g, "")}</span>
+                <div style={{...styles.barcodeLines, fontSize: isMobile ? "16px" : "28px"}}>{isMobile ? "|||| |||| |||| ||||" : "||||| | |||| || ||| |||| | |||| || ||| ||||| | |||"}</div>
+                <span style={{ fontSize: "10px", color: "#94a3b8", fontFamily: "monospace", marginTop: "4px" }}>{fichaOxxo.referencia.replace(/-/g, "")}</span>
               </div>
 
-              <p style={{ fontSize: "12px", color: "#64748b", lineHeight: "1.5", margin: "20px 0 0 0", textAlign: "center" }}>
+              <p style={{ fontSize: isMobile ? "11px" : "12px", color: "#64748b", lineHeight: "1.4", margin: "15px 0 0 0", textAlign: "center" }}>
                 Presenta este código en caja. Tienes hasta el <strong>{fichaOxxo.fechaExpiracion}</strong> antes de que expire la orden de pago. <br />
-                <span style={{fontSize: '11px', color: '#94a3b8'}}>ID Orden: {fichaOxxo.idFirebase}</span>
+                <span style={{fontSize: '10px', color: '#94a3b8'}}>ID Orden: {fichaOxxo.idFirebase}</span>
               </p>
               
               <button 
                 onClick={() => { setFichaOxxo(null); clearCart(); navigate("/tienda"); }} 
-                style={{ width: "100%", marginTop: "20px", padding: "14px", background: "#023e8a", color: "white", border: "none", borderRadius: "12px", fontWeight: "700", cursor: "pointer" }}
+                style={{ width: "100%", marginTop: "15px", padding: "12px", background: "#023e8a", color: "white", border: "none", borderRadius: "10px", fontWeight: "700", cursor: "pointer", fontSize: isMobile ? "13px" : "14px" }}
               >
                 Entendido, Vaciar y Regresar
               </button>
             </div>
           ) : (
             <>
-              <h3 style={styles.sectionTitle}>Resumen de Compra</h3>
+              <h3 style={{...styles.sectionTitle, fontSize: isMobile ? "16px" : "20px", marginBottom: isMobile ? "12px" : "20px"}}>Resumen de Compra</h3>
               {cart.map(item => (
                 <div key={item.id} style={styles.itemRow}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "12px", maxWidth: "75%" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", maxWidth: "75%", boxSizing: "border-box" }}>
                     <img 
                       src={item.image || item.img || "https://via.placeholder.com/150"} 
                       alt={item.name} 
-                      style={{ width: "40px", height: "40px", borderRadius: "8px", objectFit: "cover", flexShrink: 0 }}
+                      style={{ width: isMobile ? "34px" : "40px", height: isMobile ? "34px" : "40px", borderRadius: "6px", objectFit: "cover", flexShrink: 0 }}
                     />
-                    <span style={{ fontSize: isMobile ? "14px" : "15px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.name} (x{item.quantity})</span>
+                    <span style={{ fontSize: isMobile ? "13px" : "15px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.name} (x{item.quantity})</span>
                   </div>
-                  <span style={{fontWeight:'700', alignSelf: 'center', fontSize: isMobile ? "14px" : "15px"}}>${item.price * item.quantity}.00</span>
+                  <span style={{fontWeight:'700', alignSelf: 'center', fontSize: isMobile ? "13px" : "15px"}}>${item.price * item.quantity}.00</span>
                 </div>
               ))}
               <div style={styles.totalRow}>
-                <span style={{ fontSize: isMobile ? "16px" : "18px" }}>Total a pagar:</span>
-                <span style={{ fontSize: isMobile ? "16px" : "18px" }}>${totalPagar}.00 MXN</span>
+                <span style={{ fontSize: isMobile ? "15px" : "18px" }}>Total a pagar:</span>
+                <span style={{ fontSize: isMobile ? "15px" : "18px" }}>${totalPagar}.00 MXN</span>
               </div>
             </>
           )}
@@ -253,9 +253,9 @@ export default function Checkout() {
         <div style={{
           ...styles.paymentCard,
           order: isMobile ? 2 : 0,
-          padding: isMobile ? "20px" : "30px"
+          padding: isMobile ? "15px" : "30px"
         }}>
-          <h3 style={styles.sectionTitle}>Método de Pago</h3>
+          <h3 style={{...styles.sectionTitle, fontSize: isMobile ? "16px" : "20px", marginBottom: isMobile ? "12px" : "20px"}}>Método de Pago</h3>
           <div style={styles.tabs}>
             {["card", "oxxo", "paypal"].map(m => (
               <button 
@@ -269,8 +269,8 @@ export default function Checkout() {
                   background: method === m ? "#f0fdfa" : "white",
                   opacity: fichaOxxo ? 0.5 : 1,
                   cursor: fichaOxxo ? "not-allowed" : "pointer",
-                  fontSize: isMobile ? "12px" : "14px",
-                  padding: isMobile ? "10px 4px" : "12px"
+                  fontSize: isMobile ? "11.5px" : "14px",
+                  padding: isMobile ? "8px 2px" : "12px"
                 }}
               >
                 {m === "card" && "💳 Tarjeta"}
@@ -280,20 +280,20 @@ export default function Checkout() {
             ))}
           </div>
 
-          <form onSubmit={handlePayment} style={{marginTop: '25px'}}>
+          <form onSubmit={handlePayment} style={{marginTop: isMobile ? '16px' : '25px'}}>
             {method === "card" && (
-              <div style={styles.formGap}>
-                <span style={{fontSize: "12px", color: "#64748b", wordBreak: "break-all"}}>Registrando compra para: <strong>{user?.email}</strong></span>
+              <div style={{...styles.formGap, gap: isMobile ? "10px" : "15px"}}>
+                <span style={{fontSize: "11px", color: "#64748b", wordBreak: "break-all"}}>Registrando compra para: <strong style={{color: "#0f172a"}}>{user?.email}</strong></span>
                 
-                {/* Input de Tarjeta Inteligente */}
-                <div style={{ position: "relative" }}>
+                {/* Input de Tarjeta */}
+                <div style={{ position: "relative", width: "100%" }}>
                   <input 
                     type="text" 
                     placeholder="Número de Tarjeta (16 dígitos)" 
                     value={cardNumber}
                     onChange={handleCardNumberChange}
                     required 
-                    style={styles.input}
+                    style={{...styles.input, padding: isMobile ? "12px" : "15px", fontSize: isMobile ? "13px" : "14px"}}
                   />
                   {cardType && !isMobile && (
                     <span style={{
@@ -314,14 +314,14 @@ export default function Checkout() {
                   )}
                 </div>
 
-                <div style={{display: 'flex', gap: '15px'}}>
+                <div style={{display: 'flex', gap: isMobile ? '8px' : '15px', width: "100%"}}>
                   <input 
                     type="text" 
                     placeholder="MM/AA" 
                     value={cardExpiry}
                     onChange={handleExpiryChange}
                     required 
-                    style={styles.input}
+                    style={{...styles.input, padding: isMobile ? "12px" : "15px", fontSize: isMobile ? "13px" : "14px"}}
                   />
                   <input 
                     type="text" 
@@ -329,25 +329,25 @@ export default function Checkout() {
                     value={cardCvv}
                     onChange={handleCvvChange}
                     required 
-                    style={styles.input}
+                    style={{...styles.input, padding: isMobile ? "12px" : "15px", fontSize: isMobile ? "13px" : "14px"}}
                   />
                 </div>
               </div>
             )}
 
             {method === "oxxo" && !fichaOxxo && (
-              <div style={{ padding: "15px", backgroundColor: "#fef3c7", border: "1px solid #fde68a", borderRadius: "12px" }}>
-                <p style={styles.infoText}>Se generará una ficha digital interactiva vinculada a tu cuenta con un código de barras enlazado al total exacto de <strong>${totalPagar}.00 MXN</strong>.</p>
+              <div style={{ padding: "12px", backgroundColor: "#fef3c7", border: "1px solid #fde68a", borderRadius: "10px" }}>
+                <p style={{...styles.infoText, fontSize: isMobile ? "12.5px" : "14px"}}>Se generará una ficha digital interactiva vinculada a tu cuenta con un código de barras enlazado al total exacto de <strong>${totalPagar}.00 MXN</strong>.</p>
               </div>
             )}
 
             {method === "paypal" && (
-              <div style={{ padding: "15px", backgroundColor: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "12px" }}>
-                <p style={styles.infoText}>Serás redireccionado de forma real a los servidores externos de PayPal para validar tu sesión por un monto de <strong>${totalPagar}.00 MXN</strong>.</p>
+              <div style={{ padding: "12px", backgroundColor: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "10px" }}>
+                <p style={{...styles.infoText, fontSize: isMobile ? "12.5px" : "14px"}}>Serás redireccionado de forma real a los servidores externos de PayPal para validar tu sesión por un monto de <strong>${totalPagar}.00 MXN</strong>.</p>
               </div>
             )}
 
-            <button type="submit" disabled={loading || !!fichaOxxo} style={{ ...styles.payBtn, opacity: fichaOxxo ? 0.4 : 1, padding: isMobile ? "15px" : "18px", fontSize: isMobile ? "14px" : "15px" }}>
+            <button type="submit" disabled={loading || !!fichaOxxo} style={{ ...styles.payBtn, opacity: fichaOxxo ? 0.4 : 1, padding: isMobile ? "12px" : "18px", fontSize: isMobile ? "13.5px" : "15px", marginTop: isMobile ? "16px" : "25px" }}>
               {loading ? "PROCESANDO TRANSACCIÓN..." : method === "oxxo" ? "GENERAR REFERENCIA OXXO" : method === "paypal" ? "PAGAR CON PAYPAL ↗" : `PAGAR $${totalPagar}.00 MXN`}
             </button>
           </form>
@@ -359,21 +359,21 @@ export default function Checkout() {
 }
 
 const styles = {
-  container: { maxWidth: "1000px", margin: "0 auto", fontFamily: "'Inter', sans-serif", boxSizing: "border-box" },
-  grid: { display: "grid", alignItems: "start", boxSizing: "border-box" },
-  summaryCard: { background: "#f8fafc", borderRadius: "24px", border: "1px solid #e2e8f0", boxSizing: "border-box" },
-  paymentCard: { background: "white", borderRadius: "24px", boxShadow: "0 20px 50px rgba(0,0,0,0.04)", border: "1px solid #e2e8f0", boxSizing: "border-box" },
-  sectionTitle: { fontSize: "20px", fontWeight: "800", color: "#0a2540", marginTop: 0, marginBottom: "20px" },
-  itemRow: { display: "flex", justifyContent: "space-between", paddingBottom: "12px", borderBottom: "1px solid #e2e8f0", marginBottom: "12px", color: "#334155" },
-  totalRow: { display: "flex", justifyContent: "space-between", fontWeight: "900", color: "#023e8a", marginTop: "20px" },
-  tabs: { display: "flex", gap: "10px" },
-  tabBtn: { flex: 1, borderRadius: "12px", border: "2px solid", fontWeight: "700", transition: "all 0.2s" },
-  formGap: { display: "flex", flexDirection: "column", gap: "15px" },
-  input: { width: "100%", padding: "15px", borderRadius: "12px", border: "1px solid #cbd5e1", boxSizing: "border-box", fontSize: "14px", outline: "none" },
-  infoText: { fontSize: "14px", color: "#475569", lineHeight: "1.5", margin: 0 },
-  payBtn: { width: "100%", background: "linear-gradient(135deg, #023e8a, #0077b6)", color: "white", border: "none", borderRadius: "14px", fontWeight: "800", cursor: "pointer", marginTop: "25px", boxShadow: "0 4px 12px rgba(2,62,138,0.2)" },
-  oxxoTicket: { background: "#fff", padding: "5px", borderRadius: "16px", boxSizing: "border-box" },
-  badgeEfectivo: { background: "#fef3c7", color: "#d97706", padding: "4px 10px", borderRadius: "50px", fontSize: "12px", fontWeight: "700" },
-  barcodeContainer: { display: "flex", flexDirection: "column", alignItems: "center", background: "#f8fafc", padding: "15px", borderRadius: "10px", boxSizing: "border-box" },
+  container: { maxWidth: "1000px", margin: "0 auto", fontFamily: "'Inter', sans-serif", boxSizing: "border-box", width: "100%" },
+  grid: { display: "grid", alignItems: "start", boxSizing: "border-box", width: "100%" },
+  summaryCard: { background: "#f8fafc", borderRadius: "16px", border: "1px solid #e2e8f0", boxSizing: "border-box", width: "100%" },
+  paymentCard: { background: "white", borderRadius: "16px", boxShadow: "0 12px 40px rgba(0,0,0,0.03)", border: "1px solid #e2e8f0", boxSizing: "border-box", width: "100%" },
+  sectionTitle: { fontWeight: "800", color: "#0a2540", marginTop: 0 },
+  itemRow: { display: "flex", justifyContent: "space-between", paddingBottom: "10px", borderBottom: "1px solid #e2e8f0", marginBottom: "10px", color: "#334155", boxSizing: "border-box" },
+  totalRow: { display: "flex", justifyContent: "space-between", fontWeight: "900", color: "#023e8a", marginTop: "15px", boxSizing: "border-box" },
+  tabs: { display: "flex", gap: "6px", width: "100%", boxSizing: "border-box" },
+  tabBtn: { flex: 1, borderRadius: "10px", border: "2px solid", fontWeight: "700", transition: "all 0.2s", boxSizing: "border-box" },
+  formGap: { display: "flex", flexDirection: "column", boxSizing: "border-box", width: "100%" },
+  input: { width: "100%", borderRadius: "10px", border: "1px solid #cbd5e1", boxSizing: "border-box", outline: "none", transition: "border-color 0.2s" },
+  infoText: { color: "#475569", lineHeight: "1.4", margin: 0 },
+  payBtn: { width: "100%", background: "linear-gradient(135deg, #023e8a, #0077b6)", color: "white", border: "none", borderRadius: "10px", fontWeight: "800", cursor: "pointer", boxShadow: "0 4px 12px rgba(2,62,138,0.15)" },
+  oxxoTicket: { background: "#fff", padding: "2px", borderRadius: "12px", boxSizing: "border-box", width: "100%" },
+  badgeEfectivo: { background: "#fef3c7", color: "#d97706", padding: "3px 8px", borderRadius: "50px", fontWeight: "700" },
+  barcodeContainer: { display: "flex", flexDirection: "column", alignItems: "center", background: "#f8fafc", padding: "12px", borderRadius: "8px", boxSizing: "border-box", width: "100%" },
   barcodeLines: { fontFamily: "'Courier New', Courier, monospace", fontWeight: "100", letterSpacing: "-1px", color: "#0f172a", lineHeight: 1 }
 };

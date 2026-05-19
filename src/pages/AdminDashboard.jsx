@@ -206,55 +206,83 @@ function AdminDashboard() {
 
   return (
     <div style={{ 
-      padding: isMobile ? "100px 16px 60px 16px" : "140px 20px 80px 20px", 
+      padding: isMobile ? "90px 12px 40px 12px" : "140px 20px 80px 20px", 
       maxWidth: "1350px", 
       margin: "0 auto", 
       fontFamily: "'Inter', sans-serif",
-      boxSizing: "border-box"
+      boxSizing: "border-box",
+      width: "100%"
     }}>
       
+      {/* HEADER SECTION */}
       <div style={{ 
         ...styles.header, 
         flexDirection: isMobile ? "column" : "row", 
         alignItems: isMobile ? "flex-start" : "center",
-        gap: isMobile ? "20px" : "0px"
+        gap: isMobile ? "16px" : "0px",
+        marginBottom: isMobile ? "25px" : "40px"
       }}>
         <div>
-          <h1 style={{ color: "#0a2540", fontSize: isMobile ? "1.8rem" : "2.5rem", fontWeight: "900", margin: 0 }}>Panel Clínico & Comercial</h1>
-          <p style={{ color: "#64748b", margin: "6px 0 0 0" }}>Administración global de Dental Velasco</p>
+          <h1 style={{ color: "#0a2540", fontSize: isMobile ? "1.6rem" : "2.5rem", fontWeight: "900", margin: 0 }}>Panel Clínico & Comercial</h1>
+          <p style={{ color: "#64748b", margin: "4px 0 0 0", fontSize: isMobile ? "13px" : "16px" }}>Administración global de Dental Velasco</p>
         </div>
-        <div style={{ display: "flex", gap: "10px", width: isMobile ? "100%" : "auto" }}>
+        <div style={{ display: "flex", gap: "10px", width: isMobile ? "100%" : "auto", boxSizing: "border-box" }}>
           {productos.length === 0 && (
-            <button onClick={ejecutarMigracion} style={{ ...styles.refreshBtn, backgroundColor: "#e11d48", flex: isMobile ? 1 : "none" }}>
-              📦 {isMobile ? "Base" : "Cargar 15 Productos Base"}
+            <button onClick={ejecutarMigracion} style={{ ...styles.refreshBtn, backgroundColor: "#e11d48", flex: isMobile ? 1 : "none", padding: isMobile ? "10px 14px" : "12px 24px", fontSize: isMobile ? "12px" : "0.9rem" }}>
+              📦 {isMobile ? "Migrar" : "Cargar 15 Productos Base"}
             </button>
           )}
-          <button onClick={fetchData} style={{ ...styles.refreshBtn, flex: isMobile ? 1 : "none" }}>
+          <button onClick={fetchData} style={{ ...styles.refreshBtn, flex: isMobile ? 1 : "none", padding: isMobile ? "10px 14px" : "12px 24px", fontSize: isMobile ? "12px" : "0.9rem" }}>
             {isMobile ? "🔄 Sincronizar" : "🔄 Actualizar Todo"}
           </button>
         </div>
       </div>
 
-      <div style={{ ...styles.tabContainer, maxWidth: isMobile ? "100%" : "550px" }}>
+      {/* TABS CON SCROLL HORIZONTAL RESPONSIVO EN MÓVIL */}
+      <div style={{ 
+        ...styles.tabContainer, 
+        maxWidth: isMobile ? "100%" : "550px",
+        overflowX: isMobile ? "auto" : "visible",
+        padding: isMobile ? "4px" : "6px",
+        marginBottom: isMobile ? "20px" : "35px"
+      }}>
         {["resumen", "citas", "productos", "ventas"].map((tab) => (
-          <button key={tab} onClick={() => setActiveTab(tab)} style={{ ...styles.tabButton, backgroundColor: activeTab === tab ? "#023e8a" : "transparent", color: activeTab === tab ? "white" : "#64748b" }}>{tab}</button>
+          <button 
+            key={tab} 
+            onClick={() => setActiveTab(tab)} 
+            style={{ 
+              ...styles.tabButton, 
+              backgroundColor: activeTab === tab ? "#023e8a" : "transparent", 
+              color: activeTab === tab ? "white" : "#64748b",
+              padding: isMobile ? "8px 12px" : "10px 14px",
+              fontSize: isMobile ? "11px" : "0.75rem"
+            }}
+          >
+            {tab}
+          </button>
         ))}
       </div>
 
+      {/* TAB: RESUMEN (KPI CARDS) */}
       {activeTab === "resumen" && (
-        <div style={styles.grid}>
-          <div style={styles.kpiCard}><span>📅</span><div><h3 style={styles.kpiTitle}>Citas Médicas</h3><p style={styles.kpiValue}>{citas.length}</p></div></div>
-          <div style={{ ...styles.kpiCard, borderLeft: "6px solid #00b4d8" }}><span>🪥</span><div><h3 style={styles.kpiTitle}>Catálogo Productos</h3><p style={styles.kpiValue}>{productos.length} items</p></div></div>
-          <div style={styles.kpiCard}><span>📦</span><div><h3 style={styles.kpiTitle}>Unidades Vendidas</h3><p style={styles.kpiValue}>{totalProductosVendidos} u.</p></div></div>
-          <div style={{ ...styles.kpiCard, borderLeft: "6px solid #10b981" }}><span>💰</span><div><h3 style={styles.kpiTitle}>Ingresos Totales</h3><p style={{ ...styles.kpiValue, color: "#10b981" }}>${ingresosTotales}.00</p></div></div>
+        <div style={{
+          ...styles.grid,
+          gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fit, minmax(240px, 1fr))",
+          gap: isMobile ? "12px" : "25px"
+        }}>
+          <div style={{...styles.kpiCard, padding: isMobile ? "16px" : "26px"}}><span>📅</span><div><h3 style={styles.kpiTitle}>Citas Médicas</h3><p style={{...styles.kpiValue, fontSize: isMobile ? "1.5rem" : "1.9rem"}}>{citas.length}</p></div></div>
+          <div style={{ ...styles.kpiCard, borderLeft: "6px solid #00b4d8", padding: isMobile ? "16px" : "26px" }}><span>🪥</span><div><h3 style={styles.kpiTitle}>Catálogo</h3><p style={{...styles.kpiValue, fontSize: isMobile ? "1.5rem" : "1.9rem"}}>{productos.length} items</p></div></div>
+          <div style={{...styles.kpiCard, padding: isMobile ? "16px" : "26px"}}><span>📦</span><div><h3 style={styles.kpiTitle}>Unidades</h3><p style={{...styles.kpiValue, fontSize: isMobile ? "1.5rem" : "1.9rem"}}>{totalProductosVendidos} u.</p></div></div>
+          <div style={{ ...styles.kpiCard, borderLeft: "6px solid #10b981", padding: isMobile ? "16px" : "26px" }}><span>💰</span><div><h3 style={styles.kpiTitle}>Ingresos Totales</h3><p style={{ ...styles.kpiValue, color: "#10b981", fontSize: isMobile ? "1.5rem" : "1.9rem" }}>${ingresosTotales}.00</p></div></div>
         </div>
       )}
 
+      {/* TAB: CITAS */}
       {activeTab === "citas" && (
-        <div style={{ ...styles.tableCard, padding: isMobile ? "20px" : "35px" }}>
-          <h2 style={styles.tableHeading}>Monitoreo de Citas Médicas</h2>
+        <div style={{ ...styles.tableCard, padding: isMobile ? "15px" : "35px" }}>
+          <h2 style={{...styles.tableHeading, fontSize: isMobile ? "1.1rem" : "1.4rem", marginBottom: isMobile ? "15px" : "25px"}}>Monitoreo de Citas Médicas</h2>
           {citas.length === 0 ? <p style={styles.noData}>No hay citas registradas.</p> : (
-            <div style={{ overflowX: "auto", width: "100%" }}>
+            <div style={styles.tableWrapper}>
               <table style={styles.table}>
                 <thead>
                   <tr style={{ backgroundColor: "#f8fafc" }}>
@@ -288,7 +316,7 @@ function AdminDashboard() {
                         <td style={{ ...styles.td, color: "#64748b", fontStyle: "italic" }}>{cita.notes || cita.notas || "Sin notas"}</td>
                         <td style={styles.td}>
                           {citaReprogramandoId === cita.id ? (
-                            <div style={{ display: "flex", flexDirection: "column", gap: "8px", background: "#f8fafc", padding: "10px", borderRadius: "8px", border: "1px solid #cbd5e1", minWidth: "160px" }}>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "8px", background: "#f8fafc", padding: "10px", borderRadius: "8px", border: "1px solid #cbd5e1", minWidth: "160px", boxSizing: "border-box" }}>
                               <input type="date" value={nuevaFechaCita} onChange={e => setNuevaFechaCita(e.target.value)} style={styles.miniInput} />
                               <input type="time" value={nuevaHoraCita} onChange={e => setNuevaHoraCita(e.target.value)} style={styles.miniInput} />
                               <div style={{ display: "flex", gap: "5px" }}>
@@ -317,35 +345,38 @@ function AdminDashboard() {
         <div style={{ 
           display: "grid", 
           gridTemplateColumns: isMobile ? "1fr" : "1fr 2fr", 
-          gap: "30px", 
-          alignItems: "start" 
+          gap: isMobile ? "20px" : "30px", 
+          alignItems: "start",
+          width: "100%"
         }}>
-          <div style={{ ...styles.formCard, padding: isMobile ? "20px" : "30px" }}>
-            <h3 style={{ ...styles.tableHeading, fontSize: "1.2rem", marginBottom: "20px" }}>
-              {editandoProdId ? "📝 Editar Producto Seleccionado" : "✨ Añadir Producto Nuevo"}
+          {/* CARTA FORMULARIO */}
+          <div style={{ ...styles.formCard, padding: isMobile ? "16px" : "30px" }}>
+            <h3 style={{ ...styles.tableHeading, fontSize: isMobile ? "1.1rem" : "1.2rem", marginBottom: "15px" }}>
+              {editandoProdId ? "📝 Editar Producto" : "✨ Añadir Producto"}
             </h3>
-            <form onSubmit={handleAgregarOEditarProducto} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-              <input type="text" placeholder="Nombre" required value={nuevoProd.name} onChange={e => setNuevoProd({...nuevoProd, name: e.target.value})} style={styles.formInput} />
-              <input type="number" placeholder="Precio ($)" required value={nuevoProd.price} onChange={e => setNuevoProd({...nuevoProd, price: e.target.value})} style={styles.formInput} />
-              <input type="text" placeholder="Categoría" value={nuevoProd.category} onChange={e => setNuevoProd({...nuevoProd, category: e.target.value})} style={styles.formInput} />
-              <input type="number" placeholder="Stock" value={nuevoProd.stock} onChange={e => setNuevoProd({...nuevoProd, stock: e.target.value})} style={styles.formInput} />
-              <input type="text" placeholder="Descripción" value={nuevoProd.description} onChange={e => setNuevoProd({...nuevoProd, description: e.target.value})} style={styles.formInput} />
-              <input type="text" placeholder="URL Imagen" value={nuevoProd.image} onChange={e => setNuevoProd({...nuevoProd, image: e.target.value})} style={styles.formInput} />
+            <form onSubmit={handleAgregarOEditarProducto} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              <input type="text" placeholder="Nombre" required value={nuevoProd.name} onChange={e => setNuevoProd({...nuevoProd, name: e.target.value})} style={{...styles.formInput, padding: isMobile ? "12px" : "14px"}} />
+              <input type="number" placeholder="Precio ($)" required value={nuevoProd.price} onChange={e => setNuevoProd({...nuevoProd, price: e.target.value})} style={{...styles.formInput, padding: isMobile ? "12px" : "14px"}} />
+              <input type="text" placeholder="Categoría" value={nuevoProd.category} onChange={e => setNuevoProd({...nuevoProd, category: e.target.value})} style={{...styles.formInput, padding: isMobile ? "12px" : "14px"}} />
+              <input type="number" placeholder="Stock" value={nuevoProd.stock} onChange={e => setNuevoProd({...nuevoProd, stock: e.target.value})} style={{...styles.formInput, padding: isMobile ? "12px" : "14px"}} />
+              <input type="text" placeholder="Descripción" value={nuevoProd.description} onChange={e => setNuevoProd({...nuevoProd, description: e.target.value})} style={{...styles.formInput, padding: isMobile ? "12px" : "14px"}} />
+              <input type="text" placeholder="URL Imagen" value={nuevoProd.image} onChange={e => setNuevoProd({...nuevoProd, image: e.target.value})} style={{...styles.formInput, padding: isMobile ? "12px" : "14px"}} />
               <div style={{ display: "flex", gap: "10px" }}>
-                <button type="submit" disabled={subiendoProd} style={{ ...styles.submitBtn, flex: 2 }}>
-                  {subiendoProd ? "Guardando..." : editandoProdId ? "💾 Guardar Cambios" : "🚀 Publicar"}
+                <button type="submit" disabled={subiendoProd} style={{ ...styles.submitBtn, flex: 2, padding: isMobile ? "12px" : "15px" }}>
+                  {subiendoProd ? "Guardando..." : editandoProdId ? "💾 Guardar" : "🚀 Publicar"}
                 </button>
                 {editandoProdId && (
-                  <button type="button" onClick={() => { setEditandoProdId(null); setNuevoProd({ name: "", price: "", category: "", image: "", stock: "", description: "" }); }} style={{ ...styles.submitBtn, backgroundColor: "#64748b", background: "none", color: "#64748b", border: "1px solid #cbd5e1", flex: 1 }}>Cancelar</button>
+                  <button type="button" onClick={() => { setEditandoProdId(null); setNuevoProd({ name: "", price: "", category: "", image: "", stock: "", description: "" }); }} style={{ ...styles.submitBtn, backgroundColor: "#64748b", background: "none", color: "#64748b", border: "1px solid #cbd5e1", flex: 1, padding: isMobile ? "12px" : "15px" }}>X</button>
                 )}
               </div>
             </form>
           </div>
 
-          <div style={{ ...styles.tableCard, padding: isMobile ? "20px" : "35px" }}>
-            <h2 style={styles.tableHeading}>Inventario Actual de la Tienda</h2>
+          {/* TABLA DE INVENTARIO */}
+          <div style={{ ...styles.tableCard, padding: isMobile ? "15px" : "35px" }}>
+            <h2 style={{...styles.tableHeading, fontSize: isMobile ? "1.1rem" : "1.4rem", marginBottom: isMobile ? "15px" : "25px"}}>Inventario de la Tienda</h2>
             {productos.length === 0 ? <p style={styles.noData}>Tu catálogo está vacío.</p> : (
-              <div style={{ overflowX: "auto", width: "100%" }}>
+              <div style={styles.tableWrapper}>
                 <table style={styles.table}>
                   <thead>
                     <tr style={{ backgroundColor: "#f8fafc" }}>
@@ -377,10 +408,10 @@ function AdminDashboard() {
       )}
 
       {activeTab === "ventas" && (
-        <div style={{ ...styles.tableCard, padding: isMobile ? "20px" : "35px" }}>
-          <h2 style={styles.tableHeading}>Registro de Ventas Históricas</h2>
+        <div style={{ ...styles.tableCard, padding: isMobile ? "15px" : "35px" }}>
+          <h2 style={{...styles.tableHeading, fontSize: isMobile ? "1.1rem" : "1.4rem", marginBottom: isMobile ? "15px" : "25px"}}>Registro de Ventas Históricas</h2>
           {ventas.length === 0 ? <p style={styles.noData}>No se registran ventas todavía.</p> : (
-            <div style={{ overflowX: "auto", width: "100%" }}>
+            <div style={styles.tableWrapper}>
               <table style={styles.table}>
                 <thead>
                   <tr style={{ backgroundColor: "#f8fafc" }}>
@@ -416,20 +447,21 @@ function AdminDashboard() {
 const styles = {
   loaderContainer: { display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", backgroundColor: "#f0f4f8" },
   spinner: { border: "4px solid #e2e8f0", borderTop: "4px solid #00b4d8", borderRadius: "50%", width: "40px", height: "40px", animation: "spin 1s linear infinite" },
-  header: { display: "flex", justifyContent: "space-between", marginBottom: "40px", borderBottom: "2px solid #e2e8f0", paddingBottom: "20px", boxSizing: "border-box" },
-  refreshBtn: { backgroundColor: "#00b4d8", color: "white", border: "none", padding: "12px 24px", borderRadius: "50px", fontWeight: "800", cursor: "pointer", fontSize: "0.9rem" },
-  tabContainer: { display: "flex", gap: "8px", marginBottom: "35px", backgroundColor: "rgba(148, 163, 184, 0.12)", padding: "6px", borderRadius: "50px", width: "100%", boxSizing: "border-box" },
-  tabButton: { flex: 1, padding: "10px 14px", borderRadius: "50px", border: "none", fontWeight: "800", textTransform: "uppercase", fontSize: "0.75rem", cursor: "pointer", transition: "all 0.3s ease", whiteSpace: "nowrap" },
-  grid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "25px", width: "100%" },
-  kpiCard: { backgroundColor: "white", padding: "26px", borderRadius: "24px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "20px", borderLeft: "6px solid #023e8a", boxSizing: "border-box" },
+  header: { display: "flex", justifyContent: "space-between", borderBottom: "2px solid #e2e8f0", paddingBottom: "20px", boxSizing: "border-box", width: "100%" },
+  refreshBtn: { backgroundColor: "#00b4d8", color: "white", border: "none", borderRadius: "50px", fontWeight: "800", cursor: "pointer" },
+  tabContainer: { display: "flex", gap: "8px", backgroundColor: "rgba(148, 163, 184, 0.12)", borderRadius: "50px", width: "100%", boxSizing: "border-box", scrollbarWidth: "none" },
+  tabButton: { flex: "none", borderRadius: "50px", border: "none", fontWeight: "800", textTransform: "uppercase", cursor: "pointer", transition: "all 0.3s ease", whiteSpace: "nowrap" },
+  grid: { display: "grid", width: "100%", boxSizing: "border-box" },
+  kpiCard: { backgroundColor: "white", borderRadius: "24px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "20px", borderLeft: "6px solid #023e8a", boxSizing: "border-box", width: "100%" },
   kpiTitle: { margin: 0, color: "#64748b", fontSize: "0.9rem", fontWeight: "800", textTransform: "uppercase" },
-  kpiValue: { margin: "4px 0 0 0", color: "#0a2540", fontSize: "1.9rem", fontWeight: "900" },
+  kpiValue: { margin: "4px 0 0 0", color: "#0a2540", fontWeight: "900" },
   tableCard: { backgroundColor: "white", borderRadius: "30px", border: "1px solid #e2e8f0", width: "100%", boxSizing: "border-box" },
   formCard: { backgroundColor: "white", borderRadius: "30px", border: "1px solid #e2e8f0", width: "100%", boxSizing: "border-box" },
-  tableHeading: { color: "#0a2540", margin: "0 0 25px 0", fontSize: "1.4rem", fontWeight: "900" },
-  formInput: { width: "100%", padding: "14px 18px", borderRadius: "14px", border: "1px solid #e2e8f0", fontSize: "14px", outline: "none", boxSizing: "border-box" },
-  submitBtn: { padding: "15px", borderRadius: "14px", border: "none", background: "linear-gradient(135deg, #023e8a, #0077b6)", color: "white", fontWeight: "800", cursor: "pointer", display: "block", width: "100%" },
+  tableHeading: { color: "#0a2540", margin: 0, fontWeight: "900" },
+  formInput: { width: "100%", borderRadius: "14px", border: "1px solid #e2e8f0", fontSize: "14px", outline: "none", boxSizing: "border-box" },
+  submitBtn: { borderRadius: "14px", border: "none", background: "linear-gradient(135deg, #023e8a, #0077b6)", color: "white", fontWeight: "800", cursor: "pointer", display: "block", width: "100%" },
   noData: { color: "#64748b", textAlign: "center", padding: "50px 0", fontWeight: "600" },
+  tableWrapper: { overflowX: "auto", width: "100%", boxSizing: "border-box", WebkitOverflowScrolling: "touch" },
   table: { width: "100%", borderCollapse: "collapse" },
   th: { padding: "16px 20px", color: "#023e8a", fontWeight: "800", fontSize: "0.85rem", borderBottom: "2px solid #e2e8f0", textAlign: "left", whiteSpace: "nowrap" },
   td: { padding: "18px 20px", borderBottom: "1px solid #f1f5f9", fontSize: "0.95rem", color: "#1e293b", verticalAlign: "middle", whiteSpace: "nowrap" },
