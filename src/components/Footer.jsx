@@ -1,4 +1,7 @@
+// src/components/Footer.jsx
 import React, { useState, useEffect } from "react";
+// Importamos Link de react-router-dom para la navegación fluida a la tienda independiente
+import { Link } from "react-router-dom";
 
 function Footer() {
   const currentYear = new Date().getFullYear();
@@ -55,6 +58,9 @@ function Footer() {
               <li style={styles.linkItem}><a href="#inicio" style={styles.link}>Inicio</a></li>
               <li style={styles.linkItem}><a href="#servicios" style={styles.link}>Tratamientos</a></li>
               <li style={styles.linkItem}><a href="#nosotros" style={styles.link}>Especialistas</a></li>
+              {/* ✔️ SECCIONES AÑADIDAS: Galería y Tienda vinculadas perfectamente */}
+             
+              <li style={styles.linkItem}><Link to="/tienda" style={styles.link}>Tienda Store</Link></li>
               <li style={styles.linkItem}><a href="#contacto" style={styles.link}>Ubicación</a></li>
             </ul>
           </div>

@@ -62,7 +62,7 @@ export default function Tienda() {
   return (
     <div style={{
       ...styles.container,
-      padding: isMobile ? "100px 16px 60px 16px" : "160px 20px 100px 20px"
+      padding: isMobile ? "90px 16px 60px 16px" : "160px 20px 100px 20px"
     }}>
       <div style={styles.heroSection}>
         <span style={styles.badge}>Dental Store Premium</span>
@@ -79,25 +79,31 @@ export default function Tienda() {
         </p>
         <div style={{
           ...styles.statsRow,
+          flexDirection: isMobile ? "column" : "row",
+          width: isMobile ? "100%" : "auto",
           gap: isMobile ? "10px" : "24px"
         }}>
-          <div style={styles.statItem}>⚡ Autenticidad</div>
-          <div style={styles.statItem}>🛡️ Grado Clínico</div>
-          <div style={styles.statItem}>📦 Envío / Entrega Clínica</div>
+          <div style={{ ...styles.statItem, width: isMobile ? "100%" : "auto" }}>⚡ Autenticidad Garantizada</div>
+          <div style={{ ...styles.statItem, width: isMobile ? "100%" : "auto" }}>🛡️ Material de Grado Clínico</div>
+          <div style={{ ...styles.statItem, width: isMobile ? "100%" : "auto" }}>📦 Entrega Directa en Clínica</div>
         </div>
       </div>
       
+      {/* Contenedor de Filtros con Scroll Horizontal Táctil */}
       <div style={{
         ...styles.filterWrapper,
-        marginBottom: isMobile ? "30px" : "50px"
+        marginBottom: isMobile ? "30px" : "50px",
+        padding: isMobile ? "0 4px" : "0"
       }}>
         <div style={{
           ...styles.filterRow,
-          width: isMobile ? "100%" : "auto",
+          width: "100%",
           justifyContent: isMobile ? "flex-start" : "center",
           overflowX: isMobile ? "auto" : "visible",
-          padding: isMobile ? "6px" : "8px",
-          borderRadius: isMobile ? "16px" : "50px"
+          whiteSpace: isMobile ? "nowrap" : "normal",
+          padding: isMobile ? "8px" : "8px",
+          borderRadius: isMobile ? "16px" : "50px",
+          WebkitOverflowScrolling: "touch"
         }} className="scroll-hidden">
           {["Todos", "Ortodoncia", "Higiene", "Estética", "Clínico"].map(cat => {
             const isSelected = category === cat;
@@ -111,9 +117,10 @@ export default function Tienda() {
                   color: isSelected ? "white" : "#475569",
                   borderColor: isSelected ? "transparent" : "#e2e8f0",
                   boxShadow: isSelected ? "0 10px 20px rgba(2, 62, 138, 0.15)" : "none",
-                  padding: isMobile ? "8px 18px" : "10px 26px",
-                  fontSize: isMobile ? "13px" : "14px",
-                  flexShrink: isMobile ? 0 : 1
+                  padding: isMobile ? "10px 20px" : "10px 26px",
+                  fontSize: isMobile ? "14px" : "14px",
+                  display: "inline-block",
+                  flexShrink: 0
                 }}
               >
                 {cat}
@@ -123,9 +130,11 @@ export default function Tienda() {
         </div>
       </div>
 
+      {/* Grid de Productos Adaptativo */}
       <div style={{
         ...styles.grid,
-        gap: isMobile ? "20px" : "40px"
+        gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(280px, 1fr))",
+        gap: isMobile ? "24px" : "40px"
       }}>
         {filtered.map(product => (
           <ProductCard 
@@ -171,7 +180,7 @@ function ProductCard({ product, onAddToCart, isMobile }) {
     <div 
       style={{
         ...styles.card,
-        borderRadius: isMobile ? "20px" : "28px"
+        borderRadius: isMobile ? "24px" : "28px"
       }} 
       onMouseEnter={(e) => {
         if (!isMobile) {
@@ -188,7 +197,7 @@ function ProductCard({ product, onAddToCart, isMobile }) {
     >
       <div style={{
         ...styles.imgContainer,
-        height: isMobile ? "200px" : "230px"
+        height: isMobile ? "220px" : "230px"
       }}>
         <img src={product.image || product.img} alt={product.name} style={styles.image} />
         <span style={styles.tag}>{product.category}</span>
@@ -196,18 +205,18 @@ function ProductCard({ product, onAddToCart, isMobile }) {
 
       <div style={{
         ...styles.infoContainer,
-        padding: isMobile ? "18px" : "26px"
+        padding: isMobile ? "20px" : "26px"
       }}>
         <div style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
           <h3 style={{
             ...styles.prodName,
-            fontSize: isMobile ? "17px" : "19px"
+            fontSize: isMobile ? "18px" : "19px"
           }}>
             {product.hasColors ? `${product.name} (${selectedColor.name})` : product.name}
           </h3>
           <p style={{
             ...styles.prodDesc,
-            fontSize: isMobile ? "13px" : "14px"
+            fontSize: isMobile ? "13.5px" : "14px"
           }}>{product.description}</p>
           
           {product.hasColors && (
@@ -228,8 +237,8 @@ function ProductCard({ product, onAddToCart, isMobile }) {
                         transform: isCurrent ? "scale(1.15)" : "scale(1)",
                         border: isCurrent ? "3px solid #0f172a" : "1px solid #cbd5e1",
                         boxShadow: isCurrent ? "0 4px 8px rgba(0,0,0,0.15)" : "none",
-                        width: isMobile ? "22px" : "24px",
-                        height: isMobile ? "22px" : "24px"
+                        width: "24px",
+                        height: "24px"
                       }}
                     />
                   );
@@ -239,36 +248,37 @@ function ProductCard({ product, onAddToCart, isMobile }) {
           )}
         </div>
         
-        <div style={styles.footerRow}>
-          <div style={styles.priceCol}>
+        {/* Fila inferior de Precio y Botón (Flex vertical en celular) */}
+        <div style={{
+          ...styles.footerRow,
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: isMobile ? "stretch" : "center",
+          gap: isMobile ? "14px" : "0px"
+        }}>
+          <div style={{
+            ...styles.priceCol,
+            textAlign: isMobile ? "center" : "left",
+            backgroundColor: isMobile ? "#f8fafc" : "transparent",
+            padding: isMobile ? "8px" : "0",
+            borderRadius: isMobile ? "12px" : "0"
+          }}>
             <span style={styles.priceLabel}>Inversión</span>
             <span style={{
               ...styles.price,
-              fontSize: isMobile ? "18px" : "19px"
+              fontSize: isMobile ? "20px" : "19px"
             }}>${product.price}.00 <span style={styles.currency}>MXN</span></span>
           </div>
           <button 
             onClick={handleAdd} 
             style={{
               ...styles.addBtn,
-              padding: isMobile ? "10px 20px" : "12px 26px",
-              fontSize: isMobile ? "13px" : "14px",
-              borderRadius: isMobile ? "12px" : "16px"
-            }}
-            onMouseEnter={(e) => {
-              if (!isMobile) {
-                e.target.style.background = "#00b4d8";
-                e.target.style.transform = "scale(1.03)";
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isMobile) {
-                e.target.style.background = "#023e8a";
-                e.target.style.transform = "scale(1)";
-              }
+              padding: isMobile ? "14px" : "12px 26px",
+              fontSize: isMobile ? "14px" : "14px",
+              borderRadius: isMobile ? "14px" : "16px",
+              width: isMobile ? "100%" : "auto"
             }}
           >
-            Agregar
+            Agregar al Carrito
           </button>
         </div>
       </div>
@@ -282,12 +292,12 @@ const styles = {
   badge: { backgroundColor: "#e0f2fe", color: "#0369a1", padding: "6px 16px", borderRadius: "50px", fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "14px", display: "inline-block" },
   title: { color: "#023e8a", fontWeight: "900", margin: "0 0 12px 0", letterSpacing: "-1px", lineHeight: "1.15" },
   subtitle: { color: "#64748b", maxWidth: "650px", lineHeight: "1.6", margin: "0 0 24px 0" },
-  statsRow: { display: "flex", flexWrap: "wrap", justifyContent: "center", color: "#475569", fontSize: "12px", fontWeight: "600" },
-  statItem: { backgroundColor: "#fff", padding: "6px 14px", borderRadius: "50px", boxShadow: "0 4px 10px rgba(0,0,0,0.01)", border: "1px solid #f1f5f9" },
+  statsRow: { display: "flex", flexWrap: "wrap", justifyContent: "center", color: "#475569", fontSize: "12px", fontWeight: "600", boxSizing: "border-box" },
+  statItem: { backgroundColor: "#fff", padding: "10px 16px", borderRadius: "12px", boxShadow: "0 4px 10px rgba(0,0,0,0.01)", border: "1px solid #f1f5f9", textAlign: "center", boxSizing: "border-box" },
   filterWrapper: { display: "flex", justifyContent: "center", boxSizing: "border-box" },
   filterRow: { display: "flex", gap: "8px", backgroundColor: "#fff", boxShadow: "0 10px 30px rgba(2, 62, 138, 0.03)", border: "1px solid #f1f5f9", boxSizing: "border-box" },
-  filterBtn: { borderRadius: "50px", border: "1px solid", fontWeight: "700", cursor: "pointer", transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)" },
-  grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", boxSizing: "border-box" },
+  filterBtn: { border: "1px solid", fontWeight: "700", cursor: "pointer", transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)", borderRadius: "50px" },
+  grid: { display: "grid", boxSizing: "border-box" },
   card: { background: "white", boxShadow: "0 10px 30px rgba(0,0,0,0.02)", border: "1px solid #f1f5f9", display: "flex", flexDirection: "column", overflow: "hidden", transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)", boxSizing: "border-box" },
   imgContainer: { position: "relative", overflow: "hidden", backgroundColor: "#f8fafc", width: "100%" },
   image: { width: "100%", height: "100%", objectFit: "cover" },
@@ -299,10 +309,10 @@ const styles = {
   colorLabel: { display: "block", fontSize: "12px", fontWeight: "700", color: "#475569", marginBottom: "8px" },
   colorRow: { display: "flex", gap: "8px", flexWrap: "wrap" },
   colorCircle: { cursor: "pointer", padding: 0, transition: "all 0.2s ease" },
-  footerRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto", boxSizing: "border-box" },
+  footerRow: { display: "flex", justifyContent: "space-between", marginTop: "auto", boxSizing: "border-box" },
   priceCol: { display: "flex", flexDirection: "column" },
   priceLabel: { fontSize: "10px", color: "#94a3b8", textTransform: "uppercase", fontWeight: "700", letterSpacing: "0.5px", marginBottom: "2px" },
   price: { fontWeight: "900", color: "#00b4d8" },
   currency: { fontSize: "11px", fontWeight: "600", color: "#94a3b8" },
-  addBtn: { background: "#023e8a", color: "white", border: "none", fontWeight: "700", cursor: "pointer", transition: "all 0.25s ease", boxShadow: "0 4px 12px rgba(2, 62, 138, 0.15)" }
+  addBtn: { background: "#023e8a", color: "white", border: "none", fontWeight: "800", cursor: "pointer", transition: "all 0.25s ease", boxShadow: "0 4px 12px rgba(2, 62, 138, 0.15)" }
 };

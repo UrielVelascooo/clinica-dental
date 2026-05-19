@@ -1,5 +1,5 @@
 // src/App.jsx
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom"; 
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate, useLocation } from "react-router-dom"; 
 import { AuthProvider, useAuth } from "./context/AuthContext"; 
 import { CartProvider, useCart } from "./context/CartContext"; 
 import { useEffect, useState } from "react";
@@ -25,6 +25,20 @@ import Tienda from "./components/Tienda";
 import Checkout from "./components/Checkout"; 
 
 /**
+ * Componente Auxiliar: Control de Scroll al cambiar de ruta
+ * Asegura que la pantalla siempre suba al inicio al navegar entre componentes independientes.
+ */
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
+/**
  * Componente Vista de Desglose del Carrito (Adaptativo y Corregido)
  */
 function VistaCarrito() {
@@ -42,7 +56,6 @@ function VistaCarrito() {
   if (cart.length === 0) {
     return (
       <div style={{ padding: isMobile ? "120px 20px 80px" : "160px 40px 100px", maxWidth: "800px", margin: "0 auto", textAlign: 'center', boxSizing: "border-box" }}>
-        {/* ✔️ CORREGIDO: Se removió el carácter extraño '尊' de los estilos */}
         <h1 style={{ color: "#023e8a", fontSize: isMobile ? "2rem" : "2.5rem", fontWeight: "900" }}>Tu Carrito está vacío</h1>
         <p style={{ color: "#666", marginTop: "15px", marginBottom: "30px" }}>Parece que aún no has agregado productos del catálogo.</p>
         <Link to="/tienda" style={{ backgroundColor: "#00b4d8", color: "white", padding: "12px 30px", borderRadius: "50px", textDecoration: "none", fontWeight: "700", display: "inline-block" }}>
@@ -204,6 +217,9 @@ function App() {
     <AuthProvider>
       <CartProvider>
         <Router>
+          {/* Resetea la posición vertical del viewport en cada cambio de vista independiente */}
+          <ScrollToTop />
+          
           <Navbar />
           
           <Routes>
