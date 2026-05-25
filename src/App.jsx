@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Services from "./components/Services";
-import Dentists from "./components/Dentists";
+import Nosotros from "./components/Dentists";
 import Gallery from "./components/Gallery";
 import Appointment from "./components/Appointment"; 
 import Contact from "./components/Contact";
@@ -203,8 +203,8 @@ function Home() {
       </section>
       
       <div style={layoutStyle}>
-        <section id="dentistas" style={{ padding: "80px 0" }}>
-          <Dentists />
+        <section id="Nosotros" style={{ padding: "80px 0" }}>
+          <Nosotros />
         </section> 
         
         <section id="servicios" style={{ padding: "80px 0" }}>

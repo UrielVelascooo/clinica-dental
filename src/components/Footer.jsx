@@ -57,7 +57,7 @@ function Footer() {
             <ul style={styles.linkList}>
               <li style={styles.linkItem}><a href="#inicio" style={styles.link}>Inicio</a></li>
               <li style={styles.linkItem}><a href="#servicios" style={styles.link}>Tratamientos</a></li>
-              <li style={styles.linkItem}><a href="#nosotros" style={styles.link}>Especialistas</a></li>
+              <li style={styles.linkItem}><a href="#nosotros" style={styles.link}>Nosotros</a></li>
               {/* ✔️ SECCIONES AÑADIDAS: Galería y Tienda vinculadas perfectamente */}
              
               <li style={styles.linkItem}><Link to="/tienda" style={styles.link}>Tienda Store</Link></li>

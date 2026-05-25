@@ -1,28 +1,26 @@
+// src/pages/Checkout.jsx
 import { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext";
-import { useAuth } from "../context/AuthContext"; // 🔑 Contexto de autenticación
+import { useAuth } from "../context/AuthContext"; 
 import { useNavigate } from "react-router-dom";
 
-// 📌 IMPORTACIÓN DEL ARCHIVO DE CONFIGURACIÓN DE FIREBASE
 import { db } from "../firebaseConfig"; 
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Checkout() {
   const { cart, getCartTotal, clearCart } = useCart();
-  const { user } = useAuth(); // 🔑 Jalamos el usuario activo
+  const { user } = useAuth(); 
   const navigate = useNavigate();
   
-  const [method, setMethod] = useState("card"); // card, oxxo, paypal
+  const [method, setMethod] = useState("card"); 
   const [loading, setLoading] = useState(false);
-  const [fichaOxxo, setFichaOxxo] = useState(null); // Guarda los datos de la ficha si eligen OXXO
+  const [fichaOxxo, setFichaOxxo] = useState(null); 
 
-  // Estados locales para el formulario de tarjeta inteligente
   const [cardNumber, setCardNumber] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvv, setCardCvv] = useState("");
-  const [cardType, setCardType] = useState(""); // visa, mastercard o vacío
+  const [cardType, setCardType] = useState(""); 
 
-  // Detector de pantalla móvil en tiempo real
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
@@ -33,7 +31,6 @@ export default function Checkout() {
 
   const totalPagar = getCartTotal();
 
-  // 🛠️ FUNCIÓN INTERNA: Estructura y guarda la orden de manera automática en la colección "orders"
   const registrarOrdenEnFirebase = async (metodoPago, estadoInicial = "completado") => {
     if (!user) return null;
 
@@ -65,7 +62,6 @@ export default function Checkout() {
     }
   };
 
-  // 💳 MANEJADORES INTELIGENTES PARA INPUTS DE TARJETA
   const handleCardNumberChange = (e) => {
     let value = e.target.value.replace(/\D/g, "");
     
@@ -115,9 +111,8 @@ export default function Checkout() {
       return navigate("/tienda");
     }
 
-    setLoading(true);
-
     if (method === "paypal") {
+      setLoading(true);
       try {
         await registrarOrdenEnFirebase("paypal", "completado");
         setTimeout(() => {
@@ -133,6 +128,7 @@ export default function Checkout() {
     }
 
     if (method === "oxxo") {
+      setLoading(true);
       try {
         const ordenId = await registrarOrdenEnFirebase("oxxo", "pendiente");
         setTimeout(() => {
@@ -155,10 +151,30 @@ export default function Checkout() {
     }
 
     if (method === "card") {
+      // 1. Validación de longitud básica de campos
       if (cardNumber.replace(/\s/g, "").length < 16 || cardExpiry.length < 5 || cardCvv.length < 3) {
-        setLoading(false);
         return alert("Por favor, introduce los datos de tarjeta completos y válidos.");
       }
+
+      // 2. CONTROL DE VENCIMIENTO ULTRA-PRECISO
+      const [expiryMonth, expiryYear] = cardExpiry.split("/");
+      const month = parseInt(expiryMonth, 10);
+      const year = parseInt(`20${expiryYear}`, 10); // Convierte "26" en 2026
+
+      if (month < 1 || month > 12) {
+        return alert("El mes de expiración no es válido (debe ser entre 01 y 12).");
+      }
+
+      // Creamos la fecha límite del mes introducido (último día de ese mes a las 23:59:59)
+      const fechaExpiracionTarjeta = new Date(year, month, 0, 23, 59, 59);
+      const fechaActual = new Date();
+
+      if (fechaExpiracionTarjeta < fechaActual) {
+        return alert("Transacción declinada: La tarjeta que intentas usar ya ha expirado.");
+      }
+
+      // Si pasa los filtros de arriba, procedemos con el loading y Firebase
+      setLoading(true);
 
       try {
         const ordenId = await registrarOrdenEnFirebase("card", "completado");

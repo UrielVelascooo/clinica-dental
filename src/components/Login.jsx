@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { auth, db } from "../firebaseConfig"; 
 import {
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore"; 
 import { useNavigate } from "react-router-dom";
@@ -15,6 +16,7 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState(""); // Estado para mensajes de éxito
   
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
   const { user } = useAuth();
@@ -35,16 +37,16 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg("");
+    setSuccessMsg("");
     try {
       if (isRegistering) {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const newUser = userCredential.user;
 
-        // Guarda el perfil inicial del paciente en Firestore vinculado por su UID
         await setDoc(doc(db, "users", newUser.uid), {
           id: newUser.uid,
           email: email.toLowerCase().trim(),
-          nombre: email.split("@")[0], // Nombre provisional antes de editarse
+          nombre: email.split("@")[0], 
           telefono: "",
           rol: "paciente", 
           createdAt: new Date().toISOString()
@@ -58,6 +60,29 @@ function Login() {
       if (error.code === 'auth/weak-password') mensaje = "La contraseña es muy corta.";
       if (error.code === 'auth/email-already-in-use') mensaje = "Este correo ya está registrado.";
       if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') mensaje = "Credenciales incorrectas.";
+      if (error.code === 'auth/invalid-credential') mensaje = "Credenciales inválidas o incorrectas.";
+      setErrorMsg(mensaje);
+    }
+  };
+
+  // Función para recuperar contraseña con Firebase Auth
+  const handleForgotPassword = async () => {
+    setErrorMsg("");
+    setSuccessMsg("");
+    
+    if (!email) {
+      setErrorMsg("Por favor, ingresa tu correo electrónico primero.");
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email.trim());
+      setSuccessMsg("¡Correo enviado! Revisa tu bandeja de entrada para restablecer tu contraseña.");
+    } catch (error) {
+      console.error("Error al enviar correo de recuperación:", error);
+      let mensaje = "No se pudo enviar el correo de recuperación.";
+      if (error.code === 'auth/user-not-found') mensaje = "No existe ninguna cuenta con este correo.";
+      if (error.code === 'auth/invalid-email') mensaje = "El formato del correo no es válido.";
       setErrorMsg(mensaje);
     }
   };
@@ -91,13 +116,19 @@ function Login() {
             {isRegistering ? "Únete a la familia" : "Bienvenido"}
           </h2>
           <p style={{ ...styles.subtitle, fontSize: isMobile ? "14px" : "16px" }}>
-            {isRegistering ? "Crea tu perfil en Dental ITIZ" : "Tu salud bucal, en un solo lugar"}
+            {isRegistering ? "Crea tu perfil en Dental Velasco" : "Tu salud bucal, en un solo lugar"}
           </p>
         </header>
 
         {errorMsg && (
           <div style={styles.errorBadge} className="shake-anim">
             <span style={{marginRight: '8px', flexShrink: 0}}>✕</span> {errorMsg}
+          </div>
+        )}
+
+        {successMsg && (
+          <div style={styles.successBadge}>
+            <span style={{marginRight: '8px', flexShrink: 0}}>✓</span> {successMsg}
           </div>
         )}
 
@@ -119,6 +150,18 @@ function Login() {
           <div style={styles.inputGroup}>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                <label style={styles.label}>CONTRASEÑA</label>
+               
+               {/* Botón "¿Olvidaste tu contraseña?" - Solo visible en modo Login */}
+               {!isRegistering && (
+                 <button
+                   type="button"
+                   onClick={handleForgotPassword}
+                   style={styles.forgotButton}
+                   className="forgot-password-link"
+                 >
+                   ¿Olvidaste tu contraseña?
+                 </button>
+               )}
             </div>
             <div style={styles.inputWrapper}>
               <input
@@ -153,7 +196,7 @@ function Login() {
             {isRegistering ? "¿Ya tienes cuenta?" : "¿No tienes una cuenta todavía?"}
           </p>
           <button
-            onClick={() => { setIsRegistering(!isRegistering); setErrorMsg(""); }}
+            onClick={() => { setIsRegistering(!isRegistering); setErrorMsg(""); setSuccessMsg(""); }}
             style={styles.switchButton}
           >
             {isRegistering ? "Inicia Sesión" : "Regístrate ahora"}
@@ -174,6 +217,8 @@ function Login() {
         .premium-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(2, 62, 138, 0.3); filter: brightness(1.1); }
         .premium-btn:active { transform: translateY(-1px); }
         .back-home-btn:hover { color: #023e8a !important; }
+        .forgot-password-link { transition: color 0.2s ease, transform 0.2s ease; }
+        .forgot-password-link:hover { color: #00b4d8 !important; transform: translateY(-0.5px); }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
         .shake-anim { animation: shake 0.4s ease-in-out; }
       `}</style>
@@ -192,9 +237,11 @@ const styles = {
   title: { color: "#0a2540", fontWeight: "900", marginBottom: "8px", letterSpacing: "-1px" },
   subtitle: { color: "#64748b", fontWeight: "500" },
   errorBadge: { background: "#fff1f2", color: "#e11d48", padding: "12px 14px", borderRadius: "14px", fontSize: "13.5px", fontWeight: "600", marginBottom: "20px", border: "1px solid rgba(225, 29, 72, 0.1)", display: "flex", alignItems: "center", boxSizing: "border-box" },
+  successBadge: { background: "#f0fdf4", color: "#16a34a", padding: "12px 14px", borderRadius: "14px", fontSize: "13.5px", fontWeight: "600", marginBottom: "20px", border: "1px solid rgba(22, 163, 74, 0.1)", display: "flex", alignItems: "center", boxSizing: "border-box" },
   form: { display: "flex", flexDirection: "column", gap: "20px" },
   inputGroup: { display: "flex", flexDirection: "column", gap: "8px" },
   label: { fontSize: "11px", fontWeight: "800", color: "#023e8a", letterSpacing: "1.5px", paddingLeft: "4px" },
+  forgotButton: { background: "none", border: "none", color: "#64748b", fontSize: "11px", fontWeight: "700", cursor: "pointer", padding: "0 4px 0 0", fontFamily: "'Inter', sans-serif" },
   inputWrapper: { position: "relative" },
   input: { width: "100%", borderRadius: "16px", border: "1px solid #e2e8f0", fontSize: "15px", outline: "none", background: "rgba(255, 255, 255, 0.6)", color: "#1e293b", fontWeight: "600", boxSizing: "border-box" },
   eyeButton: { position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "18px", opacity: 0.6, padding: "4px" },

@@ -167,8 +167,8 @@ function Navbar() {
           </li>
 
           <li>
-            <HashLink to="/#dentistas" style={{...styles.link, color: isMobile ? "#023e8a" : textColor}} className="nav-aero-link" onClick={() => setMobileMenuOpen(false)}>
-              Dentistas
+            <HashLink to="/#Nosotros" style={{...styles.link, color: isMobile ? "#023e8a" : textColor}} className="nav-aero-link" onClick={() => setMobileMenuOpen(false)}>
+              Nosotros
             </HashLink>
           </li>
           
