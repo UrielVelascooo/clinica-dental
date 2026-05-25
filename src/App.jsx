@@ -39,9 +39,10 @@ function ScrollToTop() {
 }
 
 /**
- * Componente Vista de Desglose del Carrito (Adaptativo y Corregido)
+ * Componente Vista de Desglose del Carrito (Adaptativo y Limpio)
  */
 function VistaCarrito() {
+  // Consumimos directamente las acciones limpias y corregidas del CartContext
   const { cart, addToCart, removeFromCart, clearCart, getCartTotal } = useCart();
   const { user } = useAuth(); 
   const navigate = useNavigate(); 
@@ -116,15 +117,34 @@ function VistaCarrito() {
               borderRadius: "50px", 
               border: "1px solid #e2e8f0" 
             }}>
-              <button onClick={() => removeFromCart(item.id)} style={{ background: "none", border: "none", color: "#64748b", fontWeight: "bold", cursor: "pointer", fontSize: "1.2rem", padding: "0 10px" }}>-</button>
+              {/* Botón menos (-): Ejecuta la resta en el contexto */}
+              <button 
+                onClick={() => removeFromCart(item.id)} 
+                style={{ 
+                  background: "none", 
+                  border: "none", 
+                  color: item.quantity > 1 ? "#64748b" : "#cbd5e1", 
+                  fontWeight: "bold", 
+                  cursor: item.quantity > 1 ? "pointer" : "not-allowed", 
+                  fontSize: "1.2rem", 
+                  padding: "0 10px" 
+                }}
+                disabled={item.quantity <= 1}
+              >
+                -
+              </button>
+              
               <span style={{ fontWeight: "800", color: "#023e8a", minWidth: "20px", textAlign: "center" }}>{item.quantity}</span>
+              
+              {/* Botón más (+): Suma 1 usando el comportamiento nativo */}
               <button onClick={() => addToCart(item)} style={{ background: "none", border: "none", color: "#64748b", fontWeight: "bold", cursor: "pointer", fontSize: "1.2rem", padding: "0 10px" }}>+</button>
             </div>
 
-            {/* Subtotal del artículo */}
+            {/* Subtotal del artículo y Eliminación Total */}
             <div style={{ textAlign: isMobile ? "left" : "right", display: "flex", flexDirection: isMobile ? "row-reverse" : "column", justifyContent: isMobile ? "space-between" : "center", alignItems: isMobile ? "center" : "flex-end" }}>
               <p style={{ fontSize: "1.2rem", fontWeight: "900", color: "#023e8a", margin: "0" }}>${item.price * item.quantity}.00</p>
-              <button onClick={() => removeFromCart(item.id)} style={{ background: "none", border: "none", color: "#ef4444", fontSize: "0.85rem", fontWeight: "700", cursor: "pointer", textDecoration: "underline", padding: 0 }}>Eliminar</button>
+              {/* Botón Eliminar: Pasa el flag 'true' para ignorar la cantidad y remover todo */}
+              <button onClick={() => removeFromCart(item.id, true)} style={{ background: "none", border: "none", color: "#ef4444", fontSize: "0.85rem", fontWeight: "700", cursor: "pointer", textDecoration: "underline", padding: 0 }}>Eliminar</button>
             </div>
           </div>
         ))}
@@ -217,7 +237,6 @@ function App() {
     <AuthProvider>
       <CartProvider>
         <Router>
-          {/* Resetea la posición vertical del viewport en cada cambio de vista independiente */}
           <ScrollToTop />
           
           <Navbar />

@@ -1,3 +1,4 @@
+// src/context/CartContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext();
@@ -22,8 +23,21 @@ export function CartProvider({ children }) {
     });
   };
 
-  const removeFromCart = (id) => {
-    setCart(prev => prev.filter(item => item.id !== id));
+  // CORRECCIÓN SÓLIDA: Si se pasa 'clearAll' como true, borra todo. Si no, resta 1 de forma segura.
+  const removeFromCart = (id, clearAll = false) => {
+    setCart(prev => {
+      if (clearAll) {
+        return prev.filter(item => item.id !== id);
+      }
+      
+      return prev.map(item => {
+        if (item.id === id) {
+          // Solo restamos si es mayor a 1 para blindar que nunca quede en 0 o negativo
+          return item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item;
+        }
+        return item;
+      });
+    });
   };
 
   const clearCart = () => setCart([]);
@@ -31,7 +45,8 @@ export function CartProvider({ children }) {
   const getCartTotal = () => cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, getCartTotal }}>
+    // Agregamos 'setCart' al Provider para mantener compatibilidad absoluta con tus archivos
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, getCartTotal, setCart }}>
       {children}
     </CartContext.Provider>
   );

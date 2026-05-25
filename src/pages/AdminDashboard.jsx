@@ -1,4 +1,3 @@
-// src/pages/AdminDashboard.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -31,14 +30,23 @@ function AdminDashboard() {
   const [citas, setCitas] = useState([]);
   const [ventas, setVentas] = useState([]);
   const [productos, setProductos] = useState([]);
+  const [usuarios, setUsuarios] = useState([]); // CRUD de Usuarios
   const [loadingDatos, setLoadingDatos] = useState(true);
   const [activeTab, setActiveTab] = useState("resumen");
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
+  // Estados Formulario Productos
   const [nuevoProd, setNuevoProd] = useState({ name: "", price: "", category: "", image: "", stock: "", description: "" });
   const [editandoProdId, setEditandoProdId] = useState(null); 
   const [subiendoProd, setSubiendoProd] = useState(false);
 
+  // Estados Formulario Usuarios
+  const [nuevoUsuario, setNuevoUsuario] = useState({ nombre: "", email: "", telefono: "", rol: "paciente", NotasClinicas: "" });
+  const [editandoUsuarioId, setEditandoUsuarioId] = useState(null);
+  const [procesandoUsuario, setProcesandoUsuario] = useState(false);
+  const [busquedaUsuario, setBusquedaUsuario] = useState("");
+
+  // Estados Reprogramación de Citas
   const [citaReprogramandoId, setCitaReprogramandoId] = useState(null);
   const [nuevaFechaCita, setNuevaFechaCita] = useState("");
   const [nuevaHoraCita, setNuevaHoraCita] = useState("");
@@ -71,6 +79,10 @@ function AdminDashboard() {
 
       const prodSnapshot = await getDocs(collection(db, "productos"));
       setProductos(prodSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+
+      // Traer Usuarios de la Base de Datos (ajusta el nombre de tu colección "users" o "usuarios")
+      const usuariosSnapshot = await getDocs(collection(db, "users"));
+      setUsuarios(usuariosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     } catch (error) {
       console.error("Error al sincronizar:", error);
     } finally {
@@ -97,6 +109,7 @@ function AdminDashboard() {
     }
   };
 
+  // ACCIONES: PRODUCTOS
   const handleAgregarOEditarProducto = async (e) => {
     e.preventDefault();
     if (!nuevoProd.name || !nuevoProd.price) return;
@@ -155,6 +168,66 @@ function AdminDashboard() {
     }
   };
 
+  // ACCIONES: USUARIOS (CRUD)
+  const handleAgregarOEditarUsuario = async (e) => {
+    e.preventDefault();
+    if (!nuevoUsuario.nombre || !nuevoUsuario.email) return alert("Nombre y correo son obligatorios.");
+    try {
+      setProcesandoUsuario(true);
+      const dataUsuario = {
+        nombre: nuevoUsuario.nombre,
+        displayName: nuevoUsuario.nombre, // Compatibilidad con auth
+        email: nuevoUsuario.email,
+        telefono: nuevoUsuario.telefono || "",
+        rol: nuevoUsuario.rol || "paciente",
+        NotasClinicas: nuevoUsuario.NotasClinicas || "",
+        updatedAt: new Date()
+      };
+
+      if (editandoUsuarioId) {
+        const userRef = doc(db, "users", editandoUsuarioId);
+        await updateDoc(userRef, dataUsuario);
+        alert("¡Usuario modificado con éxito!");
+      } else {
+        dataUsuario.createdAt = new Date();
+        await addDoc(collection(db, "users"), dataUsuario);
+        alert("¡Usuario registrado en Firestore correctamente!");
+      }
+
+      setNuevoUsuario({ nombre: "", email: "", telefono: "", rol: "paciente", NotasClinicas: "" });
+      setEditandoUsuarioId(null);
+      fetchData();
+    } catch (error) {
+      console.error("Error al procesar usuario:", error);
+    } finally {
+      setProcesandoUsuario(false);
+    }
+  };
+
+  const handleCargarEdicionUsuario = (usr) => {
+    setEditandoUsuarioId(usr.id);
+    setNuevoUsuario({
+      nombre: usr.nombre || usr.displayName || "",
+      email: usr.email || "",
+      telefono: usr.telefono || "",
+      rol: usr.rol || "paciente",
+      NotasClinicas: usr.NotasClinicas || ""
+    });
+  };
+
+  const handleEliminarUsuario = async (id) => {
+    if (window.confirm("¿Seguro que deseas eliminar la ficha de este usuario? Esta acción no borrará sus credenciales de autenticación, pero sí sus datos del panel clínico.")) {
+      try {
+        await deleteDoc(doc(db, "users", id));
+        alert("Usuario removido de la base de datos.");
+        fetchData();
+      } catch (error) {
+        console.error("Error al borrar usuario:", error);
+      }
+    }
+  };
+
+  // ACCIONES: CITAS
   const handleCancelarCita = async (id) => {
     if (window.confirm("¿Deseas cancelar definitivamente esta cita médica?")) {
       try {
@@ -204,6 +277,14 @@ function AdminDashboard() {
     return total + (orden.items ? orden.items.reduce((sum, item) => sum + (item.quantity || 1), 0) : 0);
   }, 0);
 
+  // Filtrar la lista de usuarios según la barra de búsqueda
+  const usuariosFiltrados = usuarios.filter(u => {
+    const term = busquedaUsuario.toLowerCase();
+    const nombreVal = (u.nombre || u.displayName || "").toLowerCase();
+    const emailVal = (u.email || "").toLowerCase();
+    return nombreVal.includes(term) || emailVal.includes(term);
+  });
+
   return (
     <div style={{ 
       padding: isMobile ? "90px 12px 40px 12px" : "140px 20px 80px 20px", 
@@ -241,12 +322,12 @@ function AdminDashboard() {
       {/* TABS CON SCROLL HORIZONTAL RESPONSIVO EN MÓVIL */}
       <div style={{ 
         ...styles.tabContainer, 
-        maxWidth: isMobile ? "100%" : "550px",
+        maxWidth: isMobile ? "100%" : "680px",
         overflowX: isMobile ? "auto" : "visible",
         padding: isMobile ? "4px" : "6px",
         marginBottom: isMobile ? "20px" : "35px"
       }}>
-        {["resumen", "citas", "productos", "ventas"].map((tab) => (
+        {["resumen", "citas", "productos", "ventas", "usuarios"].map((tab) => (
           <button 
             key={tab} 
             onClick={() => setActiveTab(tab)} 
@@ -267,19 +348,19 @@ function AdminDashboard() {
       {activeTab === "resumen" && (
         <div style={{
           ...styles.grid,
-          gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fit, minmax(240px, 1fr))",
+          gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fit, minmax(220px, 1fr))",
           gap: isMobile ? "12px" : "25px"
         }}>
           <div style={{...styles.kpiCard, padding: isMobile ? "16px" : "26px"}}><span>📅</span><div><h3 style={styles.kpiTitle}>Citas Médicas</h3><p style={{...styles.kpiValue, fontSize: isMobile ? "1.5rem" : "1.9rem"}}>{citas.length}</p></div></div>
           <div style={{ ...styles.kpiCard, borderLeft: "6px solid #00b4d8", padding: isMobile ? "16px" : "26px" }}><span>🪥</span><div><h3 style={styles.kpiTitle}>Catálogo</h3><p style={{...styles.kpiValue, fontSize: isMobile ? "1.5rem" : "1.9rem"}}>{productos.length} items</p></div></div>
-          <div style={{...styles.kpiCard, padding: isMobile ? "16px" : "26px"}}><span>📦</span><div><h3 style={styles.kpiTitle}>Unidades</h3><p style={{...styles.kpiValue, fontSize: isMobile ? "1.5rem" : "1.9rem"}}>{totalProductosVendidos} u.</p></div></div>
-          <div style={{ ...styles.kpiCard, borderLeft: "6px solid #10b981", padding: isMobile ? "16px" : "26px" }}><span>💰</span><div><h3 style={styles.kpiTitle}>Ingresos Totales</h3><p style={{ ...styles.kpiValue, color: "#10b981", fontSize: isMobile ? "1.5rem" : "1.9rem" }}>${ingresosTotales}.00</p></div></div>
+          <div style={{ ...styles.kpiCard, borderLeft: "6px solid #a855f7", padding: isMobile ? "16px" : "26px" }}><span>👥</span><div><h3 style={styles.kpiTitle}>Pacientes</h3><p style={{...styles.kpiValue, fontSize: isMobile ? "1.5rem" : "1.9rem"}}>{usuarios.length} cuentas</p></div></div>
+          <div style={{ ...styles.kpiCard, borderLeft: "6px solid #10b981", padding: isMobile ? "16px" : "26px" }}><span>💰</span><div><h3 style={styles.kpiTitle}>Ingresos</h3><p style={{ ...styles.kpiValue, color: "#10b981", fontSize: isMobile ? "1.5rem" : "1.9rem" }}>${ingresosTotales}.00</p></div></div>
         </div>
       )}
 
       {/* TAB: CITAS */}
       {activeTab === "citas" && (
-        <div style={{ ...styles.tableCard, padding: isMobile ? "15px" : "35px" }}>
+        <div style={{ ...styles.tableCard, padding: isMobile ? "12px" : "35px" }}>
           <h2 style={{...styles.tableHeading, fontSize: isMobile ? "1.1rem" : "1.4rem", marginBottom: isMobile ? "15px" : "25px"}}>Monitoreo de Citas Médicas</h2>
           {citas.length === 0 ? <p style={styles.noData}>No hay citas registradas.</p> : (
             <div style={styles.tableWrapper}>
@@ -300,11 +381,11 @@ function AdminDashboard() {
                     const estatusActual = cita.estado || cita.status || "pendiente";
                     return (
                       <tr key={cita.id} style={styles.tr}>
-                        <td style={{ ...styles.td, fontWeight: "700", color: "#023e8a" }}>{cita.userEmail || cita.email || cita.nombrePaciente || "Paciente"}</td>
-                        <td style={styles.td}><span style={styles.serviceBadge}>{cita.servicio || cita.service || "General"}</span></td>
-                        <td style={styles.td}>{cita.fecha || cita.date || "No asignada"}</td>
-                        <td style={styles.td}>{cita.hora || cita.time || "No asignada"}</td>
-                        <td style={styles.td}>
+                        <td style={{ ...styles.td, fontWeight: "700", color: "#023e8a", padding: isMobile ? "12px 10px" : "18px 20px" }}>{cita.userEmail || cita.email || cita.nombrePaciente || "Paciente"}</td>
+                        <td style={{ ...styles.td, padding: isMobile ? "12px 10px" : "18px 20px" }}><span style={styles.serviceBadge}>{cita.servicio || cita.service || "General"}</span></td>
+                        <td style={{ ...styles.td, padding: isMobile ? "12px 10px" : "18px 20px" }}>{cita.fecha || cita.date || "No asignada"}</td>
+                        <td style={{ ...styles.td, padding: isMobile ? "12px 10px" : "18px 20px" }}>{cita.hora || cita.time || "No asignada"}</td>
+                        <td style={{ ...styles.td, padding: isMobile ? "12px 10px" : "18px 20px" }}>
                           <span style={{
                             ...styles.serviceBadge,
                             backgroundColor: estatusActual === "cancelada" ? "#fee2e2" : estatusActual === "reprogramada" ? "#ffedd5" : "#e0f2fe",
@@ -313,8 +394,8 @@ function AdminDashboard() {
                             {estatusActual}
                           </span>
                         </td>
-                        <td style={{ ...styles.td, color: "#64748b", fontStyle: "italic" }}>{cita.notes || cita.notas || "Sin notas"}</td>
-                        <td style={styles.td}>
+                        <td style={{ ...styles.td, color: "#64748b", fontStyle: "italic", padding: isMobile ? "12px 10px" : "18px 20px" }}>{cita.notes || cita.notas || "Sin notas"}</td>
+                        <td style={{ ...styles.td, padding: isMobile ? "12px 10px" : "18px 20px" }}>
                           {citaReprogramandoId === cita.id ? (
                             <div style={{ display: "flex", flexDirection: "column", gap: "8px", background: "#f8fafc", padding: "10px", borderRadius: "8px", border: "1px solid #cbd5e1", minWidth: "160px", boxSizing: "border-box" }}>
                               <input type="date" value={nuevaFechaCita} onChange={e => setNuevaFechaCita(e.target.value)} style={styles.miniInput} />
@@ -351,7 +432,6 @@ function AdminDashboard() {
           width: "100%",
           boxSizing: "border-box"
         }}>
-          {/* CARTA FORMULARIO */}
           <div style={{ ...styles.formCard, padding: isMobile ? "16px" : "30px" }}>
             <h3 style={{ ...styles.tableHeading, fontSize: isMobile ? "1.1rem" : "1.2rem", marginBottom: "15px" }}>
               {editandoProdId ? "📝 Editar Producto" : "✨ Añadir Producto"}
@@ -374,26 +454,30 @@ function AdminDashboard() {
             </form>
           </div>
 
-          {/* TABLA DE INVENTARIO */}
-          <div style={{ ...styles.tableCard, padding: isMobile ? "15px" : "35px" }}>
+          <div style={{ ...styles.tableCard, padding: isMobile ? "12px" : "35px", maxWidth: "100%", overflowX: "hidden" }}>
             <h2 style={{...styles.tableHeading, fontSize: isMobile ? "1.1rem" : "1.4rem", marginBottom: isMobile ? "15px" : "25px"}}>Inventario de la Tienda</h2>
             {productos.length === 0 ? <p style={styles.noData}>Tu catálogo está vacío.</p> : (
               <div style={styles.tableWrapper}>
                 <table style={styles.table}>
                   <thead>
                     <tr style={{ backgroundColor: "#f8fafc" }}>
-                      <th style={styles.th}>Imagen</th><th style={styles.th}>Producto</th><th style={styles.th}>Categoría</th><th style={styles.th}>Stock</th><th style={styles.th}>Precio</th><th style={styles.th}>Controles</th>
+                      <th style={{ ...styles.th, padding: isMobile ? "12px 10px" : "16px 20px" }}>Imagen</th>
+                      <th style={{ ...styles.th, padding: isMobile ? "12px 10px" : "16px 20px" }}>Producto</th>
+                      <th style={{ ...styles.th, padding: isMobile ? "12px 10px" : "16px 20px" }}>Categoría</th>
+                      <th style={{ ...styles.th, padding: isMobile ? "12px 10px" : "16px 20px" }}>Stock</th>
+                      <th style={{ ...styles.th, padding: isMobile ? "12px 10px" : "16px 20px" }}>Precio</th>
+                      <th style={{ ...styles.th, padding: isMobile ? "12px 10px" : "16px 20px" }}>Controles</th>
                     </tr>
                   </thead>
                   <tbody>
                     {productos.map((prod) => (
                       <tr key={prod.id} style={styles.tr}>
-                        <td style={styles.td}><img src={prod.image} alt={prod.name} style={{ width: "40px", height: "40px", borderRadius: "8px", objectFit: "cover" }} /></td>
-                        <td style={{ ...styles.td, fontWeight: "700", minWidth: "140px" }}>{prod.name}</td>
-                        <td style={styles.td}><span style={{ ...styles.serviceBadge, backgroundColor: "#f1f5f9", color: "#475569" }}>{prod.category}</span></td>
-                        <td style={styles.td}><strong>{prod.stock} u.</strong></td>
-                        <td style={{ ...styles.td, fontWeight: "800", color: "#023e8a" }}>${prod.price}.00</td>
-                        <td style={styles.td}>
+                        <td style={{ ...styles.td, padding: isMobile ? "12px 10px" : "18px 20px" }}><img src={prod.image} alt={prod.name} style={{ width: "40px", height: "40px", borderRadius: "8px", objectFit: "cover" }} /></td>
+                        <td style={{ ...styles.td, fontWeight: "700", minWidth: "140px", padding: isMobile ? "12px 10px" : "18px 20px" }}>{prod.name}</td>
+                        <td style={{ ...styles.td, padding: isMobile ? "12px 10px" : "18px 20px" }}><span style={{ ...styles.serviceBadge, backgroundColor: "#f1f5f9", color: "#475569" }}>{prod.category}</span></td>
+                        <td style={{ ...styles.td, padding: isMobile ? "12px 10px" : "18px 20px" }}><strong>{prod.stock} u.</strong></td>
+                        <td style={{ ...styles.td, fontWeight: "800", color: "#023e8a", padding: isMobile ? "12px 10px" : "18px 20px" }}>${prod.price}.00</td>
+                        <td style={{ ...styles.td, padding: isMobile ? "12px 10px" : "18px 20px" }}>
                           <div style={{ display: "flex", gap: "8px" }}>
                             <button onClick={() => handleCargarEdicion(prod)} style={{ ...styles.controlBtn, color: "#023e8a", backgroundColor: "#eff6ff" }}>✏️ Editar</button>
                             <button onClick={() => handleEliminarProducto(prod.id)} style={{ ...styles.controlBtn, color: "#ef4444", backgroundColor: "#fee2e2" }}>🗑️ Quitar</button>
@@ -411,7 +495,7 @@ function AdminDashboard() {
 
       {/* TAB: VENTAS */}
       {activeTab === "ventas" && (
-        <div style={{ ...styles.tableCard, padding: isMobile ? "15px" : "35px" }}>
+        <div style={{ ...styles.tableCard, padding: isMobile ? "12px" : "35px" }}>
           <h2 style={{...styles.tableHeading, fontSize: isMobile ? "1.1rem" : "1.4rem", marginBottom: isMobile ? "15px" : "25px"}}>Registro de Ventas Históricas</h2>
           {ventas.length === 0 ? <p style={styles.noData}>No se registran ventas todavía.</p> : (
             <div style={styles.tableWrapper}>
@@ -424,23 +508,124 @@ function AdminDashboard() {
                 <tbody>
                   {ventas.map((venta) => (
                     <tr key={venta.id} style={styles.tr}>
-                      <td style={{ ...styles.td, fontFamily: "monospace" }}>#{venta.id.substring(0, 8).toUpperCase()}</td>
-                      <td style={{ ...styles.td, fontWeight: "700" }}>{venta.userEmail || venta.email || "Cliente"}</td>
-                      <td style={styles.td}>
+                      <td style={{ ...styles.td, fontFamily: "monospace", padding: isMobile ? "12px 10px" : "18px 20px" }}>#{venta.id.substring(0, 8).toUpperCase()}</td>
+                      <td style={{ ...styles.td, fontWeight: "700", padding: isMobile ? "12px 10px" : "18px 20px" }}>{venta.userEmail || venta.email || "Cliente"}</td>
+                      <td style={{ ...styles.td, padding: isMobile ? "12px 10px" : "18px 20px" }}>
                         <div style={{ display: "flex", flexDirection: "column", minWidth: "150px" }}>
                           {venta.items ? venta.items.map((item, i) => (
                             <span key={i} style={{ fontSize: "0.85rem" }}>• {item.name || item.title} <strong>(x{item.quantity || 1})</strong></span>
                           )) : "Detalle ausente"}
                         </div>
                       </td>
-                      <td style={styles.td}>{venta.createdAt ? new Date(venta.createdAt.seconds * 1000).toLocaleDateString() : (venta.date || "Reciente")}</td>
-                      <td style={{ ...styles.td, fontWeight: "900", color: "#10b981" }}>${venta.total}.00</td>
+                      <td style={{ ...styles.td, padding: isMobile ? "12px 10px" : "18px 20px" }}>{venta.createdAt ? new Date(venta.createdAt.seconds * 1000).toLocaleDateString() : (venta.date || "Reciente")}</td>
+                      <td style={{ ...styles.td, fontWeight: "900", color: "#10b981", padding: isMobile ? "12px 10px" : "18px 20px" }}>${venta.total}.00</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           )}
+        </div>
+      )}
+
+      {/* NUEVA TAB: GESTIÓN DE USUARIOS / PACIENTES */}
+      {activeTab === "usuarios" && (
+        <div style={{ 
+          display: "grid", 
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 2fr", 
+          gap: isMobile ? "20px" : "30px", 
+          alignItems: "start",
+          width: "100%",
+          boxSizing: "border-box"
+        }}>
+          {/* FORMULARIO DE ALTA / EDICIÓN */}
+          <div style={{ ...styles.formCard, padding: isMobile ? "16px" : "30px" }}>
+            <h3 style={{ ...styles.tableHeading, fontSize: isMobile ? "1.1rem" : "1.2rem", marginBottom: "15px" }}>
+              {editandoUsuarioId ? "📝 Ficha del Usuario" : "👤 Registrar Paciente"}
+            </h3>
+            <form onSubmit={handleAgregarOEditarUsuario} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              <input type="text" placeholder="Nombre completo" required value={nuevoUsuario.nombre} onChange={e => setNuevoUsuario({...nuevoUsuario, nombre: e.target.value})} style={{...styles.formInput, padding: isMobile ? "12px" : "14px"}} />
+              <input type="email" placeholder="Correo Electrónico" required value={nuevoUsuario.email} onChange={e => setNuevoUsuario({...nuevoUsuario, email: e.target.value})} style={{...styles.formInput, padding: isMobile ? "12px" : "14px"}} />
+              <input type="tel" placeholder="Teléfono" value={nuevoUsuario.telefono} onChange={e => setNuevoUsuario({...nuevoUsuario, telefono: e.target.value})} style={{...styles.formInput, padding: isMobile ? "12px" : "14px"}} />
+              
+              <select value={nuevoUsuario.rol} onChange={e => setNuevoUsuario({...nuevoUsuario, rol: e.target.value})} style={{...styles.formInput, padding: isMobile ? "12px" : "14px", backgroundColor: "white"}}>
+                <option value="paciente">Paciente</option>
+                <option value="admin">Administrador</option>
+              </select>
+
+              <textarea placeholder="Historial Clínico / Notas del Administrador" rows="3" value={nuevoUsuario.NotasClinicas} onChange={e => setNuevoUsuario({...nuevoUsuario, NotasClinicas: e.target.value})} style={{...styles.formInput, padding: isMobile ? "12px" : "14px", borderRadius: "12px", resize: "vertical"}} />
+              
+              <div style={{ display: "flex", gap: "10px" }}>
+                <button type="submit" disabled={procesandoUsuario} style={{ ...styles.submitBtn, flex: 2, padding: isMobile ? "12px" : "15px" }}>
+                  {procesandoUsuario ? "Guardando..." : editandoUsuarioId ? "💾 Actualizar Ficha" : "🚀 Crear Cuenta"}
+                </button>
+                {editandoUsuarioId && (
+                  <button type="button" onClick={() => { setEditandoUsuarioId(null); setNuevoUsuario({ nombre: "", email: "", telefono: "", rol: "paciente", NotasClinicas: "" }); }} style={{ ...styles.submitBtn, backgroundColor: "#64748b", background: "none", color: "#64748b", border: "1px solid #cbd5e1", flex: 1, padding: isMobile ? "12px" : "15px" }}>X</button>
+                )}
+              </div>
+            </form>
+          </div>
+
+          {/* TABLA CON BUSCADOR DE USUARIOS */}
+          <div style={{ ...styles.tableCard, padding: isMobile ? "12px" : "35px", maxWidth: "100%", overflowX: "hidden" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px", marginBottom: "20px" }}>
+              <h2 style={{...styles.tableHeading, fontSize: isMobile ? "1.1rem" : "1.4rem"}}>Base de Datos de Usuarios</h2>
+              <input 
+                type="text" 
+                placeholder="🔍 Buscar por nombre o email..." 
+                value={busquedaUsuario} 
+                onChange={e => setBusquedaUsuario(e.target.value)} 
+                style={{ ...styles.formInput, padding: "8px 14px", width: isMobile ? "100%" : "250px" }}
+              />
+            </div>
+
+            {usuariosFiltrados.length === 0 ? <p style={styles.noData}>No se encontraron usuarios registrados.</p> : (
+              <div style={styles.tableWrapper}>
+                <table style={styles.table}>
+                  <thead>
+                    <tr style={{ backgroundColor: "#f8fafc" }}>
+                      <th style={{ ...styles.th, padding: isMobile ? "12px 10px" : "16px 20px" }}>Nombre / Cuenta</th>
+                      <th style={{ ...styles.th, padding: isMobile ? "12px 10px" : "16px 20px" }}>Contacto</th>
+                      <th style={{ ...styles.th, padding: isMobile ? "12px 10px" : "16px 20px" }}>Rol</th>
+                      <th style={{ ...styles.th, padding: isMobile ? "12px 10px" : "16px 20px" }}>Historial Clínico / Notas</th>
+                      <th style={{ ...styles.th, padding: isMobile ? "12px 10px" : "16px 20px" }}>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {usuariosFiltrados.map((usr) => (
+                      <tr key={usr.id} style={styles.tr}>
+                        <td style={{ ...styles.td, padding: isMobile ? "12px 10px" : "18px 20px" }}>
+                          <div style={{ fontWeight: "700", color: "#023e8a" }}>{usr.nombre || usr.displayName || "Sin Nombre"}</div>
+                          <div style={{ fontSize: "0.8rem", color: "#64748b" }}>{usr.email}</div>
+                        </td>
+                        <td style={{ ...styles.td, padding: isMobile ? "12px 10px" : "18px 20px", fontSize: "0.9rem" }}>
+                          {usr.telefono || "—"}
+                        </td>
+                        <td style={{ ...styles.td, padding: isMobile ? "12px 10px" : "18px 20px" }}>
+                          <span style={{ 
+                            ...styles.serviceBadge, 
+                            backgroundColor: usr.rol === "admin" ? "#fef3c7" : "#e0f2fe", 
+                            color: usr.rol === "admin" ? "#d97706" : "#0369a1" 
+                          }}>
+                            {usr.rol || "paciente"}
+                          </span>
+                        </td>
+                        <td style={{ ...styles.td, padding: isMobile ? "12px 10px" : "18px 20px", fontSize: "0.85rem", color: "#475569", maxWidth: "200px", whiteSpace: "normal", wordBreak: "break-word" }}>
+                          {usr.NotasClinicas ? usr.NotasClinicas : <span style={{color: "#cbd5e1", fontStyle: "italic"}}>Sin expediente clínico</span>}
+                        </td>
+                        <td style={{ ...styles.td, padding: isMobile ? "12px 10px" : "18px 20px" }}>
+                          <div style={{ display: "flex", gap: "8px" }}>
+                            <button onClick={() => handleCargarEdicionUsuario(usr)} style={{ ...styles.controlBtn, color: "#023e8a", backgroundColor: "#eff6ff" }}>✏️ Editar</button>
+                            <button onClick={() => handleEliminarUsuario(usr.id)} style={{ ...styles.controlBtn, color: "#ef4444", backgroundColor: "#fee2e2" }}>🗑️ Borrar</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

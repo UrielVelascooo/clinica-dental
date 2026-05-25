@@ -1,9 +1,11 @@
+// src/pages/Login.jsx
 import { useState, useEffect } from "react";
-import { auth } from "../firebaseConfig";
+import { auth, db } from "../firebaseConfig"; 
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword
 } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore"; 
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -14,7 +16,6 @@ function Login() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   
-  // Estado para controlar la responsividad dinámica en línea
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -36,11 +37,23 @@ function Login() {
     setErrorMsg("");
     try {
       if (isRegistering) {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const newUser = userCredential.user;
+
+        // Guarda el perfil inicial del paciente en Firestore vinculado por su UID
+        await setDoc(doc(db, "users", newUser.uid), {
+          id: newUser.uid,
+          email: email.toLowerCase().trim(),
+          nombre: email.split("@")[0], // Nombre provisional antes de editarse
+          telefono: "",
+          rol: "paciente", 
+          createdAt: new Date().toISOString()
+        });
       } else {
         await signInWithEmailAndPassword(auth, email, password);
       }
     } catch (error) {
+      console.error("Error Auth/Firestore:", error);
       let mensaje = "Ocurrió un error inesperado";
       if (error.code === 'auth/weak-password') mensaje = "La contraseña es muy corta.";
       if (error.code === 'auth/email-already-in-use') mensaje = "Este correo ya está registrado.";
@@ -51,7 +64,6 @@ function Login() {
 
   return (
     <div style={styles.container}>
-      {/* Elementos decorativos de fondo para UX Innovador */}
       <div style={styles.blob1}></div>
       <div style={styles.blob2}></div>
 
@@ -75,23 +87,17 @@ function Login() {
               </svg>
             </div>
           </div>
-          <h2 style={{
-            ...styles.title,
-            fontSize: isMobile ? "26px" : "32px"
-          }}>
+          <h2 style={{ ...styles.title, fontSize: isMobile ? "26px" : "32px" }}>
             {isRegistering ? "Únete a la familia" : "Bienvenido"}
           </h2>
-          <p style={{
-            ...styles.subtitle,
-            fontSize: isMobile ? "14px" : "16px"
-          }}>
+          <p style={{ ...styles.subtitle, fontSize: isMobile ? "14px" : "16px" }}>
             {isRegistering ? "Crea tu perfil en Dental ITIZ" : "Tu salud bucal, en un solo lugar"}
           </p>
         </header>
 
         {errorMsg && (
           <div style={styles.errorBadge} className="shake-anim">
-            <span style={{marginRight: '8px', shrink: 0}}>✕</span> {errorMsg}
+            <span style={{marginRight: '8px', flexShrink: 0}}>✕</span> {errorMsg}
           </div>
         )}
 
@@ -102,10 +108,8 @@ function Login() {
               <input
                 type="email"
                 required
-                style={{
-                  ...styles.input,
-                  padding: isMobile ? "16px 18px" : "18px 20px"
-                }}
+                value={email}
+                style={{ ...styles.input, padding: isMobile ? "16px 18px" : "18px 20px" }}
                 className="premium-input"
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -120,10 +124,8 @@ function Login() {
               <input
                 type={showPassword ? "text" : "password"}
                 required
-                style={{
-                  ...styles.input,
-                  padding: isMobile ? "16px 45px 16px 18px" : "18px 50px 18px 20px"
-                }}
+                value={password}
+                style={{ ...styles.input, padding: isMobile ? "16px 45px 16px 18px" : "18px 50px 18px 20px" }}
                 className="premium-input"
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -139,20 +141,14 @@ function Login() {
 
           <button 
             type="submit" 
-            style={{
-              ...styles.mainButton,
-              padding: isMobile ? "16px" : "20px"
-            }} 
+            style={{ ...styles.mainButton, padding: isMobile ? "16px" : "20px" }} 
             className="premium-btn"
           >
             {isRegistering ? "CREAR CUENTA" : "ENTRAR"}
           </button>
         </form>
 
-        <div style={{
-          ...styles.footer,
-          marginTop: isMobile ? "25px" : "35px"
-        }}>
+        <div style={{ ...styles.footer, marginTop: isMobile ? "25px" : "35px" }}>
           <p style={styles.footerText}>
             {isRegistering ? "¿Ya tienes cuenta?" : "¿No tienes una cuenta todavía?"}
           </p>
@@ -170,44 +166,15 @@ function Login() {
       </div>
 
       <style>{`
-        .glass-morphism {
-          animation: cardAppear 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-        @keyframes cardAppear {
-          from { opacity: 0; transform: scale(0.97) translateY(15px); }
-          to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        .premium-input {
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          -webkit-appearance: none; /* Elimina estilos por defecto de iOS */
-        }
-        .premium-input:focus {
-          background: #ffffff !important;
-          border-color: #00b4d8 !important;
-          box-shadow: 0 10px 20px -10px rgba(0, 180, 216, 0.3);
-          transform: translateY(-2px);
-        }
-        .premium-btn {
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          position: relative;
-          overflow: hidden;
-        }
-        .premium-btn:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 15px 30px rgba(2, 62, 138, 0.3);
-          filter: brightness(1.1);
-        }
-        .premium-btn:active {
-          transform: translateY(-1px);
-        }
-        .back-home-btn:hover {
-          color: #023e8a !important;
-        }
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-4px); }
-          75% { transform: translateX(4px); }
-        }
+        .glass-morphism { animation: cardAppear 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        @keyframes cardAppear { from { opacity: 0; transform: scale(0.97) translateY(15px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .premium-input { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); -webkit-appearance: none; }
+        .premium-input:focus { background: #ffffff !important; border-color: #00b4d8 !important; box-shadow: 0 10px 20px -10px rgba(0, 180, 216, 0.3); transform: translateY(-2px); }
+        .premium-btn { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
+        .premium-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(2, 62, 138, 0.3); filter: brightness(1.1); }
+        .premium-btn:active { transform: translateY(-1px); }
+        .back-home-btn:hover { color: #023e8a !important; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
         .shake-anim { animation: shake 0.4s ease-in-out; }
       `}</style>
     </div>
@@ -215,147 +182,27 @@ function Login() {
 }
 
 const styles = {
-  container: {
-    minHeight: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    background: "#f0f4f8",
-    padding: "16px",
-    fontFamily: "'Inter', sans-serif",
-    position: "relative",
-    overflow: "hidden",
-    boxSizing: "border-box"
-  },
-  blob1: {
-    position: "absolute",
-    width: "40vw",
-    height: "40vw",
-    minWidth: "280px",
-    background: "linear-gradient(135deg, rgba(0, 180, 216, 0.2), rgba(2, 62, 138, 0.2))",
-    borderRadius: "50%",
-    top: "-10%",
-    right: "-10%",
-    filter: "blur(80px)",
-    zIndex: 0
-  },
-  blob2: {
-    position: "absolute",
-    width: "35vw",
-    height: "35vw",
-    minWidth: "250px",
-    background: "linear-gradient(135deg, rgba(0, 119, 182, 0.15), rgba(0, 180, 216, 0.1))",
-    borderRadius: "50%",
-    bottom: "-8%",
-    left: "-8%",
-    filter: "blur(80px)",
-    zIndex: 0
-  },
-  card: {
-    background: "rgba(255, 255, 255, 0.85)",
-    backdropFilter: "blur(20px)",
-    WebkitBackdropFilter: "blur(20px)", /* Soporte nativo Safari móvil */
-    boxShadow: "0 40px 80px -15px rgba(2, 62, 138, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.6)",
-    width: "100%",
-    maxWidth: "450px",
-    zIndex: 1,
-    position: "relative",
-    boxSizing: "border-box"
-  },
+  container: { minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center", background: "#f0f4f8", padding: "16px", fontFamily: "'Inter', sans-serif", position: "relative", overflow: "hidden", boxSizing: "border-box" },
+  blob1: { position: "absolute", width: "40vw", height: "40vw", minWidth: "280px", background: "linear-gradient(135deg, rgba(0, 180, 216, 0.2), rgba(2, 62, 138, 0.2))", borderRadius: "50%", top: "-10%", right: "-10%", filter: "blur(80px)", zIndex: 0 },
+  blob2: { position: "absolute", width: "35vw", height: "35vw", minWidth: "250px", background: "linear-gradient(135deg, rgba(0, 119, 182, 0.15), rgba(0, 180, 216, 0.1))", borderRadius: "50%", bottom: "-8%", left: "-8%", filter: "blur(80px)", zIndex: 0 },
+  card: { background: "rgba(255, 255, 255, 0.85)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", boxShadow: "0 40px 80px -15px rgba(2, 62, 138, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.6)", width: "100%", maxWidth: "450px", zIndex: 1, position: "relative", boxSizing: "border-box" },
   header: { textAlign: "center" },
-  logoWrapper: {
-    display: "flex",
-    justifyContent: "center",
-    marginBottom: "16px"
-  },
-  logoIcon: {
-    width: "55px",
-    height: "55px",
-    background: "linear-gradient(135deg, #023e8a, #00b4d8)",
-    borderRadius: "18px",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    boxShadow: "0 10px 20px rgba(2, 62, 138, 0.15)"
-  },
+  logoWrapper: { display: "flex", justifyContent: "center", marginBottom: "16px" },
+  logoIcon: { width: "55px", height: "55px", background: "linear-gradient(135deg, #023e8a, #00b4d8)", borderRadius: "18px", display: "flex", justifyContent: "center", alignItems: "center", boxShadow: "0 10px 20px rgba(2, 62, 138, 0.15)" },
   title: { color: "#0a2540", fontWeight: "900", marginBottom: "8px", letterSpacing: "-1px" },
   subtitle: { color: "#64748b", fontWeight: "500" },
-  errorBadge: {
-    background: "#fff1f2",
-    color: "#e11d48",
-    padding: "12px 14px",
-    borderRadius: "14px",
-    fontSize: "13.5px",
-    fontWeight: "600",
-    marginBottom: "20px",
-    border: "1px solid rgba(225, 29, 72, 0.1)",
-    display: "flex",
-    alignItems: "center",
-    boxSizing: "border-box"
-  },
+  errorBadge: { background: "#fff1f2", color: "#e11d48", padding: "12px 14px", borderRadius: "14px", fontSize: "13.5px", fontWeight: "600", marginBottom: "20px", border: "1px solid rgba(225, 29, 72, 0.1)", display: "flex", alignItems: "center", boxSizing: "border-box" },
   form: { display: "flex", flexDirection: "column", gap: "20px" },
   inputGroup: { display: "flex", flexDirection: "column", gap: "8px" },
   label: { fontSize: "11px", fontWeight: "800", color: "#023e8a", letterSpacing: "1.5px", paddingLeft: "4px" },
   inputWrapper: { position: "relative" },
-  input: {
-    width: "100%",
-    borderRadius: "16px",
-    border: "1px solid #e2e8f0",
-    fontSize: "15px",
-    outline: "none",
-    background: "rgba(255, 255, 255, 0.6)",
-    color: "#1e293b",
-    fontWeight: "600",
-    boxSizing: "border-box"
-  },
-  eyeButton: {
-    position: "absolute",
-    right: "16px",
-    top: "50%",
-    transform: "translateY(-50%)",
-    background: "none",
-    border: "none",
-    cursor: "pointer",
-    fontSize: "18px",
-    opacity: 0.6,
-    padding: "4px"
-  },
-  mainButton: {
-    borderRadius: "16px",
-    border: "none",
-    background: "linear-gradient(135deg, #023e8a 0%, #0077b6 100%)",
-    color: "white",
-    fontWeight: "800",
-    fontSize: "15px",
-    cursor: "pointer",
-    boxShadow: "0 15px 30px -8px rgba(2, 62, 138, 0.25)",
-    letterSpacing: "0.5px"
-  },
+  input: { width: "100%", borderRadius: "16px", border: "1px solid #e2e8f0", fontSize: "15px", outline: "none", background: "rgba(255, 255, 255, 0.6)", color: "#1e293b", fontWeight: "600", boxSizing: "border-box" },
+  eyeButton: { position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "18px", opacity: 0.6, padding: "4px" },
+  mainButton: { borderRadius: "16px", border: "none", background: "linear-gradient(135deg, #023e8a 0%, #0077b6 100%)", color: "white", fontWeight: "800", fontSize: "15px", cursor: "pointer", boxShadow: "0 15px 30px -8px rgba(2, 62, 138, 0.25)", letterSpacing: "0.5px" },
   footer: { textAlign: "center" },
   footerText: { color: "#64748b", fontSize: "13.5px", marginBottom: "6px" },
-  switchButton: {
-    background: "none",
-    border: "none",
-    color: "#023e8a",
-    fontSize: "14.5px",
-    fontWeight: "800",
-    cursor: "pointer",
-    textDecoration: "underline",
-    textUnderlineOffset: "4px"
-  },
-  backHome: {
-    marginTop: "25px",
-    background: "none",
-    border: "none",
-    color: "#94a3b8",
-    fontSize: "13px",
-    fontWeight: "700",
-    cursor: "pointer",
-    display: "block",
-    width: "100%",
-    transition: "color 0.2s ease",
-    padding: "4px"
-  }
+  switchButton: { background: "none", border: "none", color: "#023e8a", fontSize: "14.5px", fontWeight: "800", cursor: "pointer", textDecoration: "underline", textUnderlineOffset: "4px" },
+  backHome: { marginTop: "25px", background: "none", border: "none", color: "#94a3b8", fontSize: "13px", fontWeight: "700", cursor: "pointer", display: "block", width: "100%", transition: "color 0.2s ease", padding: "4px" }
 };
 
 export default Login;

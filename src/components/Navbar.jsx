@@ -205,15 +205,20 @@ function Navbar() {
                 {showUserDropdown && (
                   <div style={{...styles.dropdownContainer, position: isMobile ? 'static' : 'absolute'}}>
                     <ul style={styles.dropdownMenu}>
-                      {isAdmin && (
+                      {/* 👑 SI ES ADMIN: Renderiza únicamente la opción del panel administrativo */}
+                      {isAdmin ? (
                         <li>
                           <Link to="/admin" style={{...styles.dropdownItem, color: "#10b981"}} className="dropdown-hover-effect" onClick={() => { setShowUserDropdown(false); setMobileMenuOpen(false); }}>
                             ⚙️ Panel de Control
                           </Link>
                         </li>
+                      ) : (
+                        /* 👥 SI ES CLIENTE: Muestra las pestañas de compras y citas */
+                        <>
+                          <li><Link to="/mis-citas" style={styles.dropdownItem} className="dropdown-hover-effect" onClick={() => { setShowUserDropdown(false); setMobileMenuOpen(false); }}>📅 Mis Citas</Link></li>
+                          <li><Link to="/mis-compras" style={styles.dropdownItem} className="dropdown-hover-effect" onClick={() => { setShowUserDropdown(false); setMobileMenuOpen(false); }}>🛍️ Mis Compras</Link></li>
+                        </>
                       )}
-                      <li><Link to="/mis-citas" style={styles.dropdownItem} className="dropdown-hover-effect" onClick={() => { setShowUserDropdown(false); setMobileMenuOpen(false); }}>📅 Mis Citas</Link></li>
-                      <li><Link to="/mis-compras" style={styles.dropdownItem} className="dropdown-hover-effect" onClick={() => { setShowUserDropdown(false); setMobileMenuOpen(false); }}>🛍️ Mis Compras</Link></li>
                     </ul>
                   </div>
                 )}
@@ -317,6 +322,7 @@ const styles = {
   dropdownItem: { display: "block", padding: "10px 15px", textDecoration: "none", color: "#023e8a", fontWeight: "700", fontSize: "0.9rem", borderRadius: "10px" },
   userLabel: { fontWeight: "900", fontSize: "0.85rem", letterSpacing: "1px" },
   logoutBtn: { fontWeight: "800", fontSize: "0.9rem", background: "transparent", border: "none", cursor: "pointer", fontFamily: "inherit" },
+  
   cartContainer: { position: "relative", display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none" },
   cartBadge: { position: "absolute", top: "-5px", right: "-5px", background: "#00b4d8", color: "white", fontSize: "10px", fontWeight: "900", borderRadius: "50%", width: "16px", height: "16px", display: "flex", alignItems: "center", justifyContent: "center" }
 };
