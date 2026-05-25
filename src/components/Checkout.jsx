@@ -183,7 +183,8 @@ export default function Checkout() {
       <div style={{
         ...styles.grid,
         gridTemplateColumns: isMobile ? "1fr" : "1.1fr 0.9fr",
-        gap: isMobile ? "16px" : "40px"
+        gap: isMobile ? "16px" : "40px",
+        gridAutoRows: "minmax(0, auto)"
       }}>
         
         {/* COLUMNA: Resumen de Compra O Ficha Digital OXXO Pay */}
@@ -236,7 +237,7 @@ export default function Checkout() {
                         alt={item.name} 
                         style={{ width: isMobile ? "32px" : "40px", height: isMobile ? "32px" : "40px", borderRadius: "8px", objectFit: "cover", flexShrink: 0 }}
                       />
-                      <span style={{ fontSize: isMobile ? "12px" : "14px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#1e293b" }}>
+                      <span style={{ fontSize: isMobile ? "12px" : "14px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: isMobile ? "normal" : "nowrap", overflowWrap: "anywhere", color: "#1e293b" }}>
                         {item.name} <strong style={{ color: "#64748b" }}>(x{item.quantity})</strong>
                       </span>
                     </div>
@@ -277,7 +278,8 @@ export default function Checkout() {
                   cursor: fichaOxxo ? "not-allowed" : "pointer",
                   fontSize: isMobile ? "11px" : "14px",
                   padding: isMobile ? "8px 2px" : "14px 10px",
-                  borderRadius: isMobile ? "8px" : "12px"
+                  borderRadius: isMobile ? "8px" : "12px",
+                  width: isMobile ? "100%" : "auto"
                 }}
               >
                 {m === "card" && (isMobile ? "Tarjeta" : "💳 Tarjeta")}
@@ -370,12 +372,12 @@ export default function Checkout() {
 const styles = {
   container: { maxWidth: "1000px", margin: "0 auto", fontFamily: "'Inter', sans-serif", boxSizing: "border-box", width: "100%" },
   grid: { display: "grid", alignItems: "start", boxSizing: "border-box", width: "100%" },
-  summaryCard: { background: "#f8fafc", borderRadius: "24px", border: "1px solid #e2e8f0", boxSizing: "border-box", width: "100%" },
-  paymentCard: { background: "white", borderRadius: "24px", boxShadow: "0 10px 30px rgba(0,0,0,0.02)", border: "1px solid #e2e8f0", boxSizing: "border-box", width: "100%" },
+  summaryCard: { background: "#f8fafc", borderRadius: "24px", border: "1px solid #e2e8f0", boxSizing: "border-box", width: "100%", minWidth: 0 },
+  paymentCard: { background: "white", borderRadius: "24px", boxShadow: "0 10px 30px rgba(0,0,0,0.02)", border: "1px solid #e2e8f0", boxSizing: "border-box", width: "100%", minWidth: 0 },
   sectionTitle: { fontWeight: "900", color: "#0a2540", marginTop: 0 },
-  itemRow: { display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "12px", borderBottom: "1px solid #e2e8f0", boxSizing: "border-box", width: "100%" },
+  itemRow: { display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "12px", borderBottom: "1px solid #e2e8f0", boxSizing: "border-box", width: "100%", flexWrap: "wrap", gap: "8px" },
   totalRow: { display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "2px solid #cbd5e1", marginTop: "15px", paddingTop: "15px", boxSizing: "border-box", width: "100%" },
-  tabs: { display: "flex", gap: "6px", width: "100%", boxSizing: "border-box" },
+  tabs: { display: "flex", flexWrap: "wrap", gap: "6px", width: "100%", boxSizing: "border-box" },
   tabBtn: { flex: 1, border: "2px solid", fontWeight: "800", transition: "all 0.2s ease", boxSizing: "border-box", cursor: "pointer" },
   formGap: { display: "flex", flexDirection: "column", boxSizing: "border-box", width: "100%" },
   input: { width: "100%", border: "1px solid #cbd5e1", boxSizing: "border-box", outline: "none", transition: "all 0.2s ease", color: "#0f172a" },
