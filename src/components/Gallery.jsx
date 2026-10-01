@@ -15,7 +15,7 @@ function Gallery() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const DURATION = 6000;
 
-  // Sincronizar el tamaño de pantalla
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", handleResize);

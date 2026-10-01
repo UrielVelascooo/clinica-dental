@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 function Contact() {
-  // Detector de pantalla móvil en tiempo real
+  
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ function Contact() {
         marginBottom: isMobile ? "40px" : "80px"
       }}>
         
-        {/* TARJETA DE INFORMACIÓN */}
+       
         <div style={{
           ...styles.infoCardMain,
           padding: isMobile ? "25px 20px" : "45px"

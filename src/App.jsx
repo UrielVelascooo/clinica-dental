@@ -26,7 +26,6 @@ import Checkout from "./components/Checkout";
 
 /**
  * Componente Auxiliar: Control de Scroll al cambiar de ruta
- * Asegura que la pantalla siempre suba al inicio al navegar entre componentes independientes.
  */
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -39,10 +38,29 @@ function ScrollToTop() {
 }
 
 /**
+ * Componente Auxiliar: Endpoint de Salud (Health Check)
+ * Devuelve el JSON requerido para la evidencia de la Fase 1
+ */
+function HealthCheck() {
+  const responseData = {
+    status: "online",
+    message: "Servidor Arriba",
+    server_time: new Date().toISOString()
+  };
+
+  return (
+    <div style={{ padding: "40px", fontFamily: "monospace", backgroundColor: "#0d1117", color: "#58a6ff", minHeight: "100vh" }}>
+      <pre style={{ fontSize: "1.1rem" }}>
+        {JSON.stringify(responseData, null, 2)}
+      </pre>
+    </div>
+  );
+}
+
+/**
  * Componente Vista de Desglose del Carrito (Adaptativo y Limpio)
  */
 function VistaCarrito() {
-  // Consumimos directamente las acciones limpias y corregidas del CartContext
   const { cart, addToCart, removeFromCart, clearCart, getCartTotal } = useCart();
   const { user } = useAuth(); 
   const navigate = useNavigate(); 
@@ -106,7 +124,6 @@ function VistaCarrito() {
               </div>
             </div>
 
-            {/* Controles de Cantidad */}
             <div style={{ 
               display: "flex", 
               alignItems: "center", 
@@ -117,7 +134,6 @@ function VistaCarrito() {
               borderRadius: "50px", 
               border: "1px solid #e2e8f0" 
             }}>
-              {/* Botón menos (-): Ejecuta la resta en el contexto */}
               <button 
                 onClick={() => removeFromCart(item.id)} 
                 style={{ 
@@ -136,20 +152,16 @@ function VistaCarrito() {
               
               <span style={{ fontWeight: "800", color: "#023e8a", minWidth: "20px", textAlign: "center" }}>{item.quantity}</span>
               
-              {/* Botón más (+): Suma 1 usando el comportamiento nativo */}
               <button onClick={() => addToCart(item)} style={{ background: "none", border: "none", color: "#64748b", fontWeight: "bold", cursor: "pointer", fontSize: "1.2rem", padding: "0 10px" }}>+</button>
             </div>
 
-            {/* Subtotal del artículo y Eliminación Total */}
             <div style={{ textAlign: isMobile ? "left" : "right", display: "flex", flexDirection: isMobile ? "row-reverse" : "column", justifyContent: isMobile ? "space-between" : "center", alignItems: isMobile ? "center" : "flex-end" }}>
               <p style={{ fontSize: "1.2rem", fontWeight: "900", color: "#023e8a", margin: "0" }}>${item.price * item.quantity}.00</p>
-              {/* Botón Eliminar: Pasa el flag 'true' para ignorar la cantidad y remover todo */}
               <button onClick={() => removeFromCart(item.id, true)} style={{ background: "none", border: "none", color: "#ef4444", fontSize: "0.85rem", fontWeight: "700", cursor: "pointer", textDecoration: "underline", padding: 0 }}>Eliminar</button>
             </div>
           </div>
         ))}
 
-        {/* Resumen Final de Compra */}
         <div style={{ 
           marginTop: "20px", 
           padding: isMobile ? "20px" : "30px", 
@@ -243,6 +255,9 @@ function App() {
           
           <Routes>
             <Route path="/" element={<Home />} />
+            {/* Ruta para simular el Health Check del servidor */}
+            <Route path="/health" element={<HealthCheck />} />
+            
             <Route path="/servicios/:id" element={<ServiceDetail />} />
             <Route path="/login" element={<Login />} />
             <Route path="/mis-citas" element={<MyAppointments />} />
@@ -251,7 +266,7 @@ function App() {
             {/* Ruta del Panel de Administración Avanzado */}
             <Route path="/admin" element={<AdminDashboard />} />
             
-            {/* Rutas comerciales perfectamente integradas */}
+            {/* Rutas comerciales */}
             <Route path="/tienda" element={<Tienda />} />
             <Route path="/carrito" element={<VistaCarrito />} />
             <Route path="/checkout" element={<Checkout />} />
